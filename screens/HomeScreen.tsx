@@ -1,37 +1,43 @@
-import React from "react";
-import { View, StyleSheet, ScrollView, Pressable } from "react-native";
+import { useState } from "react";
+import { View, StyleSheet, ScrollView, Pressable, Dimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
-import { BlurView } from "expo-blur";
+import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
+import { BlurView } from "expo-blur";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 
 import { ThemedText } from "@/components/ThemedText";
-import { CycleRingDots } from "@/components/CycleRingDots";
-import { ArticlesPreview } from "@/components/ArticlesPreview";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useApp } from "@/lib/AppContext";
+import { useLayout } from "@/lib/ThemePersonaContext";
 import {
   getCurrentCycleDay,
   getDaysUntilNextPeriod,
   getDetailedCyclePhase,
 } from "@/lib/cycle-utils";
 import {
-  DarkTheme,
+  DarkBackgrounds,
   PersonaColors,
+  NeutralColors,
+  GlassStyles,
+  getPersonaPrimary,
+} from "@/constants/colors";
+import {
   Spacing,
   BorderRadius,
   Typography,
   Shadows,
-  Glass,
-  getPersonaPrimary,
-  getPersonaGlow,
-} from "@/constants/theme";
+  IconSizes,
+  Layout,
+} from "@/constants/design-tokens";
+
+const { width } = Dimensions.get("window");
 
 interface QuickAction {
   id: string;
-  icon: keyof typeof Feather.glyphMap;
+  icon: string;
   titleAr: string;
   titleEn: string;
   screen: string;
@@ -68,43 +74,19 @@ const quickActions: QuickAction[] = [
   },
 ];
 
-// Mock articles data
-const mockArticles = [
-  {
-    id: "1",
-    title: "فهم دورتك الشهرية",
-    category: "صحة",
-    readTime: "5 دقائق",
-    excerpt: "دليل شامل لفهم مراحل الدورة الشهرية وتأثيرها على جسمك",
-  },
-  {
-    id: "2",
-    title: "العناية بالبشرة خلال الدورة",
-    category: "جمال",
-    readTime: "4 دقائق",
-    excerpt: "نصائح للعناية بالبشرة في كل مرحلة من مراحل الدورة",
-  },
-  {
-    id: "3",
-    title: "التغذية والدورة الشهرية",
-    category: "تغذية",
-    readTime: "6 دقائق",
-    excerpt: "الأطعمة المناسبة لكل مرحلة من مراحل دورتك",
-  },
-];
-
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const { t, language } = useLanguage();
+  const layout = useLayout();
   const { data } = useApp();
-
-  // Safety check
+  
+  // Safety check: if data is not loaded yet, show loading or use defaults
   if (!data || !data.settings) {
     return (
-      <View style={[styles.container, { paddingTop: insets.top }]}>
-        <View style={styles.loadingContainer}>
-          <ThemedText style={styles.loadingText}>
+      <View style={styles.container}>
+        <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+          <ThemedText style={{ color: NeutralColors.white }}>
             {language === "ar" ? "جارٍ التحميل..." : "Loading..."}
           </ThemedText>
         </View>
@@ -114,342 +96,349 @@ export default function HomeScreen() {
 
   const settings = data.settings;
   const logs = data.cycleLogs;
-  const persona = settings.persona || "single";
-  const personaColor = getPersonaPrimary(persona);
 
-  // Calculate cycle data with safe defaults
-  const cycleDay = settings.lastPeriodStart
+  // Safe defaults when no period data exists
+  const cycleDay = settings.lastPeriodStart 
     ? getCurrentCycleDay(settings.lastPeriodStart, settings.cycleLength)
     : 1;
-
   const daysUntilPeriod = settings.lastPeriodStart
     ? getDaysUntilNextPeriod(settings.lastPeriodStart, settings.cycleLength)
     : settings.cycleLength;
+  const today = new Date().toISOString().split("T")[0];
+  const phaseResult = settings.lastPeriodStart
+    ? getDetailedCyclePhase(today, settings.lastPeriodStart, {
+        cycleLength: settings.cycleLength,
+        periodLength: settings.periodLength,
+        lastPeriodStart: settings.lastPeriodStart,
+      })
+    : "follicular";
+  const phase = { name: phaseResult };
 
-  const phase = settings.lastPeriodStart
-    ? getDetailedCyclePhase(
-        settings.lastPeriodStart,
-        settings.cycleLength,
-        settings.periodLength
-      )
-    : { phase: "follicular", description: "Follicular Phase", emoji: "🌱" };
+  const personaColor = getPersonaPrimary(settings.persona || "single");
 
-  const handleQuickAction = (screen: string) => {
+  const getTimeBasedGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour < 12) {
+      return language === "ar" ? "صباح الخير" : "Good morning";
+    } else if (hour >= 12 && hour < 17) {
+      return language === "ar" ? "مساء الخير" : "Good afternoon";
+    } else {
+      return language === "ar" ? "مساء النور" : "Good evening";
+    }
+  };
+
+  const greeting = getTimeBasedGreeting();
+  const userName = settings?.name || (language === "ar" ? "حبيبتي" : "Dear");
+
+  const handleNotificationPress = () => {
+    Haptics.selectionAsync();
+    navigation.navigate("Notifications" as never);
+  };
+
+  const handleCardPress = (screen: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     navigation.navigate(screen as never);
   };
 
-  const handleArticlePress = (articleId: string) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    navigation.navigate("ArticleDetail" as never, { articleId } as never);
-  };
-
-  const handleViewAllArticles = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    navigation.navigate("Articles" as never);
-  };
-
-  const handleNotifications = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    navigation.navigate("Notifications" as never);
-  };
-
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <View style={styles.container}>
       <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={[
+          styles.scrollContent,
+          {
+            paddingTop: insets.top + Spacing.lg,
+            paddingBottom: insets.bottom + Layout.bottomNavHeight + Spacing["2xl"],
+          },
+        ]}
         showsVerticalScrollIndicator={false}
       >
         {/* Header */}
-        <Animated.View
-          entering={FadeInDown.duration(400)}
-          style={styles.header}
-        >
-          <View>
-            <ThemedText type="h1" style={styles.greeting}>
-              {language === "ar" ? "مرحباً" : "Welcome"}
+        <View style={[styles.header, { flexDirection: layout.flexDirection }]}>
+          <View style={{ flex: 1 }}>
+            <ThemedText style={[styles.greeting, { textAlign: layout.textAlign }]}>
+              {greeting}
             </ThemedText>
-            <ThemedText type="body" style={styles.subtitle}>
-              {language === "ar" ? `اليوم ${cycleDay}` : `Day ${cycleDay}`}
+            <ThemedText style={[styles.userName, { textAlign: layout.textAlign }]}>
+              {userName}
             </ThemedText>
           </View>
-          <Pressable onPress={handleNotifications} style={styles.notificationButton}>
-            <BlurView intensity={80} tint="dark" style={styles.notificationBlur}>
-              <Feather name="bell" size={20} color={personaColor} />
-            </BlurView>
+          
+          <Pressable
+            onPress={handleNotificationPress}
+            style={({ pressed }) => [
+              styles.notificationButton,
+              { opacity: pressed ? 0.7 : 1 },
+            ]}
+          >
+            <Feather name="bell" size={IconSizes.base} color={personaColor} />
           </Pressable>
-        </Animated.View>
+        </View>
 
-        {/* Cycle Ring */}
+        {/* Cycle Card */}
         <Animated.View
-          entering={FadeInDown.duration(400).delay(100)}
-          style={styles.ringSection}
+          entering={FadeInDown.delay(100).duration(600)}
         >
-          <CycleRingDots
-            cycleDay={cycleDay}
-            cycleLength={settings.cycleLength}
-            periodLength={settings.periodLength}
-            persona={persona}
-          />
-        </Animated.View>
-
-        {/* Cycle Info Card */}
-        <Animated.View
-          entering={FadeInDown.duration(400).delay(200)}
-          style={styles.infoCard}
-        >
-          <BlurView intensity={80} tint="dark" style={styles.cardBlur}>
-            <View style={styles.cardContent}>
-              <View style={styles.infoRow}>
-                <View style={styles.infoItem}>
-                  <ThemedText type="caption" style={styles.infoLabel}>
-                    {language === "ar" ? "الدورة القادمة" : "Next Period"}
+          <Pressable
+            style={styles.cycleCard}
+            onPress={() => handleCardPress("Calendar")}
+          >
+            <LinearGradient
+              colors={PersonaColors[settings.persona || "single"].gradient}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.cycleGradient}
+            >
+              <View style={[styles.cycleContent, { flexDirection: layout.flexDirection }]}>
+                <View style={styles.cycleInfo}>
+                  <ThemedText style={[styles.cycleTitle, { textAlign: layout.textAlign }]}>
+                    {language === "ar" ? "اليوم" : "Day"} {cycleDay}
                   </ThemedText>
-                  <ThemedText type="h2" style={[styles.infoValue, { color: personaColor }]}>
-                    {daysUntilPeriod}
-                  </ThemedText>
-                  <ThemedText type="caption" style={styles.infoUnit}>
-                    {language === "ar" ? "يوم" : "days"}
+                  <ThemedText style={[styles.cycleSubtitle, { textAlign: layout.textAlign }]}>
+                    {phase.name}
                   </ThemedText>
                 </View>
-                <View style={styles.divider} />
-                <View style={styles.infoItem}>
-                  <ThemedText type="caption" style={styles.infoLabel}>
-                    {language === "ar" ? "المرحلة" : "Phase"}
+
+                <View style={styles.cycleDays}>
+                  <ThemedText style={styles.cycleDaysNumber}>
+                    {daysUntilPeriod}
                   </ThemedText>
-                  <ThemedText type="h4" style={styles.phaseEmoji}>
-                    {phase.emoji}
-                  </ThemedText>
-                  <ThemedText type="caption" style={styles.infoUnit}>
-                    {phase.phase}
+                  <ThemedText style={styles.cycleDaysLabel}>
+                    {language === "ar" ? "أيام متبقية" : "days left"}
                   </ThemedText>
                 </View>
               </View>
-            </View>
-          </BlurView>
+            </LinearGradient>
+          </Pressable>
         </Animated.View>
 
         {/* Quick Actions */}
-        <Animated.View
-          entering={FadeInDown.duration(400).delay(300)}
-          style={styles.quickActionsSection}
-        >
-          <ThemedText type="h3" style={styles.sectionTitle}>
-            {language === "ar" ? "إجراءات سريعة" : "Quick Actions"}
+        <View style={styles.section}>
+          <ThemedText style={[styles.sectionTitle, { textAlign: layout.textAlign }]}>
+            {language === "ar" ? "الإجراءات السريعة" : "Quick Actions"}
           </ThemedText>
-          <View style={styles.quickActionsGrid}>
+
+          <View style={styles.actionsGrid}>
             {quickActions.map((action, index) => (
-              <QuickActionCard
+              <Animated.View
                 key={action.id}
-                action={action}
-                language={language}
-                personaColor={personaColor}
-                onPress={() => handleQuickAction(action.screen)}
-                delay={index * 50}
-              />
+                entering={FadeInDown.delay(200 + index * 50).duration(600)}
+                style={styles.actionItem}
+              >
+                <Pressable
+                  style={styles.actionCard}
+                  onPress={() => handleCardPress(action.screen)}
+                >
+                  <View style={styles.glassCard}>
+                    <View style={[styles.actionIconContainer, { backgroundColor: `${personaColor}20` }]}>
+                      <Feather name={action.icon as any} size={IconSizes.lg} color={personaColor} />
+                    </View>
+                    <ThemedText style={[styles.actionTitle, { textAlign: "center" }]}>
+                      {language === "ar" ? action.titleAr : action.titleEn}
+                    </ThemedText>
+                  </View>
+                </Pressable>
+              </Animated.View>
             ))}
           </View>
-        </Animated.View>
+        </View>
 
-        {/* Articles Preview */}
-        <Animated.View entering={FadeInDown.duration(400).delay(400)}>
-          <ArticlesPreview
-            articles={mockArticles}
-            persona={persona}
-            onArticlePress={handleArticlePress}
-            onViewAllPress={handleViewAllArticles}
-          />
-        </Animated.View>
+        {/* Today's Insights */}
+        <View style={styles.section}>
+          <ThemedText style={[styles.sectionTitle, { textAlign: layout.textAlign }]}>
+            {language === "ar" ? "رؤى اليوم" : "Today's Insights"}
+          </ThemedText>
 
-        {/* Bottom Spacing for FAB */}
-        <View style={{ height: 100 }} />
+          <Animated.View entering={FadeInDown.delay(400).duration(600)}>
+            <View style={styles.glassCard}>
+              <View style={[styles.insightHeader, { flexDirection: layout.flexDirection }]}>
+                <View style={[styles.insightIconContainer, { backgroundColor: `${personaColor}20` }]}>
+                  <Feather name="activity" size={IconSizes.base} color={personaColor} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <ThemedText style={[styles.insightTitle, { textAlign: layout.textAlign }]}>
+                    {language === "ar" ? "الطاقة" : "Energy Level"}
+                  </ThemedText>
+                  <ThemedText style={[styles.insightValue, { textAlign: layout.textAlign, color: personaColor }]}>
+                    {language === "ar" ? "متوسطة" : "Moderate"}
+                  </ThemedText>
+                </View>
+              </View>
+              <ThemedText style={[styles.insightDescription, { textAlign: layout.textAlign }]}>
+                {language === "ar" 
+                  ? "مستوى طاقتك متوسط اليوم. حاولي أخذ فترات راحة قصيرة."
+                  : "Your energy level is moderate today. Try taking short breaks."}
+              </ThemedText>
+            </View>
+          </Animated.View>
+        </View>
       </ScrollView>
     </View>
-  );
-}
-
-interface QuickActionCardProps {
-  action: QuickAction;
-  language: string;
-  personaColor: string;
-  onPress: () => void;
-  delay: number;
-}
-
-function QuickActionCard({
-  action,
-  language,
-  personaColor,
-  onPress,
-  delay,
-}: QuickActionCardProps) {
-  return (
-    <Animated.View entering={FadeInDown.duration(400).delay(delay)}>
-      <Pressable
-        onPress={onPress}
-        style={({ pressed }) => [
-          styles.quickActionCard,
-          pressed && styles.quickActionCardPressed,
-        ]}
-      >
-        <BlurView intensity={80} tint="dark" style={styles.quickActionBlur}>
-          <View style={styles.quickActionContent}>
-            <View style={[styles.quickActionIcon, { backgroundColor: `${personaColor}20` }]}>
-              <Feather name={action.icon} size={24} color={personaColor} />
-            </View>
-            <ThemedText type="body" style={styles.quickActionTitle}>
-              {language === "ar" ? action.titleAr : action.titleEn}
-            </ThemedText>
-          </View>
-        </BlurView>
-      </Pressable>
-    </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: DarkTheme.background.root,
-  },
-  loadingContainer: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  loadingText: {
-    color: DarkTheme.text.primary,
-  },
-  scrollView: {
-    flex: 1,
+    backgroundColor: DarkBackgrounds.base,
   },
   scrollContent: {
-    paddingBottom: Spacing.xxxl,
+    paddingHorizontal: Layout.screenPaddingHorizontal,
   },
+
+  // Header
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: Spacing.xl,
-    paddingVertical: Spacing.lg,
+    marginBottom: Spacing.xl,
   },
   greeting: {
-    color: DarkTheme.text.primary,
-    ...Typography.h1,
+    fontSize: Typography.body.fontSize,
+    lineHeight: Typography.body.lineHeight,
+    fontWeight: Typography.body.fontWeight,
+    color: "rgba(255, 255, 255, 0.7)",
+    marginBottom: Spacing.xs,
   },
-  subtitle: {
-    color: DarkTheme.text.secondary,
-    marginTop: Spacing.xs,
+  userName: {
+    fontSize: Typography.h2.fontSize,
+    lineHeight: Typography.h2.lineHeight,
+    fontWeight: Typography.h2.fontWeight,
+    color: NeutralColors.white,
   },
   notificationButton: {
     width: 44,
     height: 44,
-    borderRadius: BorderRadius.medium,
-    overflow: "hidden",
-  },
-  notificationBlur: {
-    flex: 1,
+    borderRadius: 22,
+    backgroundColor: DarkBackgrounds.card,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: Glass.tint,
     borderWidth: 1,
-    borderColor: Glass.border,
+    borderColor: "rgba(255, 255, 255, 0.1)",
   },
-  ringSection: {
-    alignItems: "center",
-    marginVertical: Spacing.xxl,
-  },
-  infoCard: {
-    marginHorizontal: Spacing.xl,
-    marginBottom: Spacing.xxl,
-    borderRadius: BorderRadius.large,
+
+  // Cycle Card
+  cycleCard: {
+    borderRadius: BorderRadius.xl,
     overflow: "hidden",
-    ...Shadows.card,
+    marginBottom: Spacing.xl,
   },
-  cardBlur: {
-    backgroundColor: Glass.tint,
-    borderWidth: 1,
-    borderColor: Glass.border,
-  },
-  cardContent: {
+  cycleGradient: {
     padding: Spacing.xl,
   },
-  infoRow: {
-    flexDirection: "row",
+  cycleContent: {
     alignItems: "center",
-    justifyContent: "space-around",
-  },
-  infoItem: {
-    flex: 1,
-    alignItems: "center",
-  },
-  infoLabel: {
-    color: DarkTheme.text.tertiary,
-    marginBottom: Spacing.xs,
-  },
-  infoValue: {
-    ...Typography.h2,
-    marginVertical: Spacing.xs,
-  },
-  infoUnit: {
-    color: DarkTheme.text.secondary,
-  },
-  phaseEmoji: {
-    fontSize: 32,
-    marginVertical: Spacing.xs,
-  },
-  divider: {
-    width: 1,
-    height: 60,
-    backgroundColor: DarkTheme.border.subtle,
-    marginHorizontal: Spacing.lg,
-  },
-  quickActionsSection: {
-    marginBottom: Spacing.xxl,
-  },
-  sectionTitle: {
-    color: DarkTheme.text.primary,
-    paddingHorizontal: Spacing.xl,
-    marginBottom: Spacing.lg,
-  },
-  quickActionsGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    paddingHorizontal: Spacing.xl,
-    gap: Spacing.md,
-  },
-  quickActionCard: {
-    width: "48%",
-    height: 100,
-    borderRadius: BorderRadius.large,
-    overflow: "hidden",
-    ...Shadows.card,
-  },
-  quickActionCardPressed: {
-    opacity: 0.8,
-    transform: [{ scale: 0.98 }],
-  },
-  quickActionBlur: {
-    flex: 1,
-    backgroundColor: Glass.tint,
-    borderWidth: 1,
-    borderColor: Glass.border,
-  },
-  quickActionContent: {
-    flex: 1,
-    padding: Spacing.lg,
     justifyContent: "space-between",
   },
-  quickActionIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: BorderRadius.medium,
+  cycleInfo: {
+    flex: 1,
+  },
+  cycleTitle: {
+    fontSize: Typography.h1.fontSize,
+    lineHeight: Typography.h1.lineHeight,
+    fontWeight: Typography.h1.fontWeight,
+    color: NeutralColors.white,
+    marginBottom: Spacing.xs,
+  },
+  cycleSubtitle: {
+    fontSize: Typography.body.fontSize,
+    lineHeight: Typography.body.lineHeight,
+    fontWeight: Typography.body.fontWeight,
+    color: "rgba(255, 255, 255, 0.9)",
+  },
+  cycleDays: {
+    alignItems: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    paddingVertical: Spacing.base,
+    paddingHorizontal: Spacing.lg,
+    borderRadius: BorderRadius.lg,
+  },
+  cycleDaysNumber: {
+    fontSize: Typography.h1.fontSize,
+    lineHeight: Typography.h1.lineHeight,
+    fontWeight: Typography.h1.fontWeight,
+    color: NeutralColors.white,
+  },
+  cycleDaysLabel: {
+    fontSize: Typography.caption.fontSize,
+    lineHeight: Typography.caption.lineHeight,
+    fontWeight: Typography.caption.fontWeight,
+    color: "rgba(255, 255, 255, 0.9)",
+  },
+
+  // Section
+  section: {
+    marginBottom: Spacing.xl,
+  },
+  sectionTitle: {
+    fontSize: Typography.h3.fontSize,
+    lineHeight: Typography.h3.lineHeight,
+    fontWeight: Typography.h3.fontWeight,
+    color: NeutralColors.white,
+    marginBottom: Spacing.lg,
+  },
+
+  // Quick Actions Grid
+  actionsGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: Spacing.base,
+  },
+  actionItem: {
+    width: (width - Layout.screenPaddingHorizontal * 2 - Spacing.base) / 2,
+  },
+  actionCard: {
+    width: "100%",
+  },
+  glassCard: {
+    backgroundColor: DarkBackgrounds.card,
+    borderRadius: BorderRadius.xl,
+    padding: Spacing.lg,
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.1)",
+    ...Shadows.dark.md,
+  },
+  actionIconContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: Spacing.md,
+  },
+  actionTitle: {
+    fontSize: Typography.body.fontSize,
+    lineHeight: Typography.body.lineHeight,
+    fontWeight: Typography.body.fontWeight,
+    color: NeutralColors.white,
+  },
+
+  // Insights
+  insightHeader: {
+    alignItems: "center",
+    marginBottom: Spacing.md,
+    gap: Spacing.md,
+  },
+  insightIconContainer: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     alignItems: "center",
     justifyContent: "center",
   },
-  quickActionTitle: {
-    color: DarkTheme.text.primary,
-    ...Typography.body,
+  insightTitle: {
+    fontSize: Typography.label.fontSize,
+    lineHeight: Typography.label.lineHeight,
+    fontWeight: Typography.label.fontWeight,
+    color: "rgba(255, 255, 255, 0.7)",
+    marginBottom: Spacing.xs,
+  },
+  insightValue: {
+    fontSize: Typography.h4.fontSize,
+    lineHeight: Typography.h4.lineHeight,
+    fontWeight: Typography.h4.fontWeight,
+  },
+  insightDescription: {
+    fontSize: Typography.bodySmall.fontSize,
+    lineHeight: Typography.bodySmall.lineHeight,
+    fontWeight: Typography.bodySmall.fontWeight,
+    color: "rgba(255, 255, 255, 0.7)",
   },
 });
