@@ -123,6 +123,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
     try {
       const baseUrl = getApiUrl();
       
+      // Skip API calls if no baseUrl (development mode)
+      if (!baseUrl || baseUrl.includes('localhost')) {
+        console.log('Skipping subscription fetch in development mode');
+        return;
+      }
+      
       const [plansRes, currentRes] = await Promise.all([
         fetch(new URL("/api/subscription/plans", baseUrl).toString()),
         fetch(new URL("/api/subscription/current", baseUrl).toString()),
@@ -138,7 +144,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setSubscription(current);
       }
     } catch (error) {
-      console.error("Error fetching subscription data:", error);
+      // Silently fail in development
+      console.log('Subscription data unavailable (development mode)');
     }
   }
 

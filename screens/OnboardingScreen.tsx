@@ -47,7 +47,7 @@ export default function OnboardingScreen() {
         periodLength: parseInt(periodLength),
         onboardingCompleted: true,
       });
-      navigation.navigate("Home" as never);
+      navigation.navigate("Main" as never);
     }
   };
 
