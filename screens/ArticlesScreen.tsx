@@ -45,18 +45,23 @@ export default function ArticlesScreen() {
   const { data: appData } = useApp();
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
-  const { data: articles = [], isLoading, error } = useQuery<Article[]>({
-    queryKey: ["/api/articles", appData.settings.persona],
-    queryFn: async () => {
-      const url = new URL("/api/articles", getApiUrl());
-      if (appData.settings.persona) {
-        url.searchParams.set("persona", appData.settings.persona);
-      }
-      const response = await fetch(url.toString());
-      if (!response.ok) throw new Error("Failed to fetch articles");
-      return response.json();
-    },
-  });
+  // Offline mode: return empty articles for now
+  const articles: Article[] = [];
+  const isLoading = false;
+  const error = null;
+  
+  // const { data: articles = [], isLoading, error } = useQuery<Article[]>({
+  //   queryKey: ["/api/articles", appData.settings.persona],
+  //   queryFn: async () => {
+  //     const url = new URL("/api/articles", getApiUrl());
+  //     if (appData.settings.persona) {
+  //       url.searchParams.set("persona", appData.settings.persona);
+  //     }
+  //     const response = await fetch(url.toString());
+  //     if (!response.ok) throw new Error("Failed to fetch articles");
+  //     return response.json();
+  //   },
+  // });
 
   const filteredArticles =
     selectedCategory === "all"

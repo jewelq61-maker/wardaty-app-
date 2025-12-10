@@ -116,7 +116,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     loadData();
-    fetchSubscriptionData();
+    // Disable subscription fetch in development
+    // fetchSubscriptionData();
   }, []);
 
   async function fetchSubscriptionData() {

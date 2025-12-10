@@ -48,29 +48,37 @@ export default function ArticleDetailScreen() {
   const layout = useLayout();
   const { data } = useApp();
 
-  const { data: article, isLoading: isLoadingArticle } = useQuery<Article>({
-    queryKey: ["/api/articles", articleId],
-    queryFn: async () => {
-      const url = new URL(`/api/articles/${articleId}`, getApiUrl());
-      const response = await fetch(url.toString());
-      if (!response.ok) throw new Error("Failed to fetch article");
-      return response.json();
-    },
-  });
+  // Offline mode: return null article
+  const article: Article | null = null;
+  const isLoadingArticle = false;
+  
+  // const { data: article, isLoading: isLoadingArticle } = useQuery<Article>({
+  //   queryKey: ["/api/articles", articleId],
+  //   queryFn: async () => {
+  //     const url = new URL(`/api/articles/${articleId}`, getApiUrl());
+  //     const response = await fetch(url.toString());
+  //     if (!response.ok) throw new Error("Failed to fetch article");
+  //     return response.json();
+  //   },
+  // });
 
-  const { data: relatedArticles = [], isLoading: isLoadingRelated } = useQuery<Article[]>({
-    queryKey: ["/api/articles", articleId, "related", data.settings.persona],
-    queryFn: async () => {
-      const url = new URL(`/api/articles/${articleId}/related`, getApiUrl());
-      if (data.settings.persona) {
-        url.searchParams.set("persona", data.settings.persona);
-      }
-      const response = await fetch(url.toString());
-      if (!response.ok) throw new Error("Failed to fetch related articles");
-      return response.json();
-    },
-    enabled: !!articleId,
-  });
+  // Offline mode: return empty related articles
+  const relatedArticles: Article[] = [];
+  const isLoadingRelated = false;
+  
+  // const { data: relatedArticles = [], isLoading: isLoadingRelated } = useQuery<Article[]>({
+  //   queryKey: ["/api/articles", articleId, "related", data.settings.persona],
+  //   queryFn: async () => {
+  //     const url = new URL(`/api/articles/${articleId}/related`, getApiUrl());
+  //     if (data.settings.persona) {
+  //       url.searchParams.set("persona", data.settings.persona);
+  //     }
+  //     const response = await fetch(url.toString());
+  //     if (!response.ok) throw new Error("Failed to fetch related articles");
+  //     return response.json();
+  //   },
+  //   enabled: !!articleId,
+  // });
 
   const getCategoryColor = (category: string) => {
     switch (category) {

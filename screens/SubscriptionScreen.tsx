@@ -134,35 +134,22 @@ export default function SubscriptionScreen() {
     queryKey: ["/api/moyasar/status"],
   });
 
+  // Offline mode: disable subscription activation
   const activateMutation = useMutation({
     mutationFn: async ({ planCode, startTrial }: { planCode: string; startTrial: boolean }) => {
-      const userId = "default-user";
-      const response = await apiRequest("POST", "/api/subscription/activate", { 
-        userId,
-        planCode, 
-        startTrial 
-      });
-      return response.json();
+      console.log('Offline mode: subscription activation disabled');
+      return { success: false, message: 'Offline mode' };
     },
     onSuccess: async () => {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      await refreshSubscription();
-      queryClient.invalidateQueries({ queryKey: ["/api/subscription/current"] });
+      console.log('Offline mode: skipping subscription refresh');
     },
   });
 
+  // Offline mode: disable payment checkout
   const checkoutMutation = useMutation({
     mutationFn: async ({ planCode }: { planCode: string }) => {
-      const userId = "default-user";
-      const baseUrl = getApiUrl();
-      const callbackUrl = `${baseUrl}api/moyasar/callback`;
-      
-      const response = await apiRequest("POST", "/api/moyasar/create-payment", { 
-        userId,
-        planCode,
-        callbackUrl,
-      });
-      return response.json();
+      console.log('Offline mode: payment checkout disabled');
+      return { formHtml: '', amount: 0, planCode };
     },
     onSuccess: async (result: { formHtml: string; amount: number; planCode: string }) => {
       if (result?.formHtml) {

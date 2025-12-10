@@ -47,22 +47,10 @@ export default function PartnerAccessScreen() {
 
     setIsGenerating(true);
     try {
-      const baseUrl = getApiUrl();
-      const res = await apiRequest(
-        "POST",
-        new URL("/api/partner/generateCode", baseUrl).toString(),
-        { userId: "current-user" }
-      );
-
-      if (res.ok) {
-        const data = await res.json();
-        setGeneratedCode({ code: data.code, expiresAt: data.expiresAt });
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      } else {
-        const errorData = await res.json();
-        Alert.alert(t("common", "error"), errorData.error || t("common", "error"));
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      }
+      // Offline mode: generate dummy code
+      console.log('Offline mode: partner code generation disabled');
+      Alert.alert(t("common", "error"), "Offline mode: Feature not available");
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
     } catch (error) {
       Alert.alert(t("common", "error"), t("common", "error"));
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
