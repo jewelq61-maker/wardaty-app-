@@ -74,10 +74,10 @@ export default function OnboardingScreen() {
       style={styles.stepContainer}
     >
       <ThemedText style={styles.title}>
-        {t("onboarding.selectLanguage")}
+        {t("onboarding", "chooseLanguage")}
       </ThemedText>
       <ThemedText style={styles.subtitle}>
-        Choose your preferred language
+        {t("onboarding", "chooseLanguageDesc")}
       </ThemedText>
       
       <View style={styles.languageContainer}>
@@ -127,10 +127,10 @@ export default function OnboardingScreen() {
       style={styles.stepContainer}
     >
       <ThemedText style={styles.hero}>
-        {t("onboarding.welcome")}
+        {t("onboarding", "welcome")}
       </ThemedText>
       <ThemedText style={styles.subtitle}>
-        {t("onboarding.welcomeSubtitle")}
+        {t("onboarding", "welcomeDesc")}
       </ThemedText>
     </Animated.View>
   );
@@ -142,10 +142,10 @@ export default function OnboardingScreen() {
       style={styles.stepContainer}
     >
       <ThemedText style={styles.title}>
-        {t("onboarding.selectPersona")}
+        {t("onboarding", "selectPersona")}
       </ThemedText>
       <ThemedText style={styles.subtitle}>
-        {t("onboarding.personaSubtitle")}
+        {t("onboarding", "personalizesExperience")}
       </ThemedText>
       
       <PersonaSelector
@@ -165,17 +165,17 @@ export default function OnboardingScreen() {
       style={styles.stepContainer}
     >
       <ThemedText style={styles.title}>
-        {t("onboarding.enterName")}
+        {t("onboarding", "whatsYourName")}
       </ThemedText>
       <ThemedText style={styles.subtitle}>
-        {t("onboarding.nameSubtitle")}
+        {t("onboarding", "greetPersonally")}
       </ThemedText>
       
       <TextInput
         style={styles.input}
         value={name}
         onChangeText={setName}
-        placeholder={t("onboarding.namePlaceholder")}
+        placeholder={t("onboarding", "enterName")}
         placeholderTextColor={NeutralColors.gray[400]}
         autoFocus
       />
@@ -189,16 +189,16 @@ export default function OnboardingScreen() {
       style={styles.stepContainer}
     >
       <ThemedText style={styles.title}>
-        {t("onboarding.cycleInfo")}
+        {t("onboarding", "setupCycle")}
       </ThemedText>
       <ThemedText style={styles.subtitle}>
-        {t("onboarding.cycleSubtitle")}
+        {t("onboarding", "predictPeriods")}
       </ThemedText>
       
       <View style={styles.inputGroup}>
         <View style={styles.inputWrapper}>
           <ThemedText style={styles.label}>
-            {t("onboarding.cycleLength")}
+            {t("settings", "cycleLength")}
           </ThemedText>
           <TextInput
             style={styles.input}
@@ -212,7 +212,7 @@ export default function OnboardingScreen() {
         
         <View style={styles.inputWrapper}>
           <ThemedText style={styles.label}>
-            {t("onboarding.periodLength")}
+            {t("settings", "periodLength")}
           </ThemedText>
           <TextInput
             style={styles.input}

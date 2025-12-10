@@ -83,9 +83,15 @@ export default function HomeScreen() {
   const settings = data.settings;
   const logs = data.cycleLogs;
 
-  const cycleDay = getCurrentCycleDay(logs, settings);
-  const daysUntilPeriod = getDaysUntilNextPeriod(logs, settings);
-  const phase = getDetailedCyclePhase(cycleDay, settings);
+  const cycleDay = getCurrentCycleDay(settings.lastPeriodStart, settings.cycleLength);
+  const daysUntilPeriod = getDaysUntilNextPeriod(settings.lastPeriodStart, settings.cycleLength);
+  const today = new Date().toISOString().split("T")[0];
+  const phaseResult = getDetailedCyclePhase(today, settings.lastPeriodStart, {
+    cycleLength: settings.cycleLength,
+    periodLength: settings.periodLength,
+    lastPeriodStart: settings.lastPeriodStart,
+  });
+  const phase = { name: phaseResult };
 
   const personaColor = getPersonaPrimary(settings.persona || "single");
 
