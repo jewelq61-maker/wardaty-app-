@@ -92,7 +92,7 @@ export function ThemedText({
   const { language } = useLanguage();
   const { data } = useApp();
   const isArabic = language === "ar";
-  const fontScale = data.settings.fontScale || "medium";
+  const fontScale = data?.settings?.fontScale || "medium";
   const scaleMultiplier = fontScaleMultipliers[fontScale];
 
   const getColor = () => {
