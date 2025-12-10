@@ -25,6 +25,7 @@ import {
   getPersonaPrimary,
   getPersonaGlow,
 } from "@/constants/theme";
+import { getGlowShadow } from "@/constants/design-tokens";
 
 export type MainTabParamList = {
   HomeTab: undefined;
