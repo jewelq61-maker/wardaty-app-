@@ -248,7 +248,7 @@ export default function OnboardingScreen() {
             onPress={handleBack}
           >
             <ThemedText style={styles.secondaryButtonText}>
-              {t("common.back")}
+              {t("common", "back")}
             </ThemedText>
           </Pressable>
         )}
@@ -258,7 +258,7 @@ export default function OnboardingScreen() {
           onPress={handleNext}
         >
           <ThemedText style={styles.primaryButtonText}>
-            {step === "cycle" ? t("common.finish") : t("common.next")}
+            {step === "cycle" ? t("common", "finish") : t("common", "next")}
           </ThemedText>
         </Pressable>
       </View>
