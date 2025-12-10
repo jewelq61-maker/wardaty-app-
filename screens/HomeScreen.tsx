@@ -80,6 +80,20 @@ export default function HomeScreen() {
   const { t, language } = useLanguage();
   const layout = useLayout();
   const { data } = useApp();
+  
+  // Safety check: if data is not loaded yet, show loading or use defaults
+  if (!data || !data.settings) {
+    return (
+      <View style={styles.container}>
+        <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+          <ThemedText style={{ color: NeutralColors.white }}>
+            {language === "ar" ? "جارٍ التحميل..." : "Loading..."}
+          </ThemedText>
+        </View>
+      </View>
+    );
+  }
+
   const settings = data.settings;
   const logs = data.cycleLogs;
 
