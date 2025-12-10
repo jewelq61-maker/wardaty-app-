@@ -2,16 +2,29 @@ import { Platform } from "react-native";
 
 export const BrandColors = {
   violet: {
-    main: "#8C64F0",
-    light: "#A684F5",
-    dark: "#7450D9",
-    soft: "rgba(140, 100, 240, 0.15)",
+    main: "#9C27B0",
+    light: "#BA68C8",
+    dark: "#7B1FA2",
+    soft: "rgba(156, 39, 176, 0.15)",
   },
   coral: {
-    main: "#FF6B9D",
-    light: "#FF8FB5",
-    dark: "#E85585",
-    soft: "rgba(255, 107, 157, 0.15)",
+    main: "#E91E63",
+    light: "#F06292",
+    dark: "#C2185B",
+    soft: "rgba(233, 30, 99, 0.15)",
+  },
+  // Apple Health inspired colors
+  pink: {
+    main: "#E91E63",
+    light: "#FF4081",
+    dark: "#C2185B",
+    soft: "rgba(233, 30, 99, 0.15)",
+  },
+  purple: {
+    main: "#9C27B0",
+    light: "#BA68C8",
+    dark: "#7B1FA2",
+    soft: "rgba(156, 39, 176, 0.15)",
   },
 };
 

@@ -1,10 +1,11 @@
-import React, { useState } from "react";
-import { View, StyleSheet, TextInput, Pressable } from "react-native";
+import { useState } from "react";
+import { View, StyleSheet, TextInput, Pressable, Dimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Image } from "expo-image";
-import { Feather } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import { BlurView } from "expo-blur";
 import Animated, {
   FadeInDown,
+  FadeInUp,
   FadeOutUp,
 } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
@@ -20,6 +21,8 @@ import { useApp } from "@/lib/AppContext";
 import { Persona } from "@/lib/types";
 import { KeyboardAwareScrollViewCompat } from "@/components/KeyboardAwareScrollViewCompat";
 import { Language } from "@/lib/translations";
+
+const { width, height } = Dimensions.get("window");
 
 type OnboardingStep = "language" | "welcome" | "persona" | "name" | "cycle";
 
@@ -53,411 +56,241 @@ export default function OnboardingScreen({ onBack }: OnboardingScreenProps) {
     else if (step === "name") setStep("cycle");
   };
 
-  const handleBack = () => {
-    if (step === "welcome") setStep("language");
-    else if (step === "persona") setStep("welcome");
-    else if (step === "name") setStep("persona");
-    else if (step === "cycle") setStep("name");
-  };
-
   const handleComplete = async () => {
     await updateSettings({
+      hasCompletedOnboarding: true,
+      name,
       persona,
-      name: name.trim() || "Friend",
-      cycleSettings: {
-        cycleLength: parseInt(cycleLength) || 28,
-        periodLength: parseInt(periodLength) || 5,
-        lastPeriodStart: null,
-      },
-      onboardingComplete: true,
+      cycleLength: parseInt(cycleLength),
+      periodLength: parseInt(periodLength),
     });
   };
 
-  const canProceed = () => {
-    if (step === "cycle") {
-      const cl = parseInt(cycleLength);
-      const pl = parseInt(periodLength);
-      return cl >= 21 && cl <= 40 && pl >= 2 && pl <= 10;
-    }
-    return true;
-  };
-
-  const renderLanguage = () => (
+  const renderLanguageStep = () => (
     <Animated.View
-      entering={FadeInDown.duration(400)}
-      exiting={FadeOutUp.duration(300)}
+      entering={FadeInDown.duration(600)}
+      exiting={FadeOutUp.duration(400)}
       style={styles.stepContainer}
     >
-      {onBack ? (
-        <Pressable
-          onPress={() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            onBack();
-          }}
-          style={[styles.backButtonTop, { [layout.left]: Spacing.lg, [layout.right]: undefined }]}
-        >
-          <Feather name={layout.isRTL ? "chevron-right" : "chevron-left"} size={24} color={theme.text} />
-        </Pressable>
-      ) : null}
-      <View style={styles.welcomeContent}>
-        <View style={[styles.logoContainer, { backgroundColor: theme.backgroundSecondary }]}>
-          <Image
-            source={require("@/assets/images/icon.png")}
-            style={styles.logo}
-            contentFit="contain"
-          />
-        </View>
-        <ThemedText type="h1" style={styles.welcomeTitle}>
-          {t("onboarding", "chooseLanguage")}
-        </ThemedText>
-        <ThemedText type="body" style={[styles.welcomeSubtitle, { color: theme.textSecondary }]}>
-          {t("onboarding", "chooseLanguageDesc")}
-        </ThemedText>
+      <View style={styles.iconContainer}>
+        <ThemedText style={styles.icon}>🌍</ThemedText>
       </View>
-      <View style={styles.languageOptions}>
+      
+      <ThemedText style={styles.mainTitle}>
+        {language === "ar" ? "اختاري لغتك" : "Choose Your Language"}
+      </ThemedText>
+      
+      <ThemedText style={styles.subtitle}>
+        {language === "ar" 
+          ? "اختاري اللغة المفضلة لديك"
+          : "Select your preferred language"}
+      </ThemedText>
+
+      <View style={styles.buttonGroup}>
         <Pressable
+          style={[styles.languageButton, language === "ar" && styles.languageButtonActive]}
           onPress={() => handleSelectLanguage("ar")}
-          style={[
-            styles.languageButton,
-            {
-              backgroundColor: language === "ar" ? theme.primary : theme.backgroundDefault,
-              borderColor: language === "ar" ? theme.primary : theme.cardBorder,
-            },
-          ]}
         >
-          <ThemedText
-            type="h3"
-            style={{ color: language === "ar" ? theme.buttonText : theme.text }}
-          >
-            العربية
-          </ThemedText>
-          <ThemedText
-            type="caption"
-            style={{ color: language === "ar" ? theme.buttonText : theme.textSecondary }}
-          >
-            Arabic
-          </ThemedText>
+          <BlurView intensity={20} style={styles.blurButton}>
+            <ThemedText style={[styles.languageButtonText, language === "ar" && styles.languageButtonTextActive]}>
+              العربية
+            </ThemedText>
+          </BlurView>
         </Pressable>
+
         <Pressable
+          style={[styles.languageButton, language === "en" && styles.languageButtonActive]}
           onPress={() => handleSelectLanguage("en")}
-          style={[
-            styles.languageButton,
-            {
-              backgroundColor: language === "en" ? theme.primary : theme.backgroundDefault,
-              borderColor: language === "en" ? theme.primary : theme.cardBorder,
-            },
-          ]}
         >
-          <ThemedText
-            type="h3"
-            style={{ color: language === "en" ? theme.buttonText : theme.text }}
-          >
-            English
-          </ThemedText>
-          <ThemedText
-            type="caption"
-            style={{ color: language === "en" ? theme.buttonText : theme.textSecondary }}
-          >
-            الإنجليزية
-          </ThemedText>
+          <BlurView intensity={20} style={styles.blurButton}>
+            <ThemedText style={[styles.languageButtonText, language === "en" && styles.languageButtonTextActive]}>
+              English
+            </ThemedText>
+          </BlurView>
         </Pressable>
       </View>
     </Animated.View>
   );
 
-  const renderWelcome = () => (
+  const renderWelcomeStep = () => (
     <Animated.View
-      entering={FadeInDown.duration(400)}
-      exiting={FadeOutUp.duration(300)}
+      entering={FadeInDown.duration(600)}
+      exiting={FadeOutUp.duration(400)}
       style={styles.stepContainer}
     >
-      <View style={styles.welcomeContent}>
-        <View style={[styles.logoContainer, { backgroundColor: theme.backgroundSecondary }]}>
-          <Image
-            source={require("@/assets/images/icon.png")}
-            style={styles.logo}
-            contentFit="contain"
-          />
-        </View>
-        <ThemedText type="h1" style={styles.welcomeTitle}>
-          {t("onboarding", "welcome")}
-        </ThemedText>
-        <ThemedText type="body" style={[styles.welcomeSubtitle, { color: theme.textSecondary }]}>
-          {t("onboarding", "welcomeDesc")}
-        </ThemedText>
+      <View style={styles.iconContainer}>
+        <ThemedText style={styles.icon}>🌹</ThemedText>
       </View>
-      <View style={styles.features}>
-        <FeatureItem
-          icon="calendar"
-          title={t("onboarding", "featureTrackCycle")}
-          description={t("onboarding", "featureTrackCycleDesc")}
-        />
-        <FeatureItem
-          icon="heart"
-          title={t("onboarding", "featureBeauty")}
-          description={t("onboarding", "featureBeautyDesc")}
-        />
-        <FeatureItem
-          icon="book-open"
-          title={t("onboarding", "featureFaith")}
-          description={t("onboarding", "featureFaithDesc")}
-        />
-      </View>
+      
+      <ThemedText style={styles.mainTitle}>
+        {t("onboarding.welcome")}
+      </ThemedText>
+      
+      <ThemedText style={styles.subtitle}>
+        {t("onboarding.welcomeSubtitle")}
+      </ThemedText>
+
+      <Pressable style={styles.primaryButton} onPress={handleNext}>
+        <BlurView intensity={30} style={styles.blurButton}>
+          <ThemedText style={styles.primaryButtonText}>
+            {t("onboarding.getStarted")}
+          </ThemedText>
+        </BlurView>
+      </Pressable>
     </Animated.View>
   );
 
-  const renderPersona = () => (
+  const renderPersonaStep = () => (
     <Animated.View
-      entering={FadeInDown.duration(400)}
-      exiting={FadeOutUp.duration(300)}
+      entering={FadeInDown.duration(600)}
+      exiting={FadeOutUp.duration(400)}
       style={styles.stepContainer}
     >
-      <View style={[styles.stepHeader, { alignItems: layout.alignSelf }]}>
-        <ThemedText type="h2" style={{ textAlign: layout.textAlign }}>
-          {t("onboarding", "tellAboutYourself")}
-        </ThemedText>
-        <ThemedText type="body" style={{ color: theme.textSecondary, textAlign: layout.textAlign }}>
-          {t("onboarding", "personalizesExperience")}
-        </ThemedText>
+      <ThemedText style={styles.title}>
+        {t("onboarding.selectPersona")}
+      </ThemedText>
+      
+      <ThemedText style={styles.description}>
+        {t("onboarding.personaDescription")}
+      </ThemedText>
+
+      <View style={styles.personaContainer}>
+        <PersonaSelector
+          value={persona}
+          onChange={setPersona}
+        />
       </View>
-      <PersonaSelector selectedPersona={persona} onSelect={setPersona} />
+
+      <Pressable 
+        style={[styles.primaryButton, !persona && styles.primaryButtonDisabled]} 
+        onPress={handleNext}
+        disabled={!persona}
+      >
+        <BlurView intensity={30} style={styles.blurButton}>
+          <ThemedText style={styles.primaryButtonText}>
+            {t("common.continue")}
+          </ThemedText>
+        </BlurView>
+      </Pressable>
     </Animated.View>
   );
 
-  const renderName = () => (
+  const renderNameStep = () => (
     <Animated.View
-      entering={FadeInDown.duration(400)}
-      exiting={FadeOutUp.duration(300)}
+      entering={FadeInDown.duration(600)}
+      exiting={FadeOutUp.duration(400)}
       style={styles.stepContainer}
     >
-      <View style={[styles.stepHeader, { alignItems: layout.alignSelf }]}>
-        <ThemedText type="h2" style={{ textAlign: layout.textAlign }}>
-          {t("onboarding", "whatsYourName")}
-        </ThemedText>
-        <ThemedText type="body" style={{ color: theme.textSecondary, textAlign: layout.textAlign }}>
-          {t("onboarding", "greetPersonally")}
-        </ThemedText>
-      </View>
-      <View style={styles.inputContainer}>
+      <ThemedText style={styles.title}>
+        {t("onboarding.enterName")}
+      </ThemedText>
+      
+      <ThemedText style={styles.description}>
+        {t("onboarding.nameDescription")}
+      </ThemedText>
+
+      <BlurView intensity={20} style={styles.inputContainer}>
         <TextInput
-          style={[
-            styles.input,
-            {
-              backgroundColor: theme.backgroundDefault,
-              borderColor: theme.cardBorder,
-              color: theme.text,
-              textAlign: layout.textAlign,
-            },
-          ]}
-          placeholder={t("onboarding", "enterName")}
-          placeholderTextColor={theme.textSecondary}
+          style={styles.input}
           value={name}
           onChangeText={setName}
-          autoCapitalize="words"
-          autoCorrect={false}
+          placeholder={t("onboarding.namePlaceholder")}
+          placeholderTextColor="rgba(255, 255, 255, 0.5)"
+          autoFocus
         />
-        <ThemedText type="small" style={{ color: theme.textSecondary, textAlign: layout.textAlign }}>
-          {t("onboarding", "skipIfPrefer")}
-        </ThemedText>
-      </View>
+      </BlurView>
+
+      <Pressable 
+        style={[styles.primaryButton, !name && styles.primaryButtonDisabled]} 
+        onPress={handleNext}
+        disabled={!name}
+      >
+        <BlurView intensity={30} style={styles.blurButton}>
+          <ThemedText style={styles.primaryButtonText}>
+            {t("common.continue")}
+          </ThemedText>
+        </BlurView>
+      </Pressable>
     </Animated.View>
   );
 
-  const renderCycle = () => (
+  const renderCycleStep = () => (
     <Animated.View
-      entering={FadeInDown.duration(400)}
-      exiting={FadeOutUp.duration(300)}
+      entering={FadeInDown.duration(600)}
+      exiting={FadeOutUp.duration(400)}
       style={styles.stepContainer}
     >
-      <View style={[styles.stepHeader, { alignItems: layout.alignSelf }]}>
-        <ThemedText type="h2" style={{ textAlign: layout.textAlign }}>
-          {t("onboarding", "setupCycle")}
-        </ThemedText>
-        <ThemedText type="body" style={{ color: theme.textSecondary, textAlign: layout.textAlign }}>
-          {t("onboarding", "predictPeriods")}
-        </ThemedText>
-      </View>
-      <View style={styles.cycleInputs}>
-        <View style={styles.cycleInputGroup}>
-          <ThemedText type="caption" style={{ textAlign: layout.textAlign }}>
-            {t("settings", "cycleLength")}
-          </ThemedText>
-          <View style={[styles.cycleInputRow, { flexDirection: layout.flexDirection }]}>
-            <Pressable
-              onPress={() => {
-                const val = parseInt(cycleLength) - 1;
-                if (val >= 21) setCycleLength(val.toString());
-              }}
-              style={[styles.cycleButton, { backgroundColor: theme.backgroundSecondary }]}
-            >
-              <Feather name="minus" size={20} color={theme.text} />
-            </Pressable>
-            <TextInput
-              style={[
-                styles.cycleInput,
-                {
-                  backgroundColor: theme.backgroundDefault,
-                  borderColor: theme.cardBorder,
-                  color: theme.text,
-                },
-              ]}
-              value={cycleLength}
-              onChangeText={setCycleLength}
-              keyboardType="number-pad"
-              maxLength={2}
-            />
-            <Pressable
-              onPress={() => {
-                const val = parseInt(cycleLength) + 1;
-                if (val <= 40) setCycleLength(val.toString());
-              }}
-              style={[styles.cycleButton, { backgroundColor: theme.backgroundSecondary }]}
-            >
-              <Feather name="plus" size={20} color={theme.text} />
-            </Pressable>
-            <ThemedText type="body" style={{ marginHorizontal: Spacing.sm }}>
-              {t("settings", "days")}
-            </ThemedText>
-          </View>
-          <ThemedText type="small" style={{ color: theme.textSecondary, textAlign: layout.textAlign }}>
-            {t("onboarding", "cycleLengthHint")}
-          </ThemedText>
-        </View>
+      <ThemedText style={styles.title}>
+        {t("onboarding.cycleInfo")}
+      </ThemedText>
+      
+      <ThemedText style={styles.description}>
+        {t("onboarding.cycleDescription")}
+      </ThemedText>
 
-        <View style={styles.cycleInputGroup}>
-          <ThemedText type="caption" style={{ textAlign: layout.textAlign }}>
-            {t("settings", "periodLength")}
+      <View style={styles.inputGroup}>
+        <BlurView intensity={20} style={styles.inputContainer}>
+          <ThemedText style={styles.inputLabel}>
+            {t("onboarding.cycleLength")}
           </ThemedText>
-          <View style={[styles.cycleInputRow, { flexDirection: layout.flexDirection }]}>
-            <Pressable
-              onPress={() => {
-                const val = parseInt(periodLength) - 1;
-                if (val >= 2) setPeriodLength(val.toString());
-              }}
-              style={[styles.cycleButton, { backgroundColor: theme.backgroundSecondary }]}
-            >
-              <Feather name="minus" size={20} color={theme.text} />
-            </Pressable>
-            <TextInput
-              style={[
-                styles.cycleInput,
-                {
-                  backgroundColor: theme.backgroundDefault,
-                  borderColor: theme.cardBorder,
-                  color: theme.text,
-                },
-              ]}
-              value={periodLength}
-              onChangeText={setPeriodLength}
-              keyboardType="number-pad"
-              maxLength={2}
-            />
-            <Pressable
-              onPress={() => {
-                const val = parseInt(periodLength) + 1;
-                if (val <= 10) setPeriodLength(val.toString());
-              }}
-              style={[styles.cycleButton, { backgroundColor: theme.backgroundSecondary }]}
-            >
-              <Feather name="plus" size={20} color={theme.text} />
-            </Pressable>
-            <ThemedText type="body" style={{ marginHorizontal: Spacing.sm }}>
-              {t("settings", "days")}
-            </ThemedText>
-          </View>
-          <ThemedText type="small" style={{ color: theme.textSecondary, textAlign: layout.textAlign }}>
-            {t("onboarding", "periodLengthHint")}
+          <TextInput
+            style={styles.input}
+            value={cycleLength}
+            onChangeText={setCycleLength}
+            keyboardType="number-pad"
+            maxLength={2}
+          />
+        </BlurView>
+
+        <BlurView intensity={20} style={styles.inputContainer}>
+          <ThemedText style={styles.inputLabel}>
+            {t("onboarding.periodLength")}
           </ThemedText>
-        </View>
+          <TextInput
+            style={styles.input}
+            value={periodLength}
+            onChangeText={setPeriodLength}
+            keyboardType="number-pad"
+            maxLength={2}
+          />
+        </BlurView>
       </View>
+
+      <Pressable style={styles.primaryButton} onPress={handleComplete}>
+        <BlurView intensity={30} style={styles.blurButton}>
+          <ThemedText style={styles.primaryButtonText}>
+            {t("onboarding.complete")}
+          </ThemedText>
+        </BlurView>
+      </Pressable>
     </Animated.View>
   );
 
-  const allSteps: OnboardingStep[] = ["language", "welcome", "persona", "name", "cycle"];
-  const currentStepIndex = allSteps.indexOf(step);
-
   return (
-    <KeyboardAwareScrollViewCompat
-      style={[styles.container, { backgroundColor: theme.backgroundRoot }]}
-      contentContainerStyle={[
-        styles.contentContainer,
-        {
-          paddingTop: insets.top + Spacing.xl,
-          paddingBottom: insets.bottom + Spacing.xl,
-        },
-      ]}
-    >
-      {step !== "language" ? (
-        <Pressable onPress={handleBack} style={[styles.backButton, { alignSelf: layout.alignSelf }]}>
-          <Feather name={layout.isRTL ? "arrow-right" : "arrow-left"} size={24} color={theme.text} />
-        </Pressable>
-      ) : null}
+    <View style={styles.container}>
+      <LinearGradient
+        colors={['#E91E63', '#9C27B0']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={StyleSheet.absoluteFill}
+      />
 
-      <View style={styles.progressContainer}>
-        {allSteps.map((s, i) => (
-          <View
-            key={s}
-            style={[
-              styles.progressDot,
-              {
-                backgroundColor:
-                  currentStepIndex >= i
-                    ? theme.primary
-                    : theme.backgroundSecondary,
-              },
-            ]}
-          />
-        ))}
-      </View>
-
-      <View style={styles.content}>
-        {step === "language" ? renderLanguage() : null}
-        {step === "welcome" ? renderWelcome() : null}
-        {step === "persona" ? renderPersona() : null}
-        {step === "name" ? renderName() : null}
-        {step === "cycle" ? renderCycle() : null}
-      </View>
-
-      {step !== "language" ? (
-        <View style={styles.footer}>
-          {step === "cycle" ? (
-            <Button onPress={handleComplete} disabled={!canProceed()}>
-              {t("onboarding", "getStarted")}
-            </Button>
-          ) : (
-            <Button onPress={handleNext}>
-              {step === "welcome" ? t("onboarding", "getStarted") : t("common", "next")}
-            </Button>
-          )}
-        </View>
-      ) : null}
-    </KeyboardAwareScrollViewCompat>
-  );
-}
-
-function FeatureItem({
-  icon,
-  title,
-  description,
-}: {
-  icon: keyof typeof Feather.glyphMap;
-  title: string;
-  description: string;
-}) {
-  const { theme } = useTheme();
-  const layout = useLayout();
-
-  return (
-    <View style={[styles.featureItem, { flexDirection: layout.flexDirection }]}>
-      <View style={[styles.featureIcon, { backgroundColor: theme.backgroundSecondary }]}>
-        <Feather name={icon} size={24} color={theme.primary} />
-      </View>
-      <View style={styles.featureText}>
-        <ThemedText type="h4" style={{ textAlign: layout.textAlign }}>{title}</ThemedText>
-        <ThemedText type="small" style={{ color: theme.textSecondary, textAlign: layout.textAlign }}>
-          {description}
-        </ThemedText>
-      </View>
+      <KeyboardAwareScrollViewCompat
+        contentContainerStyle={[
+          styles.scrollContent,
+          {
+            paddingTop: insets.top + 40,
+            paddingBottom: insets.bottom + 40,
+          },
+        ]}
+        showsVerticalScrollIndicator={false}
+      >
+        {step === "language" && renderLanguageStep()}
+        {step === "welcome" && renderWelcomeStep()}
+        {step === "persona" && renderPersonaStep()}
+        {step === "name" && renderNameStep()}
+        {step === "cycle" && renderCycleStep()}
+      </KeyboardAwareScrollViewCompat>
     </View>
   );
 }
@@ -466,133 +299,122 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  contentContainer: {
+  scrollContent: {
     flexGrow: 1,
-    paddingHorizontal: Spacing.lg,
-  },
-  backButton: {
-    width: 44,
-    height: 44,
     justifyContent: "center",
-  },
-  progressContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: Spacing.sm,
-    marginVertical: Spacing.lg,
-  },
-  progressDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-  },
-  content: {
-    flex: 1,
-    justifyContent: "center",
+    paddingHorizontal: 32,
   },
   stepContainer: {
-    gap: Spacing.xxl,
-  },
-  stepHeader: {
-    gap: Spacing.sm,
-  },
-  welcomeContent: {
     alignItems: "center",
-    gap: Spacing.lg,
+    gap: 24,
   },
-  logoContainer: {
-    width: 120,
-    height: 120,
-    borderRadius: 30,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: Spacing.md,
+  iconContainer: {
+    marginBottom: 16,
   },
-  logo: {
-    width: 80,
-    height: 80,
+  icon: {
+    fontSize: 80,
   },
-  welcomeTitle: {
+  mainTitle: {
+    fontSize: 48,
+    fontWeight: "700",
+    color: "#FFFFFF",
     textAlign: "center",
+    letterSpacing: -1,
   },
-  welcomeSubtitle: {
+  title: {
+    fontSize: 36,
+    fontWeight: "700",
+    color: "#FFFFFF",
     textAlign: "center",
-    paddingHorizontal: Spacing.lg,
+    letterSpacing: -0.5,
   },
-  features: {
-    gap: Spacing.lg,
+  subtitle: {
+    fontSize: 20,
+    fontWeight: "400",
+    color: "rgba(255, 255, 255, 0.8)",
+    textAlign: "center",
+    lineHeight: 28,
   },
-  featureItem: {
-    alignItems: "center",
-    gap: Spacing.md,
+  description: {
+    fontSize: 17,
+    fontWeight: "400",
+    color: "rgba(255, 255, 255, 0.7)",
+    textAlign: "center",
+    lineHeight: 24,
   },
-  featureIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: BorderRadius.medium,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  featureText: {
-    flex: 1,
-    gap: Spacing.xs,
-  },
-  languageOptions: {
-    flexDirection: "row",
-    gap: Spacing.lg,
-    justifyContent: "center",
+  buttonGroup: {
+    width: "100%",
+    gap: 16,
+    marginTop: 24,
   },
   languageButton: {
-    flex: 1,
-    padding: Spacing.xl,
-    borderRadius: BorderRadius.large,
+    width: "100%",
+    height: 60,
+    borderRadius: 30,
+    overflow: "hidden",
     borderWidth: 2,
-    alignItems: "center",
-    gap: Spacing.xs,
+    borderColor: "rgba(255, 255, 255, 0.3)",
   },
-  inputContainer: {
-    gap: Spacing.sm,
+  languageButtonActive: {
+    borderColor: "#FFFFFF",
   },
-  input: {
-    height: Spacing.inputHeight,
-    borderRadius: BorderRadius.medium,
-    borderWidth: 1,
-    paddingHorizontal: Spacing.lg,
-    fontSize: 16,
-  },
-  cycleInputs: {
-    gap: Spacing.xl,
-  },
-  cycleInputGroup: {
-    gap: Spacing.sm,
-  },
-  cycleInputRow: {
-    alignItems: "center",
-    gap: Spacing.sm,
-  },
-  cycleButton: {
-    width: 44,
-    height: 44,
-    borderRadius: BorderRadius.medium,
-    alignItems: "center",
+  blurButton: {
+    flex: 1,
     justifyContent: "center",
+    alignItems: "center",
   },
-  cycleInput: {
-    width: 60,
-    height: Spacing.inputHeight,
-    borderRadius: BorderRadius.medium,
-    borderWidth: 1,
-    textAlign: "center",
+  languageButtonText: {
     fontSize: 18,
     fontWeight: "600",
+    color: "rgba(255, 255, 255, 0.9)",
   },
-  footer: {
-    paddingTop: Spacing.xl,
+  languageButtonTextActive: {
+    color: "#FFFFFF",
   },
-  backButtonTop: {
-    position: "absolute",
-    top: 0,
-    zIndex: 10,
-    padding: Spacing.sm,
+  primaryButton: {
+    width: "100%",
+    height: 56,
+    borderRadius: 28,
+    overflow: "hidden",
+    marginTop: 24,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+  },
+  primaryButtonDisabled: {
+    opacity: 0.5,
+  },
+  primaryButtonText: {
+    fontSize: 17,
+    fontWeight: "600",
+    color: "#FFFFFF",
+  },
+  personaContainer: {
+    width: "100%",
+    marginTop: 16,
+  },
+  inputContainer: {
+    width: "100%",
+    borderRadius: 16,
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.3)",
+    marginTop: 16,
+  },
+  input: {
+    padding: 20,
+    fontSize: 17,
+    color: "#FFFFFF",
+    textAlign: "center",
+  },
+  inputLabel: {
+    fontSize: 15,
+    fontWeight: "500",
+    color: "rgba(255, 255, 255, 0.7)",
+    paddingTop: 12,
+    paddingHorizontal: 20,
+  },
+  inputGroup: {
+    width: "100%",
+    gap: 16,
+    marginTop: 16,
   },
 });
