@@ -1,13 +1,7 @@
 {
   "expo": {
-    "owner": "wardaty",
-    "extra": {
-      "eas": {
-        "projectId": "c7acffbd-7c47-45ab-bd21-5591f704376c"
-      }
-    },
     "name": "Wardaty",
-    "slug": "wardaty-app-",
+    "slug": "wardaty",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",

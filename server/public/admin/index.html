@@ -1,0 +1,3971 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wardaty - Admin Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.css" rel="stylesheet">
+  <script src="https://unpkg.com/feather-icons"></script>
+  <style>
+    :root {
+      --primary: #E91E63;
+      --primary-light: #FCE4EC;
+      --primary-dark: #C2185B;
+      --bg-root: #FAFAFA;
+      --bg-card: #FFFFFF;
+      --text-primary: #1A1A1A;
+      --text-secondary: #666666;
+      --border-color: #E0E0E0;
+      --success: #4CAF50;
+      --warning: #FF9800;
+      --error: #F44336;
+      --purple: #9C27B0;
+      --green: #4CAF50;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Tajawal', sans-serif;
+      background-color: var(--bg-root);
+      color: var(--text-primary);
+      min-height: 100vh;
+    }
+
+    .login-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .login-card {
+      background: var(--bg-card);
+      border-radius: 16px;
+      padding: 40px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .login-logo {
+      width: 80px;
+      height: 80px;
+      background: var(--primary-light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+    }
+
+    .login-logo svg {
+      width: 40px;
+      height: 40px;
+      color: var(--primary);
+    }
+
+    .login-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .login-subtitle {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      font-size: 16px;
+      font-family: 'Tajawal', sans-serif;
+      transition: border-color 0.2s;
+      direction: ltr;
+      text-align: left;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 24px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      font-family: 'Tajawal', sans-serif;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      width: 100%;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .error-message {
+      background: #FFEBEE;
+      color: var(--error);
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .dashboard-container {
+      display: none;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      position: fixed;
+      right: 0;
+      top: 0;
+      width: 280px;
+      height: 100vh;
+      background: var(--bg-card);
+      border-left: 1px solid var(--border-color);
+      padding: 24px;
+      overflow-y: auto;
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .sidebar-logo {
+      width: 48px;
+      height: 48px;
+      background: var(--primary-light);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .sidebar-logo svg {
+      width: 24px;
+      height: 24px;
+      color: var(--primary);
+    }
+
+    .sidebar-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .sidebar-subtitle {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .nav-menu {
+      list-style: none;
+    }
+
+    .nav-item {
+      margin-bottom: 4px;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 12px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .nav-link:hover {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .nav-link.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    .nav-link svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .sidebar-footer {
+      position: absolute;
+      bottom: 24px;
+      right: 24px;
+      left: 24px;
+    }
+
+    .logout-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .logout-btn:hover {
+      border-color: var(--error);
+      color: var(--error);
+    }
+
+    .main-content {
+      margin-right: 280px;
+      padding: 32px;
+      min-height: 100vh;
+    }
+
+    .page-header {
+      margin-bottom: 32px;
+    }
+
+    .page-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .page-subtitle {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+    }
+
+    .stat-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .stat-icon.primary { background: var(--primary-light); color: var(--primary); }
+    .stat-icon.purple { background: #F3E5F5; color: var(--purple); }
+    .stat-icon.green { background: #E8F5E9; color: var(--green); }
+    .stat-icon.warning { background: #FFF3E0; color: var(--warning); }
+
+    .stat-value {
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .stat-change {
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 8px;
+    }
+
+    .stat-change.positive {
+      background: #E8F5E9;
+      color: var(--success);
+    }
+
+    .stat-change.neutral {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .data-card {
+      background: var(--bg-card);
+      border-radius: 16px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+      overflow: hidden;
+    }
+
+    .data-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .data-card-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .table th {
+      text-align: right;
+      padding: 16px 24px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: #FAFAFA;
+    }
+
+    .table td {
+      padding: 16px 24px;
+      font-size: 14px;
+      color: var(--text-primary);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .badge-admin {
+      background: #F3E5F5;
+      color: var(--purple);
+    }
+
+    .badge-user {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .badge-active {
+      background: #E8F5E9;
+      color: var(--success);
+    }
+
+    .badge-trial {
+      background: #FFF3E0;
+      color: var(--warning);
+    }
+
+    .badge-free {
+      background: #F5F5F5;
+      color: var(--text-secondary);
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: var(--primary-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .user-name {
+      font-weight: 500;
+    }
+
+    .user-email {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .action-btn {
+      padding: 8px;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+
+    .action-btn:hover {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .action-btn.delete:hover {
+      background: #FFEBEE;
+      color: var(--error);
+    }
+
+    .page-section {
+      display: none;
+    }
+
+    .page-section.active {
+      display: block;
+    }
+
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 48px;
+      color: var(--text-secondary);
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--primary-light);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 48px;
+      color: var(--text-secondary);
+    }
+
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 20px;
+    }
+
+    .pagination-btn {
+      padding: 8px 16px;
+      border: 1px solid var(--border-color);
+      background: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: 'Tajawal', sans-serif;
+      transition: all 0.2s;
+    }
+
+    .pagination-btn:hover:not(:disabled) {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .pagination-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .pagination-info {
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(100%);
+        transition: transform 0.3s;
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        margin-right: 0;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .table {
+        display: block;
+        overflow-x: auto;
+      }
+    }
+
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: var(--bg-card);
+      border-radius: 16px;
+      padding: 32px;
+      width: 100%;
+      max-width: 480px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .modal-header h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 28px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      padding: 0;
+      line-height: 1;
+    }
+
+    .close-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .badge-plus {
+      background: linear-gradient(135deg, #9C27B0, #E91E63);
+      color: white;
+    }
+
+    .premium-btn {
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .premium-btn.grant {
+      background: #E8F5E9;
+      color: var(--success);
+    }
+
+    .premium-btn.grant:hover {
+      background: #C8E6C9;
+    }
+
+    .premium-btn.revoke {
+      background: #FFEBEE;
+      color: var(--error);
+    }
+
+    .premium-btn.revoke:hover {
+      background: #FFCDD2;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+  <div id="login-container" class="login-container">
+    <div class="login-card">
+      <div class="login-header">
+        <div class="login-logo">
+          <i data-feather="heart"></i>
+        </div>
+        <h1 class="login-title">ورديتي</h1>
+        <p class="login-subtitle">لوحة تحكم المدير</p>
+      </div>
+
+      <div id="login-error" class="error-message"></div>
+
+      <form id="login-form">
+        <div class="form-group">
+          <label class="form-label">البريد الإلكتروني</label>
+          <input type="email" id="login-email" class="form-input" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">كلمة المرور</label>
+          <input type="password" id="login-password" class="form-input" required>
+        </div>
+        <button type="submit" class="btn btn-primary" id="login-btn">
+          <span>تسجيل الدخول</span>
+          <i data-feather="arrow-left"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div id="dashboard-container" class="dashboard-container">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <i data-feather="heart"></i>
+        </div>
+        <div>
+          <div class="sidebar-title">ورديتي</div>
+          <div class="sidebar-subtitle">لوحة تحكم المدير</div>
+        </div>
+      </div>
+
+      <ul class="nav-menu">
+        <li class="nav-item">
+          <a class="nav-link active" data-page="dashboard">
+            <i data-feather="home"></i>
+            <span>لوحة التحكم</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-page="users">
+            <i data-feather="users"></i>
+            <span>المستخدمين</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-page="subscriptions">
+            <i data-feather="credit-card"></i>
+            <span>الاشتراكات</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-page="articles">
+            <i data-feather="file-text"></i>
+            <span>المقالات</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-page="plans">
+            <i data-feather="package"></i>
+            <span>خطط الاشتراك</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-page="reports">
+            <i data-feather="bar-chart-2"></i>
+            <span>التقارير والإحصائيات</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-page="payment">
+            <i data-feather="dollar-sign"></i>
+            <span>بوابة الدفع</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-page="fatwas">
+            <i data-feather="book-open"></i>
+            <span>الفتاوى</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-page="cycle-analytics">
+            <i data-feather="activity"></i>
+            <span>تحليلات الدورة</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-page="qadha">
+            <i data-feather="check-circle"></i>
+            <span>سجل القضاء</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-page="beauty">
+            <i data-feather="droplet"></i>
+            <span>مخطط الجمال</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-page="daughters">
+            <i data-feather="heart"></i>
+            <span>وضع البنات</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-page="notifications">
+            <i data-feather="bell"></i>
+            <span>مركز الإشعارات</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-page="roles">
+            <i data-feather="shield"></i>
+            <span>الأدوار والصلاحيات</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-page="settings">
+            <i data-feather="settings"></i>
+            <span>الإعدادات</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <button class="logout-btn" id="logout-btn">
+          <i data-feather="log-out"></i>
+          <span>تسجيل الخروج</span>
+        </button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <section id="page-dashboard" class="page-section active">
+        <div class="page-header">
+          <h1 class="page-title">لوحة التحكم</h1>
+          <p class="page-subtitle">نظرة عامة على تطبيق ورديتي</p>
+        </div>
+
+        <div class="stats-grid" id="stats-grid">
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon primary">
+                <i data-feather="users"></i>
+              </div>
+              <span class="stat-change positive">هذا الأسبوع</span>
+            </div>
+            <div class="stat-value" id="stat-total-users">-</div>
+            <div class="stat-label">إجمالي المستخدمين</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon purple">
+                <i data-feather="user-plus"></i>
+              </div>
+              <span class="stat-change neutral">آخر 30 يوم</span>
+            </div>
+            <div class="stat-value" id="stat-new-users">-</div>
+            <div class="stat-label">مستخدمين جدد</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon green">
+                <i data-feather="award"></i>
+              </div>
+              <span class="stat-change positive">نشط</span>
+            </div>
+            <div class="stat-value" id="stat-active-subs">-</div>
+            <div class="stat-label">اشتراكات مفعلة</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon warning">
+                <i data-feather="clock"></i>
+              </div>
+              <span class="stat-change neutral">تجريبي</span>
+            </div>
+            <div class="stat-value" id="stat-trial-subs">-</div>
+            <div class="stat-label">اشتراكات تجريبية</div>
+          </div>
+        </div>
+
+        <div class="data-card">
+          <div class="data-card-header">
+            <h2 class="data-card-title">أحدث المستخدمين</h2>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>المستخدم</th>
+                <th>الدور</th>
+                <th>تاريخ التسجيل</th>
+              </tr>
+            </thead>
+            <tbody id="recent-users-table">
+              <tr>
+                <td colspan="3" class="loading">
+                  <div class="spinner"></div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="page-users" class="page-section">
+        <div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+          <div>
+            <h1 class="page-title">المستخدمين</h1>
+            <p class="page-subtitle">إدارة مستخدمي التطبيق</p>
+          </div>
+          <div style="display: flex; gap: 12px;">
+            <button class="btn btn-primary" style="width: auto;" onclick="showCreateUserModal()">
+              <i data-feather="user-plus"></i>
+              <span>إضافة مستخدم</span>
+            </button>
+            <button class="btn btn-primary" style="width: auto; background: var(--purple);" onclick="showCreateAdminModal()">
+              <i data-feather="shield"></i>
+              <span>إضافة مدير</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="data-card">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>المستخدم</th>
+                <th>الاشتراك</th>
+                <th>تاريخ التسجيل</th>
+                <th>الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="users-table">
+              <tr>
+                <td colspan="4" class="loading">
+                  <div class="spinner"></div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="pagination" id="users-pagination"></div>
+        </div>
+      </section>
+
+      <!-- Create User Modal -->
+      <div id="create-user-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>إضافة مستخدم جديد</h2>
+            <button class="close-btn" onclick="hideCreateUserModal()">&times;</button>
+          </div>
+          <form id="create-user-form">
+            <div class="form-group">
+              <label class="form-label">اسم المستخدم</label>
+              <input type="text" id="new-user-username" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">البريد الإلكتروني</label>
+              <input type="email" id="new-user-email" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">الاسم الظاهر</label>
+              <input type="text" id="new-user-display" class="form-input">
+            </div>
+            <div class="form-group">
+              <label class="form-label">كلمة المرور</label>
+              <input type="password" id="new-user-password" class="form-input" required minlength="6">
+            </div>
+            <div class="form-group">
+              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <input type="checkbox" id="new-user-premium">
+                <span>منح اشتراك مميز (Plus)</span>
+              </label>
+            </div>
+            <div id="create-user-error" class="error-message"></div>
+            <button type="submit" class="btn btn-primary">إنشاء المستخدم</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Create Admin Modal -->
+      <div id="create-admin-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>إضافة مدير جديد</h2>
+            <button class="close-btn" onclick="hideCreateAdminModal()">&times;</button>
+          </div>
+          <form id="create-admin-form">
+            <div class="form-group">
+              <label class="form-label">اسم المستخدم</label>
+              <input type="text" id="new-admin-username" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">البريد الإلكتروني</label>
+              <input type="email" id="new-admin-email" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">كلمة المرور</label>
+              <input type="password" id="new-admin-password" class="form-input" required minlength="6">
+            </div>
+            <div id="create-admin-error" class="error-message"></div>
+            <button type="submit" class="btn btn-primary" style="background: var(--purple);">إنشاء المدير</button>
+          </form>
+        </div>
+      </div>
+
+      <section id="page-subscriptions" class="page-section">
+        <div class="page-header">
+          <h1 class="page-title">الاشتراكات</h1>
+          <p class="page-subtitle">إدارة اشتراكات المستخدمين</p>
+        </div>
+
+        <div class="data-card">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>معرف المستخدم</th>
+                <th>الحالة</th>
+                <th>تاريخ الانتهاء</th>
+              </tr>
+            </thead>
+            <tbody id="subscriptions-table">
+              <tr>
+                <td colspan="3" class="loading">
+                  <div class="spinner"></div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="pagination" id="subscriptions-pagination"></div>
+        </div>
+      </section>
+
+      <section id="page-articles" class="page-section">
+        <div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+          <div>
+            <h1 class="page-title">المقالات</h1>
+            <p class="page-subtitle">إدارة محتوى التطبيق</p>
+          </div>
+          <div style="display: flex; gap: 12px;">
+            <button class="btn btn-primary" style="width: auto;" onclick="showArticleModal()">
+              <i data-feather="plus"></i>
+              <span>إضافة مقال</span>
+            </button>
+            <button class="btn btn-primary" style="width: auto; background: var(--purple);" onclick="showBulkArticleModal()">
+              <i data-feather="upload"></i>
+              <span>إضافة بالجملة</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="data-card">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>العنوان</th>
+                <th>الفئة</th>
+                <th>وقت القراءة</th>
+                <th>الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="articles-table">
+              <tr>
+                <td colspan="4" class="loading">
+                  <div class="spinner"></div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <div id="article-modal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 600px;">
+          <div class="modal-header">
+            <h2 id="article-modal-title">إضافة مقال جديد</h2>
+            <button class="close-btn" onclick="hideArticleModal()">&times;</button>
+          </div>
+          <form id="article-form">
+            <input type="hidden" id="article-id">
+            <div class="form-group">
+              <label class="form-label">العنوان (عربي)</label>
+              <input type="text" id="article-title-ar" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">العنوان (إنجليزي)</label>
+              <input type="text" id="article-title-en" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">الملخص (عربي)</label>
+              <textarea id="article-summary-ar" class="form-input" rows="2" required></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">الملخص (إنجليزي)</label>
+              <textarea id="article-summary-en" class="form-input" rows="2" required></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">المحتوى (عربي)</label>
+              <textarea id="article-content-ar" class="form-input" rows="5" required></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">المحتوى (إنجليزي)</label>
+              <textarea id="article-content-en" class="form-input" rows="5" required></textarea>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+              <div class="form-group">
+                <label class="form-label">الفئة</label>
+                <select id="article-category" class="form-input" required>
+                  <option value="health">الصحة</option>
+                  <option value="beauty">الجمال</option>
+                  <option value="wellness">العافية</option>
+                  <option value="faith">الإيمان</option>
+                  <option value="nutrition">التغذية</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">وقت القراءة (دقائق)</label>
+                <input type="number" id="article-read-time" class="form-input" min="1" value="5" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">رابط الصورة</label>
+              <input type="url" id="article-image" class="form-input">
+            </div>
+            <div class="form-group">
+              <label class="form-label">الفئات المستهدفة</label>
+              <div style="display: flex; gap: 16px;">
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                  <input type="checkbox" id="persona-single" value="single">
+                  <span>عزباء</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                  <input type="checkbox" id="persona-married" value="married">
+                  <span>متزوجة</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                  <input type="checkbox" id="persona-mother" value="mother">
+                  <span>أم</span>
+                </label>
+              </div>
+            </div>
+            <div id="article-error" class="error-message"></div>
+            <button type="submit" class="btn btn-primary" id="article-submit-btn">حفظ المقال</button>
+          </form>
+        </div>
+      </div>
+
+      <div id="bulk-article-modal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 700px;">
+          <div class="modal-header">
+            <h2>إضافة مقالات بالجملة</h2>
+            <button class="close-btn" onclick="hideBulkArticleModal()">&times;</button>
+          </div>
+          <div style="padding: 0;">
+            <div class="form-group">
+              <label class="form-label">رفع ملف JSON</label>
+              <input type="file" id="bulk-file-input" accept=".json" class="form-input" onchange="handleBulkFileUpload(event)">
+            </div>
+            <div class="form-group">
+              <label class="form-label">أو الصق بيانات JSON مباشرة</label>
+              <textarea id="bulk-json-input" class="form-input" rows="10" placeholder='{"articles": [{"titleAr": "...", "titleEn": "...", ...}]}'></textarea>
+            </div>
+            <div class="form-group">
+              <details style="background: #F5F5F5; padding: 16px; border-radius: 8px;">
+                <summary style="cursor: pointer; font-weight: 600; color: var(--text-secondary);">عرض نموذج JSON</summary>
+                <pre style="margin-top: 12px; background: white; padding: 16px; border-radius: 8px; font-size: 12px; direction: ltr; text-align: left; overflow-x: auto;">{
+  "articles": [
+    {
+      "titleAr": "عنوان المقال بالعربي",
+      "titleEn": "Article Title in English",
+      "summaryAr": "ملخص قصير للمقال",
+      "summaryEn": "Short article summary",
+      "contentAr": "محتوى المقال الكامل...",
+      "contentEn": "Full article content...",
+      "category": "health",
+      "readTime": 5,
+      "personas": ["single", "married", "mother"]
+    }
+  ]
+}
+
+الفئات المتاحة: health, beauty, wellness, faith, nutrition
+الشخصيات: single, married, mother</pre>
+              </details>
+            </div>
+            <div id="bulk-error" class="error-message"></div>
+            <div id="bulk-results" style="display: none; margin-bottom: 16px;">
+              <div id="bulk-success-msg" style="background: #E8F5E9; color: #4CAF50; padding: 12px 16px; border-radius: 8px; margin-bottom: 8px;"></div>
+              <div id="bulk-failed-container" style="display: none;">
+                <div style="background: #FFEBEE; color: #F44336; padding: 12px 16px; border-radius: 8px;">
+                  <strong>المقالات الفاشلة:</strong>
+                  <ul id="bulk-failed-list" style="margin: 8px 0 0 0; padding-right: 20px;"></ul>
+                </div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 12px;">
+              <button type="button" class="btn btn-primary" onclick="submitBulkArticles()" id="bulk-submit-btn">
+                <i data-feather="upload"></i>
+                <span>رفع المقالات</span>
+              </button>
+              <button type="button" class="btn" style="background: var(--border-color); color: var(--text-primary);" onclick="hideBulkArticleModal()">إلغاء</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <section id="page-plans" class="page-section">
+        <div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+          <div>
+            <h1 class="page-title">خطط الاشتراك</h1>
+            <p class="page-subtitle">إدارة خطط الاشتراك والأسعار</p>
+          </div>
+          <button class="btn btn-primary" style="width: auto;" onclick="showPlanModal()">
+            <i data-feather="plus"></i>
+            <span>إضافة خطة</span>
+          </button>
+        </div>
+
+        <div class="data-card">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>اسم الخطة</th>
+                <th>الرمز</th>
+                <th>السعر</th>
+                <th>الحالة</th>
+                <th>الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="plans-table">
+              <tr>
+                <td colspan="5" class="loading">
+                  <div class="spinner"></div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <div id="plan-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 id="plan-modal-title">إضافة خطة جديدة</h2>
+            <button class="close-btn" onclick="hidePlanModal()">&times;</button>
+          </div>
+          <form id="plan-form">
+            <input type="hidden" id="plan-id">
+            <div class="form-group">
+              <label class="form-label">اسم الخطة (عربي)</label>
+              <input type="text" id="plan-name-ar" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">اسم الخطة (إنجليزي)</label>
+              <input type="text" id="plan-name-en" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">رمز الخطة</label>
+              <input type="text" id="plan-code" class="form-input" placeholder="monthly, yearly" required>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+              <div class="form-group">
+                <label class="form-label">السعر (ريال)</label>
+                <input type="number" id="plan-price" class="form-input" min="0" step="0.01" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">أيام التجربة</label>
+                <input type="number" id="plan-trial-days" class="form-input" min="0" value="7">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Stripe Price ID (اختياري)</label>
+              <input type="text" id="plan-stripe-id" class="form-input">
+            </div>
+            <div class="form-group">
+              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <input type="checkbox" id="plan-active" checked>
+                <span>الخطة مفعلة</span>
+              </label>
+            </div>
+            <div id="plan-error" class="error-message"></div>
+            <button type="submit" class="btn btn-primary">حفظ الخطة</button>
+          </form>
+        </div>
+      </div>
+
+      <section id="page-settings" class="page-section">
+        <div class="page-header">
+          <h1 class="page-title">الإعدادات</h1>
+          <p class="page-subtitle">إعدادات حسابك الشخصي</p>
+        </div>
+
+        <div class="data-card" style="max-width: 500px;">
+          <div class="data-card-header">
+            <h2 class="data-card-title">تغيير كلمة المرور</h2>
+          </div>
+          <div style="padding: 24px;">
+            <form id="password-form">
+              <div class="form-group">
+                <label class="form-label">كلمة المرور الحالية</label>
+                <input type="password" id="current-password" class="form-input" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">كلمة المرور الجديدة</label>
+                <input type="password" id="new-password" class="form-input" required minlength="6">
+              </div>
+              <div class="form-group">
+                <label class="form-label">تأكيد كلمة المرور الجديدة</label>
+                <input type="password" id="confirm-password" class="form-input" required minlength="6">
+              </div>
+              <div id="password-error" class="error-message"></div>
+              <div id="password-success" class="error-message" style="background: #E8F5E9; color: #4CAF50;"></div>
+              <button type="submit" class="btn btn-primary">تحديث كلمة المرور</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="data-card" style="max-width: 500px; margin-top: 24px;">
+          <div class="data-card-header">
+            <h2 class="data-card-title">معلومات النظام</h2>
+          </div>
+          <div style="padding: 24px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+              <span style="color: var(--text-secondary);">حالة Stripe:</span>
+              <span id="stripe-status">-</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+              <span style="color: var(--text-secondary);">قاعدة البيانات:</span>
+              <span class="badge badge-active">متصلة</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="page-reports" class="page-section">
+        <div class="page-header">
+          <h1 class="page-title">التقارير والإحصائيات</h1>
+          <p class="page-subtitle">نظرة تفصيلية على أداء التطبيق</p>
+        </div>
+
+        <div class="stats-grid" id="reports-stats-grid">
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon primary">
+                <i data-feather="users"></i>
+              </div>
+              <span class="stat-change positive">إجمالي</span>
+            </div>
+            <div class="stat-value" id="report-total-users">-</div>
+            <div class="stat-label">إجمالي المستخدمين</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon purple">
+                <i data-feather="file-text"></i>
+              </div>
+              <span class="stat-change neutral">منشور</span>
+            </div>
+            <div class="stat-value" id="report-total-articles">-</div>
+            <div class="stat-label">إجمالي المقالات</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon green">
+                <i data-feather="award"></i>
+              </div>
+              <span class="stat-change positive">مفعل</span>
+            </div>
+            <div class="stat-value" id="report-active-subs">-</div>
+            <div class="stat-label">اشتراكات Plus نشطة</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon warning">
+                <i data-feather="dollar-sign"></i>
+              </div>
+              <span class="stat-change neutral">تقديري</span>
+            </div>
+            <div class="stat-value" id="report-revenue">-</div>
+            <div class="stat-label">الإيرادات الشهرية (ريال)</div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+          <div class="data-card">
+            <div class="data-card-header">
+              <h2 class="data-card-title">نمو المستخدمين (آخر 6 أشهر)</h2>
+            </div>
+            <div style="padding: 24px;">
+              <div id="user-growth-chart" class="loading">
+                <div class="spinner"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="data-card">
+            <div class="data-card-header">
+              <h2 class="data-card-title">الاشتراكات حسب النوع</h2>
+            </div>
+            <div style="padding: 24px;">
+              <div id="subscription-breakdown" class="loading">
+                <div class="spinner"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="data-card" style="margin-top: 24px;">
+          <div class="data-card-header">
+            <h2 class="data-card-title">المقالات حسب التصنيف</h2>
+          </div>
+          <div style="padding: 24px;">
+            <div id="articles-by-category" class="loading">
+              <div class="spinner"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="page-payment" class="page-section">
+        <div class="page-header">
+          <h1 class="page-title">بوابة الدفع</h1>
+          <p class="page-subtitle">إعدادات بوابات الدفع (Moyasar و Stripe)</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+          <div class="data-card">
+            <div class="data-card-header" style="background: linear-gradient(135deg, #1a237e, #3949ab);">
+              <h2 class="data-card-title" style="color: white; display: flex; align-items: center; gap: 8px;">
+                <i data-feather="credit-card" style="width: 20px; height: 20px;"></i>
+                Moyasar - للسوق السعودي
+              </h2>
+            </div>
+            <div style="padding: 24px;">
+              <div id="moyasar-status-container">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                  <span style="color: var(--text-secondary);">الحالة:</span>
+                  <span id="moyasar-status-badge" class="badge badge-free">جاري التحقق...</span>
+                </div>
+              </div>
+              
+              <p style="color: var(--text-secondary); margin-bottom: 16px; line-height: 1.8; font-size: 14px;">
+                Moyasar هي بوابة الدفع الرائدة في السعودية وتدعم مدى، فيزا، ماستركارد، وApple Pay.
+              </p>
+              
+              <div style="background: #F5F5F5; border-radius: 8px; padding: 16px; font-family: monospace; font-size: 13px; direction: ltr; text-align: left;">
+                <div style="margin-bottom: 8px;"><strong>MOYASAR_SECRET_KEY</strong> - المفتاح السري</div>
+                <div><strong>MOYASAR_PUBLISHABLE_KEY</strong> - المفتاح العام</div>
+              </div>
+              
+              <p style="color: var(--text-secondary); margin-top: 16px; line-height: 1.8; font-size: 14px;">
+                احصل على المفاتيح من: 
+                <a href="https://moyasar.com/dashboard" target="_blank" style="color: var(--primary);">moyasar.com/dashboard</a>
+              </p>
+
+              <div style="margin-top: 20px; padding: 16px; background: #E3F2FD; border-radius: 8px;">
+                <h4 style="font-size: 14px; margin-bottom: 8px; color: #1565C0;">Webhook URL للـ Moyasar</h4>
+                <div style="background: white; border-radius: 6px; padding: 12px; font-family: monospace; font-size: 12px; direction: ltr; text-align: left; word-break: break-all;">
+                  <span id="moyasar-webhook-url">-</span>
+                </div>
+                <button class="btn btn-primary" style="width: auto; margin-top: 12px; background: #1565C0; padding: 8px 16px; font-size: 13px;" onclick="copyMoyasarWebhookUrl()">
+                  <i data-feather="copy"></i>
+                  <span>نسخ الرابط</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="data-card">
+            <div class="data-card-header" style="background: linear-gradient(135deg, #5433FF, #6366f1);">
+              <h2 class="data-card-title" style="color: white; display: flex; align-items: center; gap: 8px;">
+                <i data-feather="credit-card" style="width: 20px; height: 20px;"></i>
+                Stripe - للسوق الدولي
+              </h2>
+            </div>
+            <div style="padding: 24px;">
+              <div id="payment-status-container">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                  <span style="color: var(--text-secondary);">الحالة:</span>
+                  <span id="stripe-status-badge" class="badge badge-free">جاري التحقق...</span>
+                </div>
+              </div>
+              
+              <p style="color: var(--text-secondary); margin-bottom: 16px; line-height: 1.8; font-size: 14px;">
+                Stripe لقبول المدفوعات الدولية من جميع أنحاء العالم.
+              </p>
+              
+              <div style="background: #F5F5F5; border-radius: 8px; padding: 16px; font-family: monospace; font-size: 13px; direction: ltr; text-align: left;">
+                <div style="margin-bottom: 8px;"><strong>STRIPE_SECRET_KEY</strong> - المفتاح السري</div>
+                <div style="margin-bottom: 8px;"><strong>STRIPE_PUBLISHABLE_KEY</strong> - المفتاح العام</div>
+                <div><strong>STRIPE_WEBHOOK_SECRET</strong> - مفتاح Webhook</div>
+              </div>
+              
+              <p style="color: var(--text-secondary); margin-top: 16px; line-height: 1.8; font-size: 14px;">
+                احصل على المفاتيح من: 
+                <a href="https://dashboard.stripe.com/apikeys" target="_blank" style="color: var(--primary);">dashboard.stripe.com/apikeys</a>
+              </p>
+
+              <div style="margin-top: 20px; padding: 16px; background: #EDE7F6; border-radius: 8px;">
+                <h4 style="font-size: 14px; margin-bottom: 8px; color: #5433FF;">Webhook URL للـ Stripe</h4>
+                <div style="background: white; border-radius: 6px; padding: 12px; font-family: monospace; font-size: 12px; direction: ltr; text-align: left; word-break: break-all;">
+                  <span id="webhook-url">-</span>
+                </div>
+                <button class="btn btn-primary" style="width: auto; margin-top: 12px; background: #5433FF; padding: 8px 16px; font-size: 13px;" onclick="copyWebhookUrl()">
+                  <i data-feather="copy"></i>
+                  <span>نسخ الرابط</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="data-card" style="margin-top: 24px;">
+          <div class="data-card-header">
+            <h2 class="data-card-title">ملخص حالة بوابات الدفع</h2>
+          </div>
+          <div style="padding: 24px;">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>البوابة</th>
+                  <th>الحالة</th>
+                  <th>السوق المستهدف</th>
+                  <th>طرق الدفع</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="font-weight: 600;">Moyasar</td>
+                  <td><span id="moyasar-table-status" class="badge badge-free">-</span></td>
+                  <td>السعودية والخليج</td>
+                  <td>مدى، فيزا، ماستركارد، Apple Pay</td>
+                </tr>
+                <tr>
+                  <td style="font-weight: 600;">Stripe</td>
+                  <td><span id="stripe-table-status" class="badge badge-free">-</span></td>
+                  <td>دولي</td>
+                  <td>فيزا، ماستركارد، أمريكان إكسبرس</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Fatwas Page -->
+      <section id="page-fatwas" class="page-section">
+        <div class="page-header">
+          <h1 class="page-title">الفتاوى</h1>
+          <p class="page-subtitle">إدارة الفتاوى الشرعية المتعلقة بالدورة الشهرية والعبادات</p>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon primary">
+                <i data-feather="book-open"></i>
+              </div>
+              <span class="stat-change neutral">إجمالي</span>
+            </div>
+            <div class="stat-value" id="stat-total-fatwas">-</div>
+            <div class="stat-label">الفتاوى</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon green">
+                <i data-feather="check-circle"></i>
+              </div>
+              <span class="stat-change positive">موافق عليها</span>
+            </div>
+            <div class="stat-value" id="stat-approved-fatwas">-</div>
+            <div class="stat-label">فتاوى منشورة</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon warning">
+                <i data-feather="clock"></i>
+              </div>
+              <span class="stat-change neutral">معلقة</span>
+            </div>
+            <div class="stat-value" id="stat-pending-fatwas">-</div>
+            <div class="stat-label">بانتظار الموافقة</div>
+          </div>
+        </div>
+
+        <div class="data-card">
+          <div class="data-card-header">
+            <h2 class="data-card-title">قائمة الفتاوى</h2>
+            <div class="action-buttons">
+              <button class="btn btn-primary" style="width: auto; padding: 10px 20px;" onclick="showFatwaModal()">
+                <i data-feather="plus"></i>
+                <span>إضافة فتوى</span>
+              </button>
+              <button class="btn btn-primary" style="width: auto; padding: 10px 20px; background: var(--purple);" onclick="showBulkFatwaModal()">
+                <i data-feather="upload"></i>
+                <span>استيراد فتاوى</span>
+              </button>
+            </div>
+          </div>
+          <div style="padding: 16px 24px; border-bottom: 1px solid var(--border-color);">
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+              <select id="fatwa-category-filter" class="form-input" style="width: auto; min-width: 150px;" onchange="filterFatwas()">
+                <option value="">جميع التصنيفات</option>
+                <option value="period">الحيض</option>
+                <option value="prayer">الصلاة</option>
+                <option value="fasting">الصيام</option>
+                <option value="ghusl">الغسل</option>
+                <option value="general">عام</option>
+              </select>
+              <select id="fatwa-status-filter" class="form-input" style="width: auto; min-width: 150px;" onchange="filterFatwas()">
+                <option value="">جميع الحالات</option>
+                <option value="approved">موافق عليها</option>
+                <option value="pending">معلقة</option>
+              </select>
+            </div>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>السؤال</th>
+                <th>التصنيف</th>
+                <th>العالم</th>
+                <th>الحالة</th>
+                <th>الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="fatwas-table">
+              <tr><td colspan="5" class="loading"><div class="spinner"></div></td></tr>
+            </tbody>
+          </table>
+          <div id="fatwas-pagination" class="pagination"></div>
+        </div>
+
+        <div id="fatwa-modal" class="modal" style="display: none;">
+          <div class="modal-content" style="max-width: 700px;">
+            <div class="modal-header">
+              <h2 id="fatwa-modal-title">إضافة فتوى جديدة</h2>
+              <button class="close-btn" onclick="hideFatwaModal()">&times;</button>
+            </div>
+            <form id="fatwa-form" onsubmit="handleFatwaSubmit(event)">
+              <input type="hidden" id="fatwa-id">
+              <div class="form-group">
+                <label class="form-label">السؤال (عربي) *</label>
+                <textarea id="fatwa-question-ar" class="form-input" rows="3" required style="direction: rtl;"></textarea>
+              </div>
+              <div class="form-group">
+                <label class="form-label">السؤال (إنجليزي)</label>
+                <textarea id="fatwa-question-en" class="form-input" rows="2" style="direction: ltr;"></textarea>
+              </div>
+              <div class="form-group">
+                <label class="form-label">الإجابة (عربي) *</label>
+                <textarea id="fatwa-answer-ar" class="form-input" rows="5" required style="direction: rtl;"></textarea>
+              </div>
+              <div class="form-group">
+                <label class="form-label">الإجابة (إنجليزي)</label>
+                <textarea id="fatwa-answer-en" class="form-input" rows="3" style="direction: ltr;"></textarea>
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="form-group">
+                  <label class="form-label">العالم / المفتي</label>
+                  <input type="text" id="fatwa-scholar" class="form-input" placeholder="اسم العالم">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">التصنيف *</label>
+                  <select id="fatwa-category" class="form-input" required>
+                    <option value="general">عام</option>
+                    <option value="period">الحيض</option>
+                    <option value="prayer">الصلاة</option>
+                    <option value="fasting">الصيام</option>
+                    <option value="ghusl">الغسل</option>
+                  </select>
+                </div>
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="form-group">
+                  <label class="form-label">المصدر</label>
+                  <input type="text" id="fatwa-source" class="form-input" placeholder="اسم الكتاب أو الموقع">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">رابط المصدر</label>
+                  <input type="url" id="fatwa-source-url" class="form-input" placeholder="https://...">
+                </div>
+              </div>
+              <div style="display: flex; gap: 16px; margin-top: 16px;">
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                  <input type="checkbox" id="fatwa-approved">
+                  <span>موافق عليها</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                  <input type="checkbox" id="fatwa-published">
+                  <span>منشورة</span>
+                </label>
+              </div>
+              <div style="display: flex; gap: 12px; margin-top: 24px;">
+                <button type="submit" class="btn btn-primary">حفظ</button>
+                <button type="button" class="btn" style="background: var(--border-color); color: var(--text-primary);" onclick="hideFatwaModal()">إلغاء</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div id="bulk-fatwa-modal" class="modal" style="display: none;">
+          <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+              <h2>استيراد فتاوى بالجملة</h2>
+              <button class="close-btn" onclick="hideBulkFatwaModal()">&times;</button>
+            </div>
+            <div style="margin-bottom: 16px; padding: 16px; background: var(--primary-light); border-radius: 8px;">
+              <p style="margin-bottom: 8px; font-weight: 600;">صيغة JSON المطلوبة:</p>
+              <pre style="font-size: 12px; overflow-x: auto; direction: ltr; text-align: left; background: white; padding: 12px; border-radius: 4px;">[
+  {
+    "questionAr": "ما حكم الصلاة أثناء الحيض؟",
+    "answerAr": "لا تجب الصلاة على الحائض...",
+    "scholar": "ابن باز",
+    "category": "period",
+    "source": "فتاوى نور على الدرب"
+  }
+]</pre>
+            </div>
+            <form id="bulk-fatwa-form" onsubmit="handleBulkFatwaSubmit(event)">
+              <div class="form-group">
+                <label class="form-label">بيانات الفتاوى (JSON)</label>
+                <textarea id="bulk-fatwa-data" class="form-input" rows="10" required style="direction: ltr; text-align: left; font-family: monospace;"></textarea>
+              </div>
+              <div id="bulk-fatwa-results" style="display: none; margin-top: 16px; padding: 16px; border-radius: 8px;"></div>
+              <div style="display: flex; gap: 12px; margin-top: 24px;">
+                <button type="submit" class="btn btn-primary" id="bulk-fatwa-submit-btn">
+                  <i data-feather="upload"></i>
+                  <span>استيراد</span>
+                </button>
+                <button type="button" class="btn" style="background: var(--border-color); color: var(--text-primary);" onclick="hideBulkFatwaModal()">إلغاء</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- Cycle Analytics Page -->
+      <section id="page-cycle-analytics" class="page-section">
+        <div class="page-header">
+          <h1 class="page-title">تحليلات الدورة</h1>
+          <p class="page-subtitle">إحصائيات وتحليلات شاملة لبيانات الدورة الشهرية</p>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon primary">
+                <i data-feather="users"></i>
+              </div>
+              <span class="stat-change neutral">نشط</span>
+            </div>
+            <div class="stat-value" id="stat-tracking-users">-</div>
+            <div class="stat-label">مستخدمات نشطات</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon purple">
+                <i data-feather="activity"></i>
+              </div>
+              <span class="stat-change neutral">متوسط</span>
+            </div>
+            <div class="stat-value" id="stat-avg-cycle">-</div>
+            <div class="stat-label">متوسط طول الدورة</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon green">
+                <i data-feather="calendar"></i>
+              </div>
+              <span class="stat-change positive">هذا الشهر</span>
+            </div>
+            <div class="stat-value" id="stat-logs-month">-</div>
+            <div class="stat-label">سجلات مضافة</div>
+          </div>
+        </div>
+
+        <div class="data-card">
+          <div class="data-card-header">
+            <h2 class="data-card-title">ملخص التحليلات</h2>
+          </div>
+          <div style="padding: 24px;">
+            <div id="cycle-analytics-content">
+              <div class="loading"><div class="spinner"></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Qadha Logs Page -->
+      <section id="page-qadha" class="page-section">
+        <div class="page-header">
+          <h1 class="page-title">سجل القضاء</h1>
+          <p class="page-subtitle">متابعة قضاء الصلوات الفائتة للمستخدمات</p>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon primary">
+                <i data-feather="check-circle"></i>
+              </div>
+              <span class="stat-change neutral">إجمالي</span>
+            </div>
+            <div class="stat-value" id="stat-total-qadha">-</div>
+            <div class="stat-label">سجلات القضاء</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon green">
+                <i data-feather="check-square"></i>
+              </div>
+              <span class="stat-change positive">مكتملة</span>
+            </div>
+            <div class="stat-value" id="stat-completed-qadha">-</div>
+            <div class="stat-label">تم قضاؤها</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon warning">
+                <i data-feather="clock"></i>
+              </div>
+              <span class="stat-change neutral">معلقة</span>
+            </div>
+            <div class="stat-value" id="stat-pending-qadha">-</div>
+            <div class="stat-label">بانتظار القضاء</div>
+          </div>
+        </div>
+
+        <div class="data-card">
+          <div class="data-card-header">
+            <h2 class="data-card-title">سجلات القضاء الأخيرة</h2>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>المستخدم</th>
+                <th>الصلوات المعلقة</th>
+                <th>المكتملة</th>
+                <th>آخر تحديث</th>
+              </tr>
+            </thead>
+            <tbody id="qadha-table">
+              <tr><td colspan="4" class="loading"><div class="spinner"></div></td></tr>
+            </tbody>
+          </table>
+          <div id="qadha-pagination" class="pagination"></div>
+        </div>
+      </section>
+
+      <!-- Beauty Planner Page -->
+      <section id="page-beauty" class="page-section">
+        <div class="page-header">
+          <h1 class="page-title">مخطط الجمال</h1>
+          <p class="page-subtitle">إدارة روتين العناية بالبشرة والمنتجات الموصى بها</p>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon primary">
+                <i data-feather="droplet"></i>
+              </div>
+              <span class="stat-change neutral">إجمالي</span>
+            </div>
+            <div class="stat-value" id="stat-beauty-routines">-</div>
+            <div class="stat-label">روتين مسجل</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon purple">
+                <i data-feather="package"></i>
+              </div>
+              <span class="stat-change neutral">منتجات</span>
+            </div>
+            <div class="stat-value" id="stat-beauty-products">-</div>
+            <div class="stat-label">منتج مسجل</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon green">
+                <i data-feather="users"></i>
+              </div>
+              <span class="stat-change positive">نشط</span>
+            </div>
+            <div class="stat-value" id="stat-beauty-users">-</div>
+            <div class="stat-label">مستخدمات نشطات</div>
+          </div>
+        </div>
+
+        <div class="data-card">
+          <div class="data-card-header">
+            <h2 class="data-card-title">إحصائيات الروتين</h2>
+          </div>
+          <div style="padding: 24px;">
+            <div id="beauty-content">
+              <div class="loading"><div class="spinner"></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Daughters Mode Page -->
+      <section id="page-daughters" class="page-section">
+        <div class="page-header">
+          <h1 class="page-title">وضع البنات</h1>
+          <p class="page-subtitle">متابعة الأمهات اللواتي يتابعن دورات بناتهن</p>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon primary">
+                <i data-feather="heart"></i>
+              </div>
+              <span class="stat-change neutral">أمهات</span>
+            </div>
+            <div class="stat-value" id="stat-mothers-count">-</div>
+            <div class="stat-label">أم مستخدمة للميزة</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon purple">
+                <i data-feather="users"></i>
+              </div>
+              <span class="stat-change neutral">بنات</span>
+            </div>
+            <div class="stat-value" id="stat-daughters-count">-</div>
+            <div class="stat-label">بنت مسجلة</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon green">
+                <i data-feather="activity"></i>
+              </div>
+              <span class="stat-change positive">نشط</span>
+            </div>
+            <div class="stat-value" id="stat-active-tracking">-</div>
+            <div class="stat-label">تتبع نشط</div>
+          </div>
+        </div>
+
+        <div class="data-card">
+          <div class="data-card-header">
+            <h2 class="data-card-title">قائمة الأمهات والبنات</h2>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>الأم</th>
+                <th>اسم البنت</th>
+                <th>تاريخ التسجيل</th>
+                <th>الحالة</th>
+              </tr>
+            </thead>
+            <tbody id="daughters-table">
+              <tr><td colspan="4" class="loading"><div class="spinner"></div></td></tr>
+            </tbody>
+          </table>
+          <div id="daughters-pagination" class="pagination"></div>
+        </div>
+      </section>
+
+      <!-- Notifications Center Page -->
+      <section id="page-notifications" class="page-section">
+        <div class="page-header">
+          <h1 class="page-title">مركز الإشعارات</h1>
+          <p class="page-subtitle">إدارة قوالب الإشعارات وإرسال إشعارات للمستخدمات</p>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon primary">
+                <i data-feather="bell"></i>
+              </div>
+              <span class="stat-change neutral">إجمالي</span>
+            </div>
+            <div class="stat-value" id="stat-total-notifications">-</div>
+            <div class="stat-label">إشعار مرسل</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon purple">
+                <i data-feather="file-text"></i>
+              </div>
+              <span class="stat-change neutral">قوالب</span>
+            </div>
+            <div class="stat-value" id="stat-notification-templates">-</div>
+            <div class="stat-label">قالب متاح</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon green">
+                <i data-feather="send"></i>
+              </div>
+              <span class="stat-change positive">هذا الشهر</span>
+            </div>
+            <div class="stat-value" id="stat-notifications-month">-</div>
+            <div class="stat-label">إشعار هذا الشهر</div>
+          </div>
+        </div>
+
+        <div class="data-card">
+          <div class="data-card-header">
+            <h2 class="data-card-title">قوالب الإشعارات</h2>
+            <button class="btn btn-primary" style="width: auto; padding: 10px 20px;" onclick="showNotificationModal()">
+              <i data-feather="plus"></i>
+              <span>إضافة قالب</span>
+            </button>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>العنوان</th>
+                <th>النوع</th>
+                <th>الحالة</th>
+                <th>الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="notifications-table">
+              <tr><td colspan="4" class="loading"><div class="spinner"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="data-card" style="margin-top: 24px;">
+          <div class="data-card-header">
+            <h2 class="data-card-title">إرسال إشعار فوري</h2>
+          </div>
+          <div style="padding: 24px;">
+            <div class="form-group">
+              <label class="form-label">العنوان (عربي) *</label>
+              <input type="text" id="push-title-ar" class="form-input" placeholder="عنوان الإشعار بالعربية">
+            </div>
+            <div class="form-group">
+              <label class="form-label">العنوان (إنجليزي)</label>
+              <input type="text" id="push-title-en" class="form-input" placeholder="Notification title in English (optional)">
+            </div>
+            <div class="form-group">
+              <label class="form-label">المحتوى (عربي) *</label>
+              <textarea id="push-body-ar" class="form-input" rows="3" placeholder="نص الإشعار بالعربية"></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">المحتوى (إنجليزي)</label>
+              <textarea id="push-body-en" class="form-input" rows="3" placeholder="Notification content in English (optional)"></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">الفئة المستهدفة</label>
+              <select id="push-target" class="form-input">
+                <option value="all">جميع المستخدمات</option>
+                <option value="premium">مشتركات Plus فقط</option>
+                <option value="free">المستخدمات المجانيات</option>
+                <option value="single">عازبات</option>
+                <option value="married">متزوجات</option>
+                <option value="mother">أمهات</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" style="width: auto;" onclick="sendPushNotification()">
+              <i data-feather="send"></i>
+              <span>إرسال الإشعار</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Roles & Permissions Page -->
+      <section id="page-roles" class="page-section">
+        <div class="page-header">
+          <h1 class="page-title">الأدوار والصلاحيات</h1>
+          <p class="page-subtitle">إدارة أدوار المديرين وصلاحياتهم في لوحة التحكم</p>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon primary">
+                <i data-feather="shield"></i>
+              </div>
+              <span class="stat-change neutral">أدوار</span>
+            </div>
+            <div class="stat-value" id="stat-total-roles">-</div>
+            <div class="stat-label">دور متاح</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon purple">
+                <i data-feather="users"></i>
+              </div>
+              <span class="stat-change neutral">مديرين</span>
+            </div>
+            <div class="stat-value" id="stat-total-admins">-</div>
+            <div class="stat-label">مدير نشط</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon green">
+                <i data-feather="key"></i>
+              </div>
+              <span class="stat-change neutral">صلاحيات</span>
+            </div>
+            <div class="stat-value" id="stat-total-permissions">-</div>
+            <div class="stat-label">صلاحية متاحة</div>
+          </div>
+        </div>
+
+        <div class="data-card">
+          <div class="data-card-header">
+            <h2 class="data-card-title">قائمة الأدوار</h2>
+            <button class="btn btn-primary" style="width: auto; padding: 10px 20px;" onclick="showRoleModal()">
+              <i data-feather="plus"></i>
+              <span>إضافة دور</span>
+            </button>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>الدور</th>
+                <th>الوصف</th>
+                <th>الصلاحيات</th>
+                <th>الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="roles-table">
+              <tr><td colspan="4" class="loading"><div class="spinner"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="data-card" style="margin-top: 24px;">
+          <div class="data-card-header">
+            <h2 class="data-card-title">المديرين وأدوارهم</h2>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>المدير</th>
+                <th>البريد الإلكتروني</th>
+                <th>الدور</th>
+                <th>الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="admins-roles-table">
+              <tr><td colspan="4" class="loading"><div class="spinner"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const AUTH_TOKEN_KEY = 'wardaty_admin_token';
+    let authToken = localStorage.getItem(AUTH_TOKEN_KEY);
+    let currentPage = { users: 1, subscriptions: 1 };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      feather.replace();
+      
+      if (authToken) {
+        validateSession();
+      } else {
+        showLogin();
+      }
+
+      setupEventListeners();
+    });
+
+    function setupEventListeners() {
+      document.getElementById('login-form').addEventListener('submit', handleLogin);
+      document.getElementById('logout-btn').addEventListener('click', handleLogout);
+
+      document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+          const page = e.currentTarget.dataset.page;
+          navigateToPage(page);
+        });
+      });
+    }
+
+    async function validateSession() {
+      try {
+        const response = await fetch('/api/auth/me', {
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.user.isAdmin) {
+            showDashboard();
+            loadDashboardData();
+          } else {
+            handleLogout();
+          }
+        } else {
+          handleLogout();
+        }
+      } catch (error) {
+        handleLogout();
+      }
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+      const loginBtn = document.getElementById('login-btn');
+      const errorDiv = document.getElementById('login-error');
+
+      loginBtn.disabled = true;
+      errorDiv.style.display = 'none';
+
+      try {
+        const response = await fetch('/api/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          authToken = data.token;
+          localStorage.setItem(AUTH_TOKEN_KEY, authToken);
+          showDashboard();
+          loadDashboardData();
+        } else {
+          errorDiv.textContent = data.error || 'فشل تسجيل الدخول';
+          errorDiv.style.display = 'block';
+        }
+      } catch (error) {
+        errorDiv.textContent = 'حدث خطأ في الاتصال';
+        errorDiv.style.display = 'block';
+      } finally {
+        loginBtn.disabled = false;
+      }
+    }
+
+    function handleLogout() {
+      localStorage.removeItem(AUTH_TOKEN_KEY);
+      authToken = null;
+      showLogin();
+    }
+
+    function showLogin() {
+      document.getElementById('login-container').style.display = 'flex';
+      document.getElementById('dashboard-container').style.display = 'none';
+    }
+
+    function showDashboard() {
+      document.getElementById('login-container').style.display = 'none';
+      document.getElementById('dashboard-container').style.display = 'block';
+    }
+
+    function navigateToPage(page) {
+      document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.toggle('active', link.dataset.page === page);
+      });
+
+      document.querySelectorAll('.page-section').forEach(section => {
+        section.classList.toggle('active', section.id === `page-${page}`);
+      });
+
+      switch (page) {
+        case 'dashboard':
+          loadDashboardData();
+          break;
+        case 'users':
+          loadUsers();
+          break;
+        case 'subscriptions':
+          loadSubscriptions();
+          break;
+        case 'articles':
+          loadArticles();
+          break;
+        case 'plans':
+          loadPlans();
+          break;
+        case 'reports':
+          loadReports();
+          break;
+        case 'payment':
+          loadPaymentSettings();
+          break;
+        case 'fatwas':
+          loadFatwas();
+          break;
+        case 'cycle-analytics':
+          loadCycleAnalytics();
+          break;
+        case 'qadha':
+          loadQadhaLogs();
+          break;
+        case 'beauty':
+          loadBeautyData();
+          break;
+        case 'daughters':
+          loadDaughtersData();
+          break;
+        case 'notifications':
+          loadNotifications();
+          break;
+        case 'roles':
+          loadRoles();
+          break;
+        case 'settings':
+          loadSettings();
+          break;
+      }
+    }
+
+    async function loadDashboardData() {
+      try {
+        const response = await fetch('/api/admin/dashboard/stats', {
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          
+          document.getElementById('stat-total-users').textContent = data.users.total;
+          document.getElementById('stat-new-users').textContent = data.users.newThisMonth;
+          document.getElementById('stat-active-subs').textContent = data.subscriptions.active;
+          document.getElementById('stat-trial-subs').textContent = data.subscriptions.trial;
+
+          renderRecentUsers(data.recentUsers);
+        }
+      } catch (error) {
+        console.error('Error loading dashboard:', error);
+      }
+    }
+
+    function renderRecentUsers(users) {
+      const tbody = document.getElementById('recent-users-table');
+      
+      if (!users || users.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" class="empty-state">لا يوجد مستخدمين</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = users.map(user => `
+        <tr>
+          <td>
+            <div class="user-info">
+              <div class="user-avatar">${getInitials(user.displayName || user.username)}</div>
+              <div>
+                <div class="user-name">${user.displayName || user.username}</div>
+                <div class="user-email">${user.email}</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <span class="badge ${user.isAdmin ? 'badge-admin' : 'badge-user'}">
+              ${user.isAdmin ? 'مدير' : 'مستخدم'}
+            </span>
+          </td>
+          <td>${formatDate(user.createdAt)}</td>
+        </tr>
+      `).join('');
+
+      feather.replace();
+    }
+
+    async function loadUsers(page = 1) {
+      currentPage.users = page;
+      const tbody = document.getElementById('users-table');
+      tbody.innerHTML = '<tr><td colspan="4" class="loading"><div class="spinner"></div></td></tr>';
+
+      try {
+        const response = await fetch(`/api/admin/users-with-subs?page=${page}&limit=10`, {
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          renderUsersTable(data.users);
+          renderPagination('users', data.pagination);
+        }
+      } catch (error) {
+        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">حدث خطأ في تحميل البيانات</td></tr>';
+      }
+    }
+
+    function getSubscriptionBadge(user) {
+      if (user.subscriptionStatus === 'active') {
+        return '<span class="badge badge-plus">Plus</span>';
+      } else if (user.subscriptionStatus === 'trial') {
+        return '<span class="badge badge-trial">تجريبي</span>';
+      } else {
+        return '<span class="badge badge-free">مجاني</span>';
+      }
+    }
+
+    function getPremiumButton(user) {
+      if (user.subscriptionStatus === 'active') {
+        return `<button class="premium-btn revoke" onclick="revokePremium('${user.id}')" title="إلغاء الاشتراك المميز">إلغاء Plus</button>`;
+      } else {
+        return `<button class="premium-btn grant" onclick="grantPremium('${user.id}')" title="منح اشتراك مميز">منح Plus</button>`;
+      }
+    }
+
+    function renderUsersTable(users) {
+      const tbody = document.getElementById('users-table');
+      
+      if (!users || users.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">لا يوجد مستخدمين</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = users.map(user => `
+        <tr>
+          <td>
+            <div class="user-info">
+              <div class="user-avatar">${getInitials(user.displayName || user.username)}</div>
+              <div>
+                <div class="user-name">${user.displayName || user.username}</div>
+                <div class="user-email">${user.email}</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            ${getSubscriptionBadge(user)}
+          </td>
+          <td>${formatDate(user.createdAt)}</td>
+          <td>
+            <div class="action-buttons">
+              ${getPremiumButton(user)}
+              <button class="action-btn" onclick="toggleAdmin('${user.id}', ${!user.isAdmin})" title="${user.isAdmin ? 'إزالة صلاحيات المدير' : 'جعله مدير'}">
+                <i data-feather="${user.isAdmin ? 'user-x' : 'user-check'}"></i>
+              </button>
+              <button class="action-btn delete" onclick="deleteUser('${user.id}')" title="حذف">
+                <i data-feather="trash-2"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+
+      feather.replace();
+    }
+
+    async function loadSubscriptions(page = 1) {
+      currentPage.subscriptions = page;
+      const tbody = document.getElementById('subscriptions-table');
+      tbody.innerHTML = '<tr><td colspan="3" class="loading"><div class="spinner"></div></td></tr>';
+
+      try {
+        const response = await fetch(`/api/admin/subscriptions?page=${page}&limit=10`, {
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          renderSubscriptionsTable(data.subscriptions);
+          renderPagination('subscriptions', data.pagination);
+        }
+      } catch (error) {
+        tbody.innerHTML = '<tr><td colspan="3" class="empty-state">حدث خطأ في تحميل البيانات</td></tr>';
+      }
+    }
+
+    function renderSubscriptionsTable(subscriptions) {
+      const tbody = document.getElementById('subscriptions-table');
+      
+      if (!subscriptions || subscriptions.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" class="empty-state">لا يوجد اشتراكات</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = subscriptions.map(sub => `
+        <tr>
+          <td>${sub.userId}</td>
+          <td>
+            <span class="badge badge-${sub.status}">
+              ${getStatusLabel(sub.status)}
+            </span>
+          </td>
+          <td>${sub.expiresAt ? formatDate(sub.expiresAt) : '-'}</td>
+        </tr>
+      `).join('');
+    }
+
+    async function loadArticles() {
+      const tbody = document.getElementById('articles-table');
+      tbody.innerHTML = '<tr><td colspan="4" class="loading"><div class="spinner"></div></td></tr>';
+
+      try {
+        const response = await fetch('/api/articles');
+
+        if (response.ok) {
+          const articles = await response.json();
+          articlesCache = articles;
+          renderArticlesTable(articles);
+        }
+      } catch (error) {
+        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">حدث خطأ في تحميل البيانات</td></tr>';
+      }
+    }
+
+    function renderArticlesTable(articles) {
+      const tbody = document.getElementById('articles-table');
+      
+      if (!articles || articles.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">لا يوجد مقالات</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = articles.map(article => `
+        <tr>
+          <td>${article.titleAr}</td>
+          <td>${getCategoryLabel(article.category)}</td>
+          <td>${article.readTime} دقائق</td>
+          <td>
+            <div class="action-buttons">
+              <button class="action-btn" onclick="editArticle('${article.id}')" title="تعديل">
+                <i data-feather="edit-2"></i>
+              </button>
+              <button class="action-btn delete" onclick="deleteArticle('${article.id}')" title="حذف">
+                <i data-feather="trash-2"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+      feather.replace();
+    }
+
+    function getCategoryLabel(category) {
+      const labels = { health: 'الصحة', beauty: 'الجمال', wellness: 'العافية', faith: 'الإيمان', nutrition: 'التغذية' };
+      return labels[category] || category;
+    }
+
+    let articlesCache = [];
+
+    function showArticleModal(article = null) {
+      document.getElementById('article-modal').style.display = 'flex';
+      document.getElementById('article-form').reset();
+      document.getElementById('article-error').style.display = 'none';
+      
+      if (article) {
+        document.getElementById('article-modal-title').textContent = 'تعديل المقال';
+        document.getElementById('article-id').value = article.id;
+        document.getElementById('article-title-ar').value = article.titleAr || '';
+        document.getElementById('article-title-en').value = article.titleEn || '';
+        document.getElementById('article-summary-ar').value = article.summaryAr || '';
+        document.getElementById('article-summary-en').value = article.summaryEn || '';
+        document.getElementById('article-content-ar').value = article.contentAr || '';
+        document.getElementById('article-content-en').value = article.contentEn || '';
+        document.getElementById('article-category').value = article.category || 'health';
+        document.getElementById('article-read-time').value = article.readTime || 5;
+        document.getElementById('article-image').value = article.imageUrl || '';
+        document.getElementById('persona-single').checked = article.personas?.includes('single');
+        document.getElementById('persona-married').checked = article.personas?.includes('married');
+        document.getElementById('persona-mother').checked = article.personas?.includes('mother');
+      } else {
+        document.getElementById('article-modal-title').textContent = 'إضافة مقال جديد';
+        document.getElementById('article-id').value = '';
+      }
+    }
+
+    function hideArticleModal() {
+      document.getElementById('article-modal').style.display = 'none';
+    }
+
+    function showBulkArticleModal() {
+      document.getElementById('bulk-article-modal').style.display = 'flex';
+      document.getElementById('bulk-json-input').value = '';
+      document.getElementById('bulk-file-input').value = '';
+      document.getElementById('bulk-error').style.display = 'none';
+      document.getElementById('bulk-results').style.display = 'none';
+      feather.replace();
+    }
+
+    function hideBulkArticleModal() {
+      document.getElementById('bulk-article-modal').style.display = 'none';
+    }
+
+    function handleBulkFileUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById('bulk-json-input').value = e.target.result;
+      };
+      reader.onerror = function() {
+        document.getElementById('bulk-error').textContent = 'فشل في قراءة الملف';
+        document.getElementById('bulk-error').style.display = 'block';
+      };
+      reader.readAsText(file);
+    }
+
+    async function submitBulkArticles() {
+      const errorDiv = document.getElementById('bulk-error');
+      const resultsDiv = document.getElementById('bulk-results');
+      const submitBtn = document.getElementById('bulk-submit-btn');
+      
+      errorDiv.style.display = 'none';
+      resultsDiv.style.display = 'none';
+      
+      const jsonInput = document.getElementById('bulk-json-input').value.trim();
+      if (!jsonInput) {
+        errorDiv.textContent = 'الرجاء إدخال بيانات JSON أو رفع ملف';
+        errorDiv.style.display = 'block';
+        return;
+      }
+      
+      let data;
+      try {
+        data = JSON.parse(jsonInput);
+      } catch (e) {
+        errorDiv.textContent = 'بيانات JSON غير صالحة. تأكد من صحة التنسيق.';
+        errorDiv.style.display = 'block';
+        return;
+      }
+      
+      if (!data.articles || !Array.isArray(data.articles) || data.articles.length === 0) {
+        errorDiv.textContent = 'يجب أن يحتوي الملف على مصفوفة "articles" تحتوي على مقال واحد على الأقل';
+        errorDiv.style.display = 'block';
+        return;
+      }
+      
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span>جاري الرفع...</span>';
+      
+      try {
+        const response = await fetch('/api/articles/bulk', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          },
+          body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+          displayBulkResults(result);
+          loadArticles();
+        } else {
+          errorDiv.textContent = result.error || 'حدث خطأ أثناء رفع المقالات';
+          errorDiv.style.display = 'block';
+        }
+      } catch (error) {
+        errorDiv.textContent = 'حدث خطأ في الاتصال بالخادم';
+        errorDiv.style.display = 'block';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i data-feather="upload"></i><span>رفع المقالات</span>';
+        feather.replace();
+      }
+    }
+
+    function displayBulkResults(result) {
+      const resultsDiv = document.getElementById('bulk-results');
+      const successMsg = document.getElementById('bulk-success-msg');
+      const failedContainer = document.getElementById('bulk-failed-container');
+      const failedList = document.getElementById('bulk-failed-list');
+      
+      successMsg.textContent = `تم إضافة ${result.successCount} من أصل ${result.totalProvided} مقال بنجاح`;
+      resultsDiv.style.display = 'block';
+      
+      if (result.failedCount > 0 && result.failed) {
+        failedList.innerHTML = result.failed.map(f => 
+          `<li>المقال #${f.index + 1}: ${f.error}</li>`
+        ).join('');
+        failedContainer.style.display = 'block';
+      } else {
+        failedContainer.style.display = 'none';
+      }
+    }
+
+    async function editArticle(id) {
+      const article = articlesCache.find(a => a.id === id);
+      if (article) showArticleModal(article);
+    }
+
+    async function deleteArticle(id) {
+      if (!confirm('هل أنت متأكد من حذف هذا المقال؟')) return;
+      try {
+        const response = await fetch(`/api/articles/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        if (response.ok) {
+          loadArticles();
+          alert('تم حذف المقال بنجاح');
+        }
+      } catch (error) {
+        alert('حدث خطأ أثناء الحذف');
+      }
+    }
+
+    document.getElementById('article-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const errorDiv = document.getElementById('article-error');
+      errorDiv.style.display = 'none';
+      
+      const personas = [];
+      if (document.getElementById('persona-single').checked) personas.push('single');
+      if (document.getElementById('persona-married').checked) personas.push('married');
+      if (document.getElementById('persona-mother').checked) personas.push('mother');
+      
+      const data = {
+        titleAr: document.getElementById('article-title-ar').value,
+        titleEn: document.getElementById('article-title-en').value,
+        summaryAr: document.getElementById('article-summary-ar').value,
+        summaryEn: document.getElementById('article-summary-en').value,
+        contentAr: document.getElementById('article-content-ar').value,
+        contentEn: document.getElementById('article-content-en').value,
+        category: document.getElementById('article-category').value,
+        readTime: parseInt(document.getElementById('article-read-time').value),
+        imageUrl: document.getElementById('article-image').value || null,
+        personas: personas.length > 0 ? personas : null
+      };
+      
+      const id = document.getElementById('article-id').value;
+      const method = id ? 'PUT' : 'POST';
+      const url = id ? `/api/articles/${id}` : '/api/articles';
+      
+      try {
+        const response = await fetch(url, {
+          method,
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+          body: JSON.stringify(data)
+        });
+        if (response.ok) {
+          hideArticleModal();
+          loadArticles();
+          alert(id ? 'تم تحديث المقال بنجاح' : 'تم إضافة المقال بنجاح');
+        } else {
+          const err = await response.json();
+          errorDiv.textContent = err.error || 'فشل حفظ المقال';
+          errorDiv.style.display = 'block';
+        }
+      } catch (error) {
+        errorDiv.textContent = 'حدث خطأ في الاتصال';
+        errorDiv.style.display = 'block';
+      }
+    });
+
+    async function loadPlans() {
+      const tbody = document.getElementById('plans-table');
+      tbody.innerHTML = '<tr><td colspan="5" class="loading"><div class="spinner"></div></td></tr>';
+      try {
+        const response = await fetch('/api/admin/plans', { headers: { 'Authorization': `Bearer ${authToken}` } });
+        if (response.ok) {
+          const plans = await response.json();
+          renderPlansTable(plans);
+        }
+      } catch (error) {
+        tbody.innerHTML = '<tr><td colspan="5" class="empty-state">حدث خطأ في تحميل البيانات</td></tr>';
+      }
+    }
+
+    let plansCache = [];
+
+    function renderPlansTable(plans) {
+      plansCache = plans;
+      const tbody = document.getElementById('plans-table');
+      if (!plans || plans.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="empty-state">لا يوجد خطط</td></tr>';
+        return;
+      }
+      tbody.innerHTML = plans.map(plan => `
+        <tr>
+          <td>${plan.nameAr}</td>
+          <td><code>${plan.code}</code></td>
+          <td>${plan.price} ريال</td>
+          <td><span class="badge ${plan.isActive ? 'badge-active' : 'badge-free'}">${plan.isActive ? 'مفعلة' : 'معطلة'}</span></td>
+          <td>
+            <div class="action-buttons">
+              <button class="action-btn" onclick="editPlan('${plan.id}')" title="تعديل"><i data-feather="edit-2"></i></button>
+              <button class="action-btn delete" onclick="deletePlan('${plan.id}')" title="حذف"><i data-feather="trash-2"></i></button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+      feather.replace();
+    }
+
+    function showPlanModal(plan = null) {
+      document.getElementById('plan-modal').style.display = 'flex';
+      document.getElementById('plan-form').reset();
+      document.getElementById('plan-error').style.display = 'none';
+      if (plan) {
+        document.getElementById('plan-modal-title').textContent = 'تعديل الخطة';
+        document.getElementById('plan-id').value = plan.id;
+        document.getElementById('plan-name-ar').value = plan.nameAr || '';
+        document.getElementById('plan-name-en').value = plan.nameEn || '';
+        document.getElementById('plan-code').value = plan.code || '';
+        document.getElementById('plan-price').value = plan.price || 0;
+        document.getElementById('plan-trial-days').value = plan.trialDays || 7;
+        document.getElementById('plan-stripe-id').value = plan.stripePriceId || '';
+        document.getElementById('plan-active').checked = plan.isActive !== false;
+      } else {
+        document.getElementById('plan-modal-title').textContent = 'إضافة خطة جديدة';
+        document.getElementById('plan-id').value = '';
+      }
+    }
+
+    function hidePlanModal() { document.getElementById('plan-modal').style.display = 'none'; }
+
+    function editPlan(id) {
+      const plan = plansCache.find(p => p.id === id);
+      if (plan) showPlanModal(plan);
+    }
+
+    async function deletePlan(id) {
+      if (!confirm('هل أنت متأكد من حذف هذه الخطة؟')) return;
+      try {
+        const response = await fetch(`/api/admin/plans/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        if (response.ok) { loadPlans(); alert('تم حذف الخطة بنجاح'); }
+        else { const data = await response.json(); alert(data.error || 'فشل حذف الخطة'); }
+      } catch (error) { alert('حدث خطأ أثناء الحذف'); }
+    }
+
+    document.getElementById('plan-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const errorDiv = document.getElementById('plan-error');
+      errorDiv.style.display = 'none';
+      const data = {
+        nameAr: document.getElementById('plan-name-ar').value,
+        nameEn: document.getElementById('plan-name-en').value,
+        code: document.getElementById('plan-code').value,
+        price: parseFloat(document.getElementById('plan-price').value),
+        trialDays: parseInt(document.getElementById('plan-trial-days').value) || 7,
+        stripePriceId: document.getElementById('plan-stripe-id').value || null,
+        isActive: document.getElementById('plan-active').checked
+      };
+      const id = document.getElementById('plan-id').value;
+      const method = id ? 'PUT' : 'POST';
+      const url = id ? `/api/admin/plans/${id}` : '/api/admin/plans';
+      try {
+        const response = await fetch(url, {
+          method,
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+          body: JSON.stringify(data)
+        });
+        if (response.ok) { hidePlanModal(); loadPlans(); alert(id ? 'تم تحديث الخطة بنجاح' : 'تم إضافة الخطة بنجاح'); }
+        else { const err = await response.json(); errorDiv.textContent = err.error || 'فشل حفظ الخطة'; errorDiv.style.display = 'block'; }
+      } catch (error) { errorDiv.textContent = 'حدث خطأ في الاتصال'; errorDiv.style.display = 'block'; }
+    });
+
+    async function loadSettings() {
+      try {
+        const response = await fetch('/api/stripe/status');
+        if (response.ok) {
+          const data = await response.json();
+          document.getElementById('stripe-status').innerHTML = data.configured 
+            ? '<span class="badge badge-active">مفعل</span>' 
+            : '<span class="badge badge-trial">غير مفعل</span>';
+        }
+      } catch (error) { console.error('Error loading settings:', error); }
+    }
+
+    async function loadReports() {
+      try {
+        const response = await fetch('/api/admin/reports', {
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        if (response.ok) {
+          const data = await response.json();
+          
+          document.getElementById('report-total-users').textContent = data.overview.totalUsers;
+          document.getElementById('report-total-articles').textContent = data.overview.totalArticles;
+          document.getElementById('report-active-subs').textContent = data.subscriptions.active;
+          document.getElementById('report-revenue').textContent = data.revenue.estimatedMonthly.toLocaleString();
+          
+          renderUserGrowthChart(data.charts.userGrowth);
+          renderSubscriptionBreakdown(data.subscriptions);
+          renderArticlesByCategory(data.charts.articlesByCategory);
+          
+          feather.replace();
+        }
+      } catch (error) {
+        console.error('Error loading reports:', error);
+      }
+    }
+
+    function renderUserGrowthChart(data) {
+      const container = document.getElementById('user-growth-chart');
+      if (!data || data.length === 0) {
+        container.innerHTML = '<div class="empty-state">لا توجد بيانات</div>';
+        return;
+      }
+      
+      const maxCount = Math.max(...data.map(d => d.users), 1);
+      container.innerHTML = `
+        <div style="display: flex; align-items: flex-end; justify-content: space-between; height: 150px; gap: 8px;">
+          ${data.map(item => `
+            <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+              <div style="background: var(--primary); border-radius: 4px 4px 0 0; width: 100%; height: ${(item.users / maxCount) * 100}px; min-height: 4px;"></div>
+              <div style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">${item.month}</div>
+              <div style="font-size: 14px; font-weight: 600;">${item.users}</div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function renderSubscriptionBreakdown(data) {
+      const container = document.getElementById('subscription-breakdown');
+      if (!data) {
+        container.innerHTML = '<div class="empty-state">لا توجد بيانات</div>';
+        return;
+      }
+      
+      const total = (data.active || 0) + (data.trial || 0) + (data.free || 0);
+      container.innerHTML = `
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="display: flex; align-items: center; gap: 8px;">
+              <span style="width: 12px; height: 12px; border-radius: 50%; background: var(--success);"></span>
+              Plus نشط
+            </span>
+            <span style="font-weight: 600;">${data.active || 0}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="display: flex; align-items: center; gap: 8px;">
+              <span style="width: 12px; height: 12px; border-radius: 50%; background: var(--warning);"></span>
+              تجريبي
+            </span>
+            <span style="font-weight: 600;">${data.trial || 0}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="display: flex; align-items: center; gap: 8px;">
+              <span style="width: 12px; height: 12px; border-radius: 50%; background: var(--text-secondary);"></span>
+              مجاني
+            </span>
+            <span style="font-weight: 600;">${data.free || 0}</span>
+          </div>
+          <div style="border-top: 1px solid var(--border-color); padding-top: 12px; display: flex; justify-content: space-between;">
+            <span style="font-weight: 600;">الإجمالي</span>
+            <span style="font-weight: 600;">${total}</span>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderArticlesByCategory(data) {
+      const container = document.getElementById('articles-by-category');
+      if (!data || data.length === 0) {
+        container.innerHTML = '<div class="empty-state">لا توجد مقالات</div>';
+        return;
+      }
+      
+      const categoryLabels = { health: 'الصحة', beauty: 'الجمال', wellness: 'العافية', faith: 'الإيمان', nutrition: 'التغذية' };
+      const categoryColors = { health: '#E91E63', beauty: '#9C27B0', wellness: '#4CAF50', faith: '#2196F3', nutrition: '#FF9800' };
+      
+      container.innerHTML = `
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px;">
+          ${data.map(item => `
+            <div style="background: ${categoryColors[item.category] || '#666'}15; padding: 16px; border-radius: 12px; text-align: center;">
+              <div style="font-size: 28px; font-weight: 700; color: ${categoryColors[item.category] || '#666'};">${item.count}</div>
+              <div style="color: var(--text-secondary); font-size: 14px;">${categoryLabels[item.category] || item.category}</div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    async function loadPaymentSettings() {
+      try {
+        const [stripeRes, moyasarRes] = await Promise.all([
+          fetch('/api/stripe/status'),
+          fetch('/api/moyasar/status')
+        ]);
+        
+        const stripeData = stripeRes.ok ? await stripeRes.json() : { configured: false };
+        const moyasarData = moyasarRes.ok ? await moyasarRes.json() : { configured: false };
+        
+        const baseUrl = window.location.origin;
+        
+        document.getElementById('stripe-status-badge').className = stripeData.configured ? 'badge badge-active' : 'badge badge-trial';
+        document.getElementById('stripe-status-badge').textContent = stripeData.configured ? 'مفعل' : 'غير مفعل';
+        document.getElementById('stripe-table-status').className = stripeData.configured ? 'badge badge-active' : 'badge badge-trial';
+        document.getElementById('stripe-table-status').textContent = stripeData.configured ? 'مفعل' : 'غير مفعل';
+        
+        document.getElementById('moyasar-status-badge').className = moyasarData.configured ? 'badge badge-active' : 'badge badge-trial';
+        document.getElementById('moyasar-status-badge').textContent = moyasarData.configured ? 'مفعل' : 'غير مفعل';
+        document.getElementById('moyasar-table-status').className = moyasarData.configured ? 'badge badge-active' : 'badge badge-trial';
+        document.getElementById('moyasar-table-status').textContent = moyasarData.configured ? 'مفعل' : 'غير مفعل';
+        
+        document.getElementById('webhook-url').textContent = `${baseUrl}/api/stripe/webhook`;
+        document.getElementById('moyasar-webhook-url').textContent = `${baseUrl}/api/moyasar/webhook`;
+        
+        feather.replace();
+      } catch (error) {
+        console.error('Error loading payment settings:', error);
+      }
+    }
+
+    function copyWebhookUrl() {
+      const url = document.getElementById('webhook-url').textContent;
+      navigator.clipboard.writeText(url).then(() => {
+        alert('تم نسخ الرابط');
+      }).catch(() => {
+        alert('فشل نسخ الرابط');
+      });
+    }
+
+    function copyMoyasarWebhookUrl() {
+      const url = document.getElementById('moyasar-webhook-url').textContent;
+      navigator.clipboard.writeText(url).then(() => {
+        alert('تم نسخ الرابط');
+      }).catch(() => {
+        alert('فشل نسخ الرابط');
+      });
+    }
+
+    document.getElementById('password-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const errorDiv = document.getElementById('password-error');
+      const successDiv = document.getElementById('password-success');
+      errorDiv.style.display = 'none';
+      successDiv.style.display = 'none';
+      
+      const currentPassword = document.getElementById('current-password').value;
+      const newPassword = document.getElementById('new-password').value;
+      const confirmPassword = document.getElementById('confirm-password').value;
+      
+      if (newPassword !== confirmPassword) {
+        errorDiv.textContent = 'كلمة المرور الجديدة غير متطابقة';
+        errorDiv.style.display = 'block';
+        return;
+      }
+      
+      try {
+        const response = await fetch('/api/admin/change-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+          body: JSON.stringify({ currentPassword, newPassword })
+        });
+        if (response.ok) {
+          successDiv.textContent = 'تم تحديث كلمة المرور بنجاح';
+          successDiv.style.display = 'block';
+          this.reset();
+        } else {
+          const data = await response.json();
+          errorDiv.textContent = data.error || 'فشل تحديث كلمة المرور';
+          errorDiv.style.display = 'block';
+        }
+      } catch (error) {
+        errorDiv.textContent = 'حدث خطأ في الاتصال';
+        errorDiv.style.display = 'block';
+      }
+    });
+
+    document.getElementById('plan-modal').addEventListener('click', function(e) { if (e.target === this) hidePlanModal(); });
+    document.getElementById('article-modal').addEventListener('click', function(e) { if (e.target === this) hideArticleModal(); });
+
+    function renderPagination(type, pagination) {
+      const container = document.getElementById(`${type}-pagination`);
+      
+      if (pagination.totalPages <= 1) {
+        container.innerHTML = '';
+        return;
+      }
+
+      container.innerHTML = `
+        <button class="pagination-btn" onclick="load${capitalize(type)}(${pagination.page - 1})" ${pagination.page === 1 ? 'disabled' : ''}>
+          السابق
+        </button>
+        <span class="pagination-info">
+          صفحة ${pagination.page} من ${pagination.totalPages}
+        </span>
+        <button class="pagination-btn" onclick="load${capitalize(type)}(${pagination.page + 1})" ${pagination.page === pagination.totalPages ? 'disabled' : ''}>
+          التالي
+        </button>
+      `;
+    }
+
+    async function toggleAdmin(userId, makeAdmin) {
+      if (!confirm(makeAdmin ? 'هل تريد جعل هذا المستخدم مدير؟' : 'هل تريد إزالة صلاحيات المدير من هذا المستخدم؟')) {
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/admin/users/${userId}`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${authToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ isAdmin: makeAdmin })
+        });
+
+        if (response.ok) {
+          loadUsers(currentPage.users);
+        }
+      } catch (error) {
+        alert('حدث خطأ أثناء التحديث');
+      }
+    }
+
+    async function deleteUser(userId) {
+      if (!confirm('هل أنت متأكد من حذف هذا المستخدم؟')) {
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/admin/users/${userId}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+
+        if (response.ok) {
+          loadUsers(currentPage.users);
+        }
+      } catch (error) {
+        alert('حدث خطأ أثناء الحذف');
+      }
+    }
+
+    function getInitials(name) {
+      if (!name) return '?';
+      return name.charAt(0).toUpperCase();
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return '-';
+      const date = new Date(dateStr);
+      return date.toLocaleDateString('ar-SA', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    }
+
+    function getStatusLabel(status) {
+      const labels = {
+        active: 'نشط',
+        trial: 'تجريبي',
+        free: 'مجاني',
+        cancelled: 'ملغي',
+        expired: 'منتهي'
+      };
+      return labels[status] || status;
+    }
+
+    function capitalize(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    function showCreateUserModal() {
+      document.getElementById('create-user-modal').style.display = 'flex';
+      document.getElementById('create-user-form').reset();
+      document.getElementById('create-user-error').style.display = 'none';
+    }
+
+    function hideCreateUserModal() {
+      document.getElementById('create-user-modal').style.display = 'none';
+    }
+
+    document.getElementById('create-user-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const username = document.getElementById('new-user-username').value;
+      const email = document.getElementById('new-user-email').value;
+      const displayName = document.getElementById('new-user-display').value;
+      const password = document.getElementById('new-user-password').value;
+      const grantPremiumAccess = document.getElementById('new-user-premium').checked;
+      const errorDiv = document.getElementById('create-user-error');
+      
+      errorDiv.style.display = 'none';
+      
+      try {
+        const response = await fetch('/api/admin/users', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${authToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            username,
+            email,
+            displayName: displayName || undefined,
+            password,
+            grantPremium: grantPremiumAccess
+          })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          hideCreateUserModal();
+          loadUsers(currentPage.users);
+          alert('تم إنشاء المستخدم بنجاح');
+        } else {
+          errorDiv.textContent = data.error || 'فشل إنشاء المستخدم';
+          errorDiv.style.display = 'block';
+        }
+      } catch (error) {
+        errorDiv.textContent = 'حدث خطأ في الاتصال';
+        errorDiv.style.display = 'block';
+      }
+    });
+
+    function showCreateAdminModal() {
+      document.getElementById('create-admin-modal').style.display = 'flex';
+      document.getElementById('create-admin-form').reset();
+      document.getElementById('create-admin-error').style.display = 'none';
+    }
+
+    function hideCreateAdminModal() {
+      document.getElementById('create-admin-modal').style.display = 'none';
+    }
+
+    document.getElementById('create-admin-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const username = document.getElementById('new-admin-username').value;
+      const email = document.getElementById('new-admin-email').value;
+      const password = document.getElementById('new-admin-password').value;
+      const errorDiv = document.getElementById('create-admin-error');
+      
+      errorDiv.style.display = 'none';
+      
+      try {
+        const response = await fetch('/api/admin/admins', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${authToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            username,
+            email,
+            password
+          })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          hideCreateAdminModal();
+          loadUsers(currentPage.users);
+          alert('تم إنشاء المدير بنجاح');
+        } else {
+          errorDiv.textContent = data.error || 'فشل إنشاء المدير';
+          errorDiv.style.display = 'block';
+        }
+      } catch (error) {
+        errorDiv.textContent = 'حدث خطأ في الاتصال';
+        errorDiv.style.display = 'block';
+      }
+    });
+
+    async function grantPremium(userId) {
+      if (!confirm('هل تريد منح هذا المستخدم اشتراك Plus مميز؟')) {
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/admin/users/${userId}/grant-premium`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${authToken}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          loadUsers(currentPage.users);
+          alert('تم منح الاشتراك المميز بنجاح');
+        } else {
+          const data = await response.json();
+          alert(data.error || 'فشل منح الاشتراك');
+        }
+      } catch (error) {
+        alert('حدث خطأ أثناء منح الاشتراك');
+      }
+    }
+
+    async function revokePremium(userId) {
+      if (!confirm('هل تريد إلغاء اشتراك Plus لهذا المستخدم؟')) {
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/admin/users/${userId}/revoke-premium`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${authToken}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          loadUsers(currentPage.users);
+          alert('تم إلغاء الاشتراك بنجاح');
+        } else {
+          const data = await response.json();
+          alert(data.error || 'فشل إلغاء الاشتراك');
+        }
+      } catch (error) {
+        alert('حدث خطأ أثناء إلغاء الاشتراك');
+      }
+    }
+
+    document.getElementById('create-user-modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        hideCreateUserModal();
+      }
+    });
+
+    // ========== Fatwas Module ==========
+    let currentFatwaPage = 1;
+    let allFatwasData = [];
+
+    async function loadFatwas(page = 1) {
+      currentFatwaPage = page;
+      const tbody = document.getElementById('fatwas-table');
+      tbody.innerHTML = '<tr><td colspan="5" class="loading"><div class="spinner"></div></td></tr>';
+
+      try {
+        const category = document.getElementById('fatwa-category-filter')?.value || '';
+        const status = document.getElementById('fatwa-status-filter')?.value || '';
+        
+        let url = `/api/admin/fatwas?limit=50`;
+        if (category) url += `&category=${category}`;
+        if (status === 'approved') url += `&approved=true`;
+        if (status === 'pending') url += `&approved=false`;
+
+        const response = await fetch(url, {
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          allFatwasData = data.fatwas || [];
+          document.getElementById('stat-total-fatwas').textContent = data.stats?.total || 0;
+          document.getElementById('stat-approved-fatwas').textContent = data.stats?.approved || 0;
+          document.getElementById('stat-pending-fatwas').textContent = data.stats?.pending || 0;
+          renderFatwasTable(allFatwasData);
+        } else {
+          tbody.innerHTML = '<tr><td colspan="5" class="empty-state">لا توجد فتاوى</td></tr>';
+        }
+      } catch (error) {
+        console.error('Error loading fatwas:', error);
+        tbody.innerHTML = '<tr><td colspan="5" class="empty-state">حدث خطأ في تحميل البيانات</td></tr>';
+      }
+      feather.replace();
+    }
+
+    function filterFatwas() {
+      loadFatwas(1);
+    }
+
+    function renderFatwasTable(fatwas) {
+      const tbody = document.getElementById('fatwas-table');
+      if (!fatwas || fatwas.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="empty-state">لا توجد فتاوى</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = fatwas.map(fatwa => {
+        const question = fatwa.questionAr || '';
+        const truncatedQuestion = question.length > 60 ? question.substring(0, 60) + '...' : question;
+        const isApproved = fatwa.isApproved;
+        const isPublished = fatwa.isPublished;
+        
+        let statusBadge = '';
+        if (isPublished) {
+          statusBadge = '<span class="badge badge-active">منشورة</span>';
+        } else if (isApproved) {
+          statusBadge = '<span class="badge badge-user">موافق عليها</span>';
+        } else {
+          statusBadge = '<span class="badge badge-trial">معلقة</span>';
+        }
+
+        return `
+        <tr>
+          <td title="${question.replace(/"/g, '&quot;')}">${truncatedQuestion || '-'}</td>
+          <td><span class="badge badge-user">${getFatwaCategoryLabel(fatwa.category)}</span></td>
+          <td>${fatwa.scholar || '-'}</td>
+          <td>${statusBadge}</td>
+          <td>
+            <div class="action-buttons">
+              ${!isApproved ? `<button class="action-btn" onclick="approveFatwa('${fatwa.id}', true)" title="موافقة"><i data-feather="check"></i></button>` : ''}
+              ${isApproved && !isPublished ? `<button class="action-btn" onclick="publishFatwa('${fatwa.id}')" title="نشر"><i data-feather="globe"></i></button>` : ''}
+              ${isApproved ? `<button class="action-btn" onclick="approveFatwa('${fatwa.id}', false)" title="إلغاء الموافقة" style="color: var(--warning);"><i data-feather="x"></i></button>` : ''}
+              <button class="action-btn" onclick="editFatwa('${fatwa.id}')" title="تعديل"><i data-feather="edit-2"></i></button>
+              <button class="action-btn delete" onclick="deleteFatwa('${fatwa.id}')" title="حذف"><i data-feather="trash-2"></i></button>
+            </div>
+          </td>
+        </tr>
+      `}).join('');
+      feather.replace();
+    }
+
+    function getFatwaCategoryLabel(category) {
+      const labels = { period: 'الحيض', prayer: 'الصلاة', fasting: 'الصيام', ghusl: 'الغسل', general: 'عام' };
+      return labels[category] || category || 'عام';
+    }
+
+    function showFatwaModal(fatwa = null) {
+      document.getElementById('fatwa-modal').style.display = 'flex';
+      document.getElementById('fatwa-form').reset();
+      
+      if (fatwa) {
+        document.getElementById('fatwa-modal-title').textContent = 'تعديل الفتوى';
+        document.getElementById('fatwa-id').value = fatwa.id;
+        document.getElementById('fatwa-question-ar').value = fatwa.questionAr || '';
+        document.getElementById('fatwa-question-en').value = fatwa.questionEn || '';
+        document.getElementById('fatwa-answer-ar').value = fatwa.answerAr || '';
+        document.getElementById('fatwa-answer-en').value = fatwa.answerEn || '';
+        document.getElementById('fatwa-scholar').value = fatwa.scholar || '';
+        document.getElementById('fatwa-category').value = fatwa.category || 'general';
+        document.getElementById('fatwa-source').value = fatwa.source || '';
+        document.getElementById('fatwa-source-url').value = fatwa.sourceUrl || '';
+        document.getElementById('fatwa-approved').checked = fatwa.isApproved || false;
+        document.getElementById('fatwa-published').checked = fatwa.isPublished || false;
+      } else {
+        document.getElementById('fatwa-modal-title').textContent = 'إضافة فتوى جديدة';
+        document.getElementById('fatwa-id').value = '';
+      }
+      feather.replace();
+    }
+
+    function hideFatwaModal() {
+      document.getElementById('fatwa-modal').style.display = 'none';
+    }
+
+    async function editFatwa(id) {
+      try {
+        const response = await fetch(`/api/admin/fatwas/${id}`, {
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        if (response.ok) {
+          const fatwa = await response.json();
+          showFatwaModal(fatwa);
+        } else {
+          alert('فشل في جلب بيانات الفتوى');
+        }
+      } catch (error) {
+        console.error('Error fetching fatwa:', error);
+        alert('حدث خطأ أثناء جلب البيانات');
+      }
+    }
+
+    async function handleFatwaSubmit(event) {
+      event.preventDefault();
+      
+      const id = document.getElementById('fatwa-id').value;
+      const data = {
+        questionAr: document.getElementById('fatwa-question-ar').value,
+        questionEn: document.getElementById('fatwa-question-en').value || null,
+        answerAr: document.getElementById('fatwa-answer-ar').value,
+        answerEn: document.getElementById('fatwa-answer-en').value || null,
+        scholar: document.getElementById('fatwa-scholar').value || null,
+        category: document.getElementById('fatwa-category').value,
+        source: document.getElementById('fatwa-source').value || null,
+        sourceUrl: document.getElementById('fatwa-source-url').value || null,
+        isApproved: document.getElementById('fatwa-approved').checked,
+        isPublished: document.getElementById('fatwa-published').checked
+      };
+
+      try {
+        const url = id ? `/api/admin/fatwas/${id}` : '/api/admin/fatwas';
+        const method = id ? 'PUT' : 'POST';
+        
+        const response = await fetch(url, {
+          method,
+          headers: { 
+            'Authorization': `Bearer ${authToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+          hideFatwaModal();
+          loadFatwas(currentFatwaPage);
+          alert(id ? 'تم تحديث الفتوى بنجاح' : 'تم إضافة الفتوى بنجاح');
+        } else {
+          const result = await response.json();
+          alert(result.error || 'فشل في حفظ الفتوى');
+        }
+      } catch (error) {
+        console.error('Error saving fatwa:', error);
+        alert('حدث خطأ أثناء الحفظ');
+      }
+    }
+
+    async function deleteFatwa(id) {
+      if (!confirm('هل أنت متأكد من حذف هذه الفتوى؟')) return;
+      try {
+        const response = await fetch(`/api/admin/fatwas/${id}`, { 
+          method: 'DELETE', 
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        if (response.ok) {
+          loadFatwas(currentFatwaPage);
+          alert('تم حذف الفتوى بنجاح');
+        } else {
+          alert('فشل في حذف الفتوى');
+        }
+      } catch (e) { 
+        console.error('Error deleting fatwa:', e);
+        alert('حدث خطأ'); 
+      }
+    }
+
+    async function approveFatwa(id, approve) {
+      try {
+        const response = await fetch(`/api/admin/fatwas/${id}/approve`, {
+          method: 'POST',
+          headers: { 
+            'Authorization': `Bearer ${authToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ isApproved: approve, isPublished: false })
+        });
+
+        if (response.ok) {
+          loadFatwas(currentFatwaPage);
+          alert(approve ? 'تم اعتماد الفتوى' : 'تم إلغاء اعتماد الفتوى');
+        } else {
+          alert('فشل في تحديث حالة الفتوى');
+        }
+      } catch (error) {
+        console.error('Error approving fatwa:', error);
+        alert('حدث خطأ');
+      }
+    }
+
+    async function publishFatwa(id) {
+      try {
+        const response = await fetch(`/api/admin/fatwas/${id}/approve`, {
+          method: 'POST',
+          headers: { 
+            'Authorization': `Bearer ${authToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ isApproved: true, isPublished: true })
+        });
+
+        if (response.ok) {
+          loadFatwas(currentFatwaPage);
+          alert('تم نشر الفتوى بنجاح');
+        } else {
+          alert('فشل في نشر الفتوى');
+        }
+      } catch (error) {
+        console.error('Error publishing fatwa:', error);
+        alert('حدث خطأ');
+      }
+    }
+
+    function showBulkFatwaModal() {
+      document.getElementById('bulk-fatwa-modal').style.display = 'flex';
+      document.getElementById('bulk-fatwa-data').value = '';
+      document.getElementById('bulk-fatwa-results').style.display = 'none';
+      feather.replace();
+    }
+
+    function hideBulkFatwaModal() {
+      document.getElementById('bulk-fatwa-modal').style.display = 'none';
+    }
+
+    async function handleBulkFatwaSubmit(event) {
+      event.preventDefault();
+      
+      const dataText = document.getElementById('bulk-fatwa-data').value.trim();
+      const submitBtn = document.getElementById('bulk-fatwa-submit-btn');
+      const resultsDiv = document.getElementById('bulk-fatwa-results');
+      
+      let fatwasData;
+      try {
+        fatwasData = JSON.parse(dataText);
+        if (!Array.isArray(fatwasData)) {
+          throw new Error('يجب أن تكون البيانات مصفوفة');
+        }
+      } catch (e) {
+        resultsDiv.style.display = 'block';
+        resultsDiv.style.background = '#FFEBEE';
+        resultsDiv.innerHTML = `<p style="color: var(--error);">خطأ في صيغة JSON: ${e.message}</p>`;
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span>جاري الاستيراد...</span>';
+
+      try {
+        const response = await fetch('/api/admin/fatwas/bulk', {
+          method: 'POST',
+          headers: { 
+            'Authorization': `Bearer ${authToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ fatwas: fatwasData })
+        });
+
+        const result = await response.json();
+        resultsDiv.style.display = 'block';
+
+        if (response.ok) {
+          resultsDiv.style.background = '#E8F5E9';
+          resultsDiv.innerHTML = `
+            <p style="color: var(--success); font-weight: 600;">تم استيراد ${result.successCount} فتوى بنجاح</p>
+            ${result.failedCount > 0 ? `<p style="color: var(--error);">فشل ${result.failedCount} فتوى</p>` : ''}
+          `;
+          loadFatwas(1);
+          setTimeout(() => hideBulkFatwaModal(), 2000);
+        } else {
+          resultsDiv.style.background = '#FFEBEE';
+          resultsDiv.innerHTML = `<p style="color: var(--error);">${result.error || 'فشل في الاستيراد'}</p>`;
+        }
+      } catch (error) {
+        console.error('Error bulk importing fatwas:', error);
+        resultsDiv.style.display = 'block';
+        resultsDiv.style.background = '#FFEBEE';
+        resultsDiv.innerHTML = '<p style="color: var(--error);">حدث خطأ أثناء الاستيراد</p>';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i data-feather="upload"></i><span>استيراد</span>';
+        feather.replace();
+      }
+    }
+
+    document.getElementById('fatwa-modal')?.addEventListener('click', function(e) {
+      if (e.target === this) hideFatwaModal();
+    });
+
+    document.getElementById('bulk-fatwa-modal')?.addEventListener('click', function(e) {
+      if (e.target === this) hideBulkFatwaModal();
+    });
+
+    // ========== Cycle Analytics Module ==========
+    async function loadCycleAnalytics() {
+      const content = document.getElementById('cycle-analytics-content');
+      content.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+
+      try {
+        const response = await fetch('/api/admin/cycle-analytics', {
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          document.getElementById('stat-tracking-users').textContent = data.activeUsers || 0;
+          document.getElementById('stat-avg-cycle').textContent = data.avgCycleLength ? `${data.avgCycleLength} يوم` : '-';
+          document.getElementById('stat-logs-month').textContent = data.logsThisMonth || 0;
+          
+          content.innerHTML = `
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+              <div style="padding: 16px; background: var(--primary-light); border-radius: 12px;">
+                <div style="font-size: 24px; font-weight: 700; color: var(--primary);">${data.totalLogs || 0}</div>
+                <div style="font-size: 14px; color: var(--text-secondary);">إجمالي السجلات</div>
+              </div>
+              <div style="padding: 16px; background: #F3E5F5; border-radius: 12px;">
+                <div style="font-size: 24px; font-weight: 700; color: var(--purple);">${data.avgPeriodLength || '-'}</div>
+                <div style="font-size: 14px; color: var(--text-secondary);">متوسط أيام الدورة</div>
+              </div>
+              <div style="padding: 16px; background: #E8F5E9; border-radius: 12px;">
+                <div style="font-size: 24px; font-weight: 700; color: var(--green);">${data.regularUsers || 0}</div>
+                <div style="font-size: 14px; color: var(--text-secondary);">مستخدمات منتظمات</div>
+              </div>
+            </div>
+          `;
+        } else {
+          content.innerHTML = '<div class="empty-state">لا توجد بيانات تحليلية</div>';
+        }
+      } catch (error) {
+        content.innerHTML = '<div class="empty-state">حدث خطأ في تحميل البيانات</div>';
+      }
+    }
+
+    // ========== Qadha Logs Module ==========
+    async function loadQadhaLogs(page = 1) {
+      const tbody = document.getElementById('qadha-table');
+      tbody.innerHTML = '<tr><td colspan="4" class="loading"><div class="spinner"></div></td></tr>';
+
+      try {
+        const response = await fetch(`/api/admin/qadha-logs?page=${page}&limit=10`, {
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          document.getElementById('stat-total-qadha').textContent = data.stats?.total || 0;
+          document.getElementById('stat-completed-qadha').textContent = data.stats?.completed || 0;
+          document.getElementById('stat-pending-qadha').textContent = data.stats?.pending || 0;
+          renderQadhaTable(data.logs || []);
+        } else {
+          tbody.innerHTML = '<tr><td colspan="4" class="empty-state">لا توجد سجلات قضاء</td></tr>';
+        }
+      } catch (error) {
+        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">حدث خطأ في تحميل البيانات</td></tr>';
+      }
+      feather.replace();
+    }
+
+    function renderQadhaTable(logs) {
+      const tbody = document.getElementById('qadha-table');
+      if (!logs || logs.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">لا توجد سجلات قضاء</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = logs.map(log => `
+        <tr>
+          <td>${log.userName || log.userId || '-'}</td>
+          <td>${log.pendingCount || 0}</td>
+          <td>${log.completedCount || 0}</td>
+          <td>${formatDate(log.updatedAt)}</td>
+        </tr>
+      `).join('');
+    }
+
+    // ========== Beauty Planner Module ==========
+    async function loadBeautyData() {
+      const content = document.getElementById('beauty-content');
+      content.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+
+      try {
+        const response = await fetch('/api/admin/beauty-analytics', {
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          document.getElementById('stat-beauty-routines').textContent = data.totalRoutines || 0;
+          document.getElementById('stat-beauty-products').textContent = data.totalProducts || 0;
+          document.getElementById('stat-beauty-users').textContent = data.activeUsers || 0;
+          
+          content.innerHTML = `
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+              <div style="padding: 16px; background: var(--primary-light); border-radius: 12px;">
+                <div style="font-size: 24px; font-weight: 700; color: var(--primary);">${data.amRoutines || 0}</div>
+                <div style="font-size: 14px; color: var(--text-secondary);">روتين صباحي</div>
+              </div>
+              <div style="padding: 16px; background: #F3E5F5; border-radius: 12px;">
+                <div style="font-size: 24px; font-weight: 700; color: var(--purple);">${data.pmRoutines || 0}</div>
+                <div style="font-size: 14px; color: var(--text-secondary);">روتين مسائي</div>
+              </div>
+              <div style="padding: 16px; background: #E8F5E9; border-radius: 12px;">
+                <div style="font-size: 24px; font-weight: 700; color: var(--green);">${data.completionRate || 0}%</div>
+                <div style="font-size: 14px; color: var(--text-secondary);">معدل الإكمال</div>
+              </div>
+            </div>
+          `;
+        } else {
+          content.innerHTML = '<div class="empty-state">لا توجد بيانات</div>';
+        }
+      } catch (error) {
+        content.innerHTML = '<div class="empty-state">حدث خطأ في تحميل البيانات</div>';
+      }
+    }
+
+    // ========== Daughters Mode Module ==========
+    async function loadDaughtersData(page = 1) {
+      const tbody = document.getElementById('daughters-table');
+      tbody.innerHTML = '<tr><td colspan="4" class="loading"><div class="spinner"></div></td></tr>';
+
+      try {
+        const limit = 10;
+        const offset = (page - 1) * limit;
+        const response = await fetch(`/api/admin/daughters?limit=${limit}&offset=${offset}`, {
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          document.getElementById('stat-mothers-count').textContent = data.mothersCount || 0;
+          document.getElementById('stat-daughters-count').textContent = data.total || 0;
+          document.getElementById('stat-active-tracking').textContent = data.daughters?.length || 0;
+          renderDaughtersTable(data.daughters || []);
+        } else {
+          tbody.innerHTML = '<tr><td colspan="4" class="empty-state">لا توجد بيانات</td></tr>';
+        }
+      } catch (error) {
+        console.error('Error loading daughters data:', error);
+        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">حدث خطأ في تحميل البيانات</td></tr>';
+      }
+      feather.replace();
+    }
+
+    function renderDaughtersTable(daughters) {
+      const tbody = document.getElementById('daughters-table');
+      if (!daughters || daughters.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">لا توجد بنات مسجلات</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = daughters.map(d => `
+        <tr>
+          <td>${d.mother?.username || d.mother?.email || d.daughter?.motherId || '-'}</td>
+          <td>${d.daughter?.name || '-'}</td>
+          <td>${formatDate(d.daughter?.createdAt)}</td>
+          <td><span class="badge badge-active">مسجلة</span></td>
+        </tr>
+      `).join('');
+    }
+
+    // ========== Notifications Center Module ==========
+    async function loadNotifications() {
+      const tbody = document.getElementById('notifications-table');
+      tbody.innerHTML = '<tr><td colspan="4" class="loading"><div class="spinner"></div></td></tr>';
+
+      try {
+        const response = await fetch('/api/admin/notification-templates', {
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          document.getElementById('stat-total-notifications').textContent = data.stats?.totalSent || 0;
+          document.getElementById('stat-notification-templates').textContent = data.templates?.length || 0;
+          document.getElementById('stat-notifications-month').textContent = data.stats?.sentThisMonth || 0;
+          renderNotificationsTable(data.templates || []);
+        } else {
+          tbody.innerHTML = '<tr><td colspan="4" class="empty-state">لا توجد قوالب</td></tr>';
+        }
+      } catch (error) {
+        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">حدث خطأ في تحميل البيانات</td></tr>';
+      }
+      feather.replace();
+    }
+
+    function renderNotificationsTable(templates) {
+      const tbody = document.getElementById('notifications-table');
+      if (!templates || templates.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">لا توجد قوالب إشعارات</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = templates.map(t => `
+        <tr>
+          <td>${t.titleAr || t.title || '-'}</td>
+          <td><span class="badge badge-user">${getNotificationTypeLabel(t.type)}</span></td>
+          <td><span class="badge ${t.isActive ? 'badge-active' : 'badge-free'}">${t.isActive ? 'مفعل' : 'معطل'}</span></td>
+          <td>
+            <div class="action-buttons">
+              <button class="action-btn" onclick="editNotificationTemplate('${t.id}')" title="تعديل"><i data-feather="edit-2"></i></button>
+              <button class="action-btn delete" onclick="deleteNotificationTemplate('${t.id}')" title="حذف"><i data-feather="trash-2"></i></button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+      feather.replace();
+    }
+
+    function getNotificationTypeLabel(type) {
+      const labels = { reminder: 'تذكير', promo: 'ترويجي', system: 'نظام', period: 'دورة' };
+      return labels[type] || type || 'عام';
+    }
+
+    function showNotificationModal() { alert('سيتم إضافة نموذج قالب الإشعار قريباً'); }
+    function editNotificationTemplate(id) { alert('سيتم إضافة تعديل القالب قريباً'); }
+    async function deleteNotificationTemplate(id) {
+      if (!confirm('هل أنت متأكد من حذف هذا القالب؟')) return;
+      try {
+        await fetch(`/api/admin/notification-templates/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${authToken}` }});
+        loadNotifications();
+      } catch (e) { alert('حدث خطأ'); }
+    }
+
+    async function sendPushNotification() {
+      const titleAr = document.getElementById('push-title-ar').value;
+      const titleEn = document.getElementById('push-title-en').value;
+      const bodyAr = document.getElementById('push-body-ar').value;
+      const bodyEn = document.getElementById('push-body-en').value;
+      const target = document.getElementById('push-target').value;
+      
+      if (!titleAr || !bodyAr) {
+        alert('الرجاء إدخال العنوان والمحتوى بالعربية');
+        return;
+      }
+      
+      try {
+        const response = await fetch('/api/admin/send-notification', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${authToken}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ titleAr, titleEn, bodyAr, bodyEn, target })
+        });
+        
+        if (response.ok) {
+          alert('تم إرسال الإشعار بنجاح');
+          document.getElementById('push-title-ar').value = '';
+          document.getElementById('push-title-en').value = '';
+          document.getElementById('push-body-ar').value = '';
+          document.getElementById('push-body-en').value = '';
+        } else {
+          alert('فشل إرسال الإشعار');
+        }
+      } catch (e) {
+        alert('حدث خطأ أثناء الإرسال');
+      }
+    }
+
+    // ========== Roles & Permissions Module ==========
+    async function loadRoles() {
+      const rolesTable = document.getElementById('roles-table');
+      const adminsTable = document.getElementById('admins-roles-table');
+      rolesTable.innerHTML = '<tr><td colspan="4" class="loading"><div class="spinner"></div></td></tr>';
+      adminsTable.innerHTML = '<tr><td colspan="4" class="loading"><div class="spinner"></div></td></tr>';
+
+      try {
+        const response = await fetch('/api/admin/roles', {
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          document.getElementById('stat-total-roles').textContent = data.roles?.length || 0;
+          document.getElementById('stat-total-admins').textContent = data.admins?.length || 0;
+          document.getElementById('stat-total-permissions').textContent = data.permissionsCount || 0;
+          renderRolesTable(data.roles || []);
+          renderAdminsRolesTable(data.admins || []);
+        } else {
+          rolesTable.innerHTML = '<tr><td colspan="4" class="empty-state">لا توجد أدوار</td></tr>';
+          adminsTable.innerHTML = '<tr><td colspan="4" class="empty-state">لا يوجد مديرين</td></tr>';
+        }
+      } catch (error) {
+        rolesTable.innerHTML = '<tr><td colspan="4" class="empty-state">حدث خطأ</td></tr>';
+        adminsTable.innerHTML = '<tr><td colspan="4" class="empty-state">حدث خطأ</td></tr>';
+      }
+      feather.replace();
+    }
+
+    function renderRolesTable(roles) {
+      const tbody = document.getElementById('roles-table');
+      if (!roles || roles.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">لا توجد أدوار</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = roles.map(role => `
+        <tr>
+          <td><strong>${role.nameAr || role.name || '-'}</strong></td>
+          <td>${role.description || '-'}</td>
+          <td>${role.permissionsCount || 0} صلاحية</td>
+          <td>
+            <div class="action-buttons">
+              <button class="action-btn" onclick="editRole('${role.id}')" title="تعديل"><i data-feather="edit-2"></i></button>
+              <button class="action-btn delete" onclick="deleteRole('${role.id}')" title="حذف"><i data-feather="trash-2"></i></button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+      feather.replace();
+    }
+
+    function renderAdminsRolesTable(admins) {
+      const tbody = document.getElementById('admins-roles-table');
+      if (!admins || admins.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">لا يوجد مديرين</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = admins.map(admin => `
+        <tr>
+          <td>${admin.displayName || admin.username || '-'}</td>
+          <td>${admin.email || '-'}</td>
+          <td><span class="badge badge-admin">${admin.roleName || 'مدير'}</span></td>
+          <td>
+            <button class="action-btn" onclick="changeAdminRole('${admin.id}')" title="تغيير الدور"><i data-feather="user-check"></i></button>
+          </td>
+        </tr>
+      `).join('');
+      feather.replace();
+    }
+
+    function showRoleModal() { alert('سيتم إضافة نموذج الدور قريباً'); }
+    function editRole(id) { alert('سيتم إضافة تعديل الدور قريباً'); }
+    function changeAdminRole(id) { alert('سيتم إضافة تغيير دور المدير قريباً'); }
+    async function deleteRole(id) {
+      if (!confirm('هل أنت متأكد من حذف هذا الدور؟')) return;
+      try {
+        await fetch(`/api/admin/roles/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${authToken}` }});
+        loadRoles();
+      } catch (e) { alert('حدث خطأ'); }
+    }
+  </script>
+</body>
+</html>
