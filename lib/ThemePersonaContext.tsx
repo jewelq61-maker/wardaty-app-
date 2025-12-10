@@ -86,8 +86,11 @@ export function ThemePersonaProvider({ children }: { children: ReactNode }) {
   const isRTL = I18nManager.isRTL;
 
   const effectiveMode: ThemeMode = useMemo(() => {
-    // Force dark mode always (except onboarding)
-    return "dark";
+    // Respect user's theme preference
+    if (themePreference === "system") {
+      return systemColorScheme === "dark" ? "dark" : "light";
+    }
+    return themePreference === "dark" ? "dark" : "light";
   }, [themePreference, systemColorScheme]);
 
   const theme = useMemo(() => {

@@ -20,6 +20,7 @@ import { useLayout } from "@/lib/ThemePersonaContext";
 import { useApp } from "@/lib/AppContext";
 import { Spacing, BorderRadius } from "@/constants/theme";
 import { getApiUrl } from "@/lib/query-client";
+import { getAllArticles, getRelatedArticles } from "@/data/articles";
 
 interface Article {
   id: string;
@@ -48,8 +49,22 @@ export default function ArticleDetailScreen() {
   const layout = useLayout();
   const { data } = useApp();
 
-  // Offline mode: return null article
-  const article: Article | null = null;
+  // Offline mode: use local articles data
+  const allArticles = getAllArticles();
+  const foundArticle = allArticles.find(a => a.id === articleId);
+  const article: Article | null = foundArticle ? {
+    id: foundArticle.id,
+    titleAr: foundArticle.titleAr,
+    titleEn: foundArticle.titleEn,
+    contentAr: foundArticle.contentAr,
+    contentEn: foundArticle.contentEn,
+    category: foundArticle.category,
+    readTime: foundArticle.readTime,
+    icon: foundArticle.icon,
+    personas: foundArticle.personas,
+    createdAt: new Date(foundArticle.createdAt),
+    updatedAt: new Date(foundArticle.updatedAt),
+  } : null;
   const isLoadingArticle = false;
   
   // const { data: article, isLoading: isLoadingArticle } = useQuery<Article>({
@@ -62,8 +77,21 @@ export default function ArticleDetailScreen() {
   //   },
   // });
 
-  // Offline mode: return empty related articles
-  const relatedArticles: Article[] = [];
+  // Offline mode: use local related articles
+  const relatedArticlesData = articleId ? getRelatedArticles(articleId) : [];
+  const relatedArticles: Article[] = relatedArticlesData.map(article => ({
+    id: article.id,
+    titleAr: article.titleAr,
+    titleEn: article.titleEn,
+    contentAr: article.contentAr,
+    contentEn: article.contentEn,
+    category: article.category,
+    readTime: article.readTime,
+    icon: article.icon,
+    personas: article.personas,
+    createdAt: new Date(article.createdAt),
+    updatedAt: new Date(article.updatedAt),
+  }));
   const isLoadingRelated = false;
   
   // const { data: relatedArticles = [], isLoading: isLoadingRelated } = useQuery<Article[]>({

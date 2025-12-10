@@ -16,6 +16,7 @@ import { Spacing, BorderRadius } from "@/constants/theme";
 import type { Article as ArticleType } from "@shared/schema";
 import type { ArticlesStackParamList } from "@/navigation/ArticlesStackNavigator";
 import { getApiUrl } from "@/lib/query-client";
+import { getAllArticles, getArticlesByCategory } from "@/data/articles";
 
 interface Article {
   id: string;
@@ -45,8 +46,21 @@ export default function ArticlesScreen() {
   const { data: appData } = useApp();
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
-  // Offline mode: return empty articles for now
-  const articles: Article[] = [];
+  // Offline mode: use local articles data
+  const allArticles = getAllArticles();
+  const articles: Article[] = allArticles.map(article => ({
+    id: article.id,
+    titleAr: article.titleAr,
+    titleEn: article.titleEn,
+    contentAr: article.contentAr,
+    contentEn: article.contentEn,
+    category: article.category,
+    readTime: article.readTime,
+    icon: article.icon,
+    personas: article.personas,
+    createdAt: new Date(article.createdAt),
+    updatedAt: new Date(article.updatedAt),
+  }));
   const isLoading = false;
   const error = null;
   

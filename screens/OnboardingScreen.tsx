@@ -24,6 +24,7 @@ export default function OnboardingScreen() {
   const { settings, updateSettings } = useApp();
 
   const [step, setStep] = useState<OnboardingStep>("language");
+  const [selectedLanguage, setSelectedLanguage] = useState<"ar" | "en" | null>(null);
   const [persona, setPersona] = useState<Persona>("single");
   const [name, setName] = useState("");
   const [cycleLength, setCycleLength] = useState("28");
@@ -33,6 +34,9 @@ export default function OnboardingScreen() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     
     if (step === "language") {
+      if (selectedLanguage) {
+        setLanguage(selectedLanguage);
+      }
       setStep("welcome");
     } else if (step === "welcome") {
       setStep("persona");
@@ -84,16 +88,16 @@ export default function OnboardingScreen() {
         <Pressable
           style={[
             styles.languageButton,
-            language === "ar" && styles.languageButtonActive,
+            selectedLanguage === "ar" && styles.languageButtonActive,
           ]}
           onPress={() => {
-            setLanguage("ar");
+            setSelectedLanguage("ar");
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
           }}
         >
           <ThemedText style={[
             styles.languageButtonText,
-            language === "ar" && styles.languageButtonTextActive,
+            selectedLanguage === "ar" && styles.languageButtonTextActive,
           ]}>
             العربية
           </ThemedText>
@@ -102,16 +106,16 @@ export default function OnboardingScreen() {
         <Pressable
           style={[
             styles.languageButton,
-            language === "en" && styles.languageButtonActive,
+            selectedLanguage === "en" && styles.languageButtonActive,
           ]}
           onPress={() => {
-            setLanguage("en");
+            setSelectedLanguage("en");
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
           }}
         >
           <ThemedText style={[
             styles.languageButtonText,
-            language === "en" && styles.languageButtonTextActive,
+            selectedLanguage === "en" && styles.languageButtonTextActive,
           ]}>
             English
           </ThemedText>

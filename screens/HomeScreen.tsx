@@ -96,6 +96,13 @@ export default function HomeScreen() {
 
   const settings = data.settings;
   const logs = data.cycleLogs;
+  const pregnancySettings = data.pregnancySettings;
+  const { getPregnancyWeek, getPregnancyDaysRemaining } = useApp();
+
+  // Check if pregnancy mode is enabled
+  const isPregnancyMode = pregnancySettings?.enabled || false;
+  const pregnancyWeek = isPregnancyMode ? getPregnancyWeek() : null;
+  const daysRemaining = isPregnancyMode ? getPregnancyDaysRemaining() : null;
 
   // Safe defaults when no period data exists
   const cycleDay = settings.lastPeriodStart 
@@ -174,13 +181,13 @@ export default function HomeScreen() {
           </Pressable>
         </View>
 
-        {/* Cycle Card */}
+        {/* Cycle or Pregnancy Card */}
         <Animated.View
           entering={FadeInDown.delay(100).duration(600)}
         >
           <Pressable
             style={styles.cycleCard}
-            onPress={() => handleCardPress("Calendar")}
+            onPress={() => handleCardPress(isPregnancyMode ? "Pregnancy" : "Calendar")}
           >
             <LinearGradient
               colors={PersonaColors[settings.persona || "single"].gradient}
@@ -188,25 +195,47 @@ export default function HomeScreen() {
               end={{ x: 1, y: 1 }}
               style={styles.cycleGradient}
             >
-              <View style={[styles.cycleContent, { flexDirection: layout.flexDirection }]}>
-                <View style={styles.cycleInfo}>
-                  <ThemedText style={[styles.cycleTitle, { textAlign: layout.textAlign }]}>
-                    {language === "ar" ? "اليوم" : "Day"} {cycleDay}
-                  </ThemedText>
-                  <ThemedText style={[styles.cycleSubtitle, { textAlign: layout.textAlign }]}>
-                    {phase.name}
-                  </ThemedText>
-                </View>
+              {isPregnancyMode ? (
+                <View style={[styles.cycleContent, { flexDirection: layout.flexDirection }]}>
+                  <View style={styles.cycleInfo}>
+                    <ThemedText style={[styles.cycleTitle, { textAlign: layout.textAlign }]}>
+                      {language === "ar" ? "الأسبوع" : "Week"} {pregnancyWeek || 1}
+                    </ThemedText>
+                    <ThemedText style={[styles.cycleSubtitle, { textAlign: layout.textAlign }]}>
+                      {language === "ar" ? "من الحمل" : "of pregnancy"}
+                    </ThemedText>
+                  </View>
 
-                <View style={styles.cycleDays}>
-                  <ThemedText style={styles.cycleDaysNumber}>
-                    {daysUntilPeriod}
-                  </ThemedText>
-                  <ThemedText style={styles.cycleDaysLabel}>
-                    {language === "ar" ? "أيام متبقية" : "days left"}
-                  </ThemedText>
+                  <View style={styles.cycleDays}>
+                    <ThemedText style={styles.cycleDaysNumber}>
+                      {daysRemaining || 280}
+                    </ThemedText>
+                    <ThemedText style={styles.cycleDaysLabel}>
+                      {language === "ar" ? "يوم متبقي" : "days left"}
+                    </ThemedText>
+                  </View>
                 </View>
-              </View>
+              ) : (
+                <View style={[styles.cycleContent, { flexDirection: layout.flexDirection }]}>
+                  <View style={styles.cycleInfo}>
+                    <ThemedText style={[styles.cycleTitle, { textAlign: layout.textAlign }]}>
+                      {language === "ar" ? "اليوم" : "Day"} {cycleDay}
+                    </ThemedText>
+                    <ThemedText style={[styles.cycleSubtitle, { textAlign: layout.textAlign }]}>
+                      {phase.name}
+                    </ThemedText>
+                  </View>
+
+                  <View style={styles.cycleDays}>
+                    <ThemedText style={styles.cycleDaysNumber}>
+                      {daysUntilPeriod}
+                    </ThemedText>
+                    <ThemedText style={styles.cycleDaysLabel}>
+                      {language === "ar" ? "أيام متبقية" : "days left"}
+                    </ThemedText>
+                  </View>
+                </View>
+              )}
             </LinearGradient>
           </Pressable>
         </Animated.View>

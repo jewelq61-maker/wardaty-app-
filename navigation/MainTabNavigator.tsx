@@ -65,8 +65,8 @@ function CustomTabBar({ state, descriptors, navigation }: CustomTabBarProps) {
 
   const handleFABPress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    const currentTab = getCurrentTabName();
-    triggerFAB(currentTab);
+    // Always open LogScreen for unified quick logging
+    navigation.navigate("Log");
   };
 
   const getTabLabel = (routeName: string): string => {
