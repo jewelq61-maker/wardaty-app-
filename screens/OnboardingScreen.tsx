@@ -2,7 +2,6 @@ import { useState } from "react";
 import { View, StyleSheet, Pressable, TextInput, ScrollView, Dimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
-import { LinearGradient } from "expo-linear-gradient";
 import Animated, { FadeInDown, FadeOutUp } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 
@@ -11,7 +10,7 @@ import { PersonaSelector } from "@/components/PersonaSelector";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useApp } from "@/lib/AppContext";
 import { Persona } from "@/lib/types";
-import { LightBackgrounds, BrandColors, Gradients, NeutralColors, PersonaColors } from "@/constants/colors";
+import { LightBackgrounds, BrandColors, NeutralColors, PersonaColors } from "@/constants/colors";
 import { Spacing, BorderRadius, Typography, Shadows, Layout } from "@/constants/design-tokens";
 
 const { width } = Dimensions.get("window");
@@ -258,16 +257,9 @@ export default function OnboardingScreen() {
           style={[styles.primaryButton, step !== "language" && { flex: 1 }]}
           onPress={handleNext}
         >
-          <LinearGradient
-            colors={[Gradients.main.colors[0], Gradients.main.colors[1]]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.gradientButton}
-          >
-            <ThemedText style={styles.primaryButtonText}>
-              {step === "cycle" ? t("common.finish") : t("common.next")}
-            </ThemedText>
-          </LinearGradient>
+          <ThemedText style={styles.primaryButtonText}>
+            {step === "cycle" ? t("common.finish") : t("common.next")}
+          </ThemedText>
         </Pressable>
       </View>
     </View>
@@ -386,13 +378,12 @@ const styles = StyleSheet.create({
   primaryButton: {
     flex: 1,
     borderRadius: BorderRadius["2xl"],
-    overflow: "hidden",
-  },
-  gradientButton: {
+    backgroundColor: BrandColors.violet.main,
     paddingVertical: Spacing.lg,
     paddingHorizontal: Spacing.xl,
     alignItems: "center",
     justifyContent: "center",
+    ...Shadows.light.md,
   },
   primaryButtonText: {
     fontSize: Typography.button.fontSize,

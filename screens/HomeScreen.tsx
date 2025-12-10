@@ -79,7 +79,9 @@ export default function HomeScreen() {
   const navigation = useNavigation();
   const { t, language } = useLanguage();
   const layout = useLayout();
-  const { settings, logs } = useApp();
+  const { data } = useApp();
+  const settings = data.settings;
+  const logs = data.cycleLogs;
 
   const cycleDay = getCurrentCycleDay(logs, settings);
   const daysUntilPeriod = getDaysUntilNextPeriod(logs, settings);
