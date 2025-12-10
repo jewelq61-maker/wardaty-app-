@@ -83,14 +83,21 @@ export default function HomeScreen() {
   const settings = data.settings;
   const logs = data.cycleLogs;
 
-  const cycleDay = getCurrentCycleDay(settings.lastPeriodStart, settings.cycleLength);
-  const daysUntilPeriod = getDaysUntilNextPeriod(settings.lastPeriodStart, settings.cycleLength);
+  // Safe defaults when no period data exists
+  const cycleDay = settings.lastPeriodStart 
+    ? getCurrentCycleDay(settings.lastPeriodStart, settings.cycleLength)
+    : 1;
+  const daysUntilPeriod = settings.lastPeriodStart
+    ? getDaysUntilNextPeriod(settings.lastPeriodStart, settings.cycleLength)
+    : settings.cycleLength;
   const today = new Date().toISOString().split("T")[0];
-  const phaseResult = getDetailedCyclePhase(today, settings.lastPeriodStart, {
-    cycleLength: settings.cycleLength,
-    periodLength: settings.periodLength,
-    lastPeriodStart: settings.lastPeriodStart,
-  });
+  const phaseResult = settings.lastPeriodStart
+    ? getDetailedCyclePhase(today, settings.lastPeriodStart, {
+        cycleLength: settings.cycleLength,
+        periodLength: settings.periodLength,
+        lastPeriodStart: settings.lastPeriodStart,
+      })
+    : "follicular";
   const phase = { name: phaseResult };
 
   const personaColor = getPersonaPrimary(settings.persona || "single");
