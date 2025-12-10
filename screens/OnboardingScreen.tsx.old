@@ -1,0 +1,420 @@
+import { useState } from "react";
+import { View, StyleSheet, TextInput, Pressable, Dimensions } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { LinearGradient } from "expo-linear-gradient";
+import { BlurView } from "expo-blur";
+import Animated, {
+  FadeInDown,
+  FadeInUp,
+  FadeOutUp,
+} from "react-native-reanimated";
+import * as Haptics from "expo-haptics";
+
+import { ThemedText } from "@/components/ThemedText";
+import { Button } from "@/components/Button";
+import { PersonaSelector } from "@/components/PersonaSelector";
+import { useTheme } from "@/hooks/useTheme";
+import { useLanguage } from "@/hooks/useLanguage";
+import { useLayout } from "@/lib/ThemePersonaContext";
+import { Spacing, BorderRadius } from "@/constants/theme";
+import { useApp } from "@/lib/AppContext";
+import { Persona } from "@/lib/types";
+import { KeyboardAwareScrollViewCompat } from "@/components/KeyboardAwareScrollViewCompat";
+import { Language } from "@/lib/translations";
+
+const { width, height } = Dimensions.get("window");
+
+type OnboardingStep = "language" | "welcome" | "persona" | "name" | "cycle";
+
+interface OnboardingScreenProps {
+  onBack?: () => void;
+}
+
+export default function OnboardingScreen({ onBack }: OnboardingScreenProps) {
+  const insets = useSafeAreaInsets();
+  const { theme } = useTheme();
+  const { updateSettings } = useApp();
+  const { t, setLanguage, language } = useLanguage();
+  const layout = useLayout();
+
+  const [step, setStep] = useState<OnboardingStep>("language");
+  const [persona, setPersona] = useState<Persona>("single");
+  const [name, setName] = useState("");
+  const [cycleLength, setCycleLength] = useState("28");
+  const [periodLength, setPeriodLength] = useState("5");
+
+  const handleSelectLanguage = async (lang: Language) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    await setLanguage(lang);
+    setStep("welcome");
+  };
+
+  const handleNext = () => {
+    if (step === "language") setStep("welcome");
+    else if (step === "welcome") setStep("persona");
+    else if (step === "persona") setStep("name");
+    else if (step === "name") setStep("cycle");
+  };
+
+  const handleComplete = async () => {
+    await updateSettings({
+      hasCompletedOnboarding: true,
+      name,
+      persona,
+      cycleLength: parseInt(cycleLength),
+      periodLength: parseInt(periodLength),
+    });
+  };
+
+  const renderLanguageStep = () => (
+    <Animated.View
+      entering={FadeInDown.duration(600)}
+      exiting={FadeOutUp.duration(400)}
+      style={styles.stepContainer}
+    >
+      <View style={styles.iconContainer}>
+        <ThemedText style={styles.icon}>🌍</ThemedText>
+      </View>
+      
+      <ThemedText style={styles.mainTitle}>
+        {language === "ar" ? "اختاري لغتك" : "Choose Your Language"}
+      </ThemedText>
+      
+      <ThemedText style={styles.subtitle}>
+        {language === "ar" 
+          ? "اختاري اللغة المفضلة لديك"
+          : "Select your preferred language"}
+      </ThemedText>
+
+      <View style={styles.buttonGroup}>
+        <Pressable
+          style={[styles.languageButton, language === "ar" && styles.languageButtonActive]}
+          onPress={() => handleSelectLanguage("ar")}
+        >
+          <BlurView intensity={20} style={styles.blurButton}>
+            <ThemedText style={[styles.languageButtonText, language === "ar" && styles.languageButtonTextActive]}>
+              العربية
+            </ThemedText>
+          </BlurView>
+        </Pressable>
+
+        <Pressable
+          style={[styles.languageButton, language === "en" && styles.languageButtonActive]}
+          onPress={() => handleSelectLanguage("en")}
+        >
+          <BlurView intensity={20} style={styles.blurButton}>
+            <ThemedText style={[styles.languageButtonText, language === "en" && styles.languageButtonTextActive]}>
+              English
+            </ThemedText>
+          </BlurView>
+        </Pressable>
+      </View>
+    </Animated.View>
+  );
+
+  const renderWelcomeStep = () => (
+    <Animated.View
+      entering={FadeInDown.duration(600)}
+      exiting={FadeOutUp.duration(400)}
+      style={styles.stepContainer}
+    >
+      <View style={styles.iconContainer}>
+        <ThemedText style={styles.icon}>🌹</ThemedText>
+      </View>
+      
+      <ThemedText style={styles.mainTitle}>
+        {t("onboarding.welcome")}
+      </ThemedText>
+      
+      <ThemedText style={styles.subtitle}>
+        {t("onboarding.welcomeSubtitle")}
+      </ThemedText>
+
+      <Pressable style={styles.primaryButton} onPress={handleNext}>
+        <BlurView intensity={30} style={styles.blurButton}>
+          <ThemedText style={styles.primaryButtonText}>
+            {t("onboarding.getStarted")}
+          </ThemedText>
+        </BlurView>
+      </Pressable>
+    </Animated.View>
+  );
+
+  const renderPersonaStep = () => (
+    <Animated.View
+      entering={FadeInDown.duration(600)}
+      exiting={FadeOutUp.duration(400)}
+      style={styles.stepContainer}
+    >
+      <ThemedText style={styles.title}>
+        {t("onboarding.selectPersona")}
+      </ThemedText>
+      
+      <ThemedText style={styles.description}>
+        {t("onboarding.personaDescription")}
+      </ThemedText>
+
+      <View style={styles.personaContainer}>
+        <PersonaSelector
+          selectedPersona={persona}
+          onSelect={setPersona}
+        />
+      </View>
+
+      <Pressable 
+        style={[styles.primaryButton, !persona && styles.primaryButtonDisabled]} 
+        onPress={handleNext}
+        disabled={!persona}
+      >
+        <BlurView intensity={30} style={styles.blurButton}>
+          <ThemedText style={styles.primaryButtonText}>
+            {t("common.continue")}
+          </ThemedText>
+        </BlurView>
+      </Pressable>
+    </Animated.View>
+  );
+
+  const renderNameStep = () => (
+    <Animated.View
+      entering={FadeInDown.duration(600)}
+      exiting={FadeOutUp.duration(400)}
+      style={styles.stepContainer}
+    >
+      <ThemedText style={styles.title}>
+        {t("onboarding.enterName")}
+      </ThemedText>
+      
+      <ThemedText style={styles.description}>
+        {t("onboarding.nameDescription")}
+      </ThemedText>
+
+      <BlurView intensity={20} style={styles.inputContainer}>
+        <TextInput
+          style={styles.input}
+          value={name}
+          onChangeText={setName}
+          placeholder={t("onboarding.namePlaceholder")}
+          placeholderTextColor="rgba(255, 255, 255, 0.5)"
+          autoFocus
+        />
+      </BlurView>
+
+      <Pressable 
+        style={[styles.primaryButton, !name && styles.primaryButtonDisabled]} 
+        onPress={handleNext}
+        disabled={!name}
+      >
+        <BlurView intensity={30} style={styles.blurButton}>
+          <ThemedText style={styles.primaryButtonText}>
+            {t("common.continue")}
+          </ThemedText>
+        </BlurView>
+      </Pressable>
+    </Animated.View>
+  );
+
+  const renderCycleStep = () => (
+    <Animated.View
+      entering={FadeInDown.duration(600)}
+      exiting={FadeOutUp.duration(400)}
+      style={styles.stepContainer}
+    >
+      <ThemedText style={styles.title}>
+        {t("onboarding.cycleInfo")}
+      </ThemedText>
+      
+      <ThemedText style={styles.description}>
+        {t("onboarding.cycleDescription")}
+      </ThemedText>
+
+      <View style={styles.inputGroup}>
+        <BlurView intensity={20} style={styles.inputContainer}>
+          <ThemedText style={styles.inputLabel}>
+            {t("onboarding.cycleLength")}
+          </ThemedText>
+          <TextInput
+            style={styles.input}
+            value={cycleLength}
+            onChangeText={setCycleLength}
+            keyboardType="number-pad"
+            maxLength={2}
+          />
+        </BlurView>
+
+        <BlurView intensity={20} style={styles.inputContainer}>
+          <ThemedText style={styles.inputLabel}>
+            {t("onboarding.periodLength")}
+          </ThemedText>
+          <TextInput
+            style={styles.input}
+            value={periodLength}
+            onChangeText={setPeriodLength}
+            keyboardType="number-pad"
+            maxLength={2}
+          />
+        </BlurView>
+      </View>
+
+      <Pressable style={styles.primaryButton} onPress={handleComplete}>
+        <BlurView intensity={30} style={styles.blurButton}>
+          <ThemedText style={styles.primaryButtonText}>
+            {t("onboarding.complete")}
+          </ThemedText>
+        </BlurView>
+      </Pressable>
+    </Animated.View>
+  );
+
+  return (
+    <View style={styles.container}>
+      <LinearGradient
+        colors={['#E91E63', '#9C27B0']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={StyleSheet.absoluteFill}
+      />
+
+      <KeyboardAwareScrollViewCompat
+        contentContainerStyle={[
+          styles.scrollContent,
+          {
+            paddingTop: insets.top + 40,
+            paddingBottom: insets.bottom + 40,
+          },
+        ]}
+        showsVerticalScrollIndicator={false}
+      >
+        {step === "language" && renderLanguageStep()}
+        {step === "welcome" && renderWelcomeStep()}
+        {step === "persona" && renderPersonaStep()}
+        {step === "name" && renderNameStep()}
+        {step === "cycle" && renderCycleStep()}
+      </KeyboardAwareScrollViewCompat>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: "center",
+    paddingHorizontal: 32,
+  },
+  stepContainer: {
+    alignItems: "center",
+    gap: 24,
+  },
+  iconContainer: {
+    marginBottom: 16,
+  },
+  icon: {
+    fontSize: 80,
+  },
+  mainTitle: {
+    fontSize: 48,
+    fontWeight: "700",
+    color: "#FFFFFF",
+    textAlign: "center",
+    letterSpacing: -1,
+  },
+  title: {
+    fontSize: 36,
+    fontWeight: "700",
+    color: "#FFFFFF",
+    textAlign: "center",
+    letterSpacing: -0.5,
+  },
+  subtitle: {
+    fontSize: 20,
+    fontWeight: "400",
+    color: "rgba(255, 255, 255, 0.8)",
+    textAlign: "center",
+    lineHeight: 28,
+  },
+  description: {
+    fontSize: 17,
+    fontWeight: "400",
+    color: "rgba(255, 255, 255, 0.7)",
+    textAlign: "center",
+    lineHeight: 24,
+  },
+  buttonGroup: {
+    width: "100%",
+    gap: 16,
+    marginTop: 24,
+  },
+  languageButton: {
+    width: "100%",
+    height: 60,
+    borderRadius: 30,
+    overflow: "hidden",
+    borderWidth: 2,
+    borderColor: "rgba(255, 255, 255, 0.3)",
+  },
+  languageButtonActive: {
+    borderColor: "#FFFFFF",
+  },
+  blurButton: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  languageButtonText: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "rgba(255, 255, 255, 0.9)",
+  },
+  languageButtonTextActive: {
+    color: "#FFFFFF",
+  },
+  primaryButton: {
+    width: "100%",
+    height: 56,
+    borderRadius: 28,
+    overflow: "hidden",
+    marginTop: 24,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+  },
+  primaryButtonDisabled: {
+    opacity: 0.5,
+  },
+  primaryButtonText: {
+    fontSize: 17,
+    fontWeight: "600",
+    color: "#FFFFFF",
+  },
+  personaContainer: {
+    width: "100%",
+    marginTop: 16,
+  },
+  inputContainer: {
+    width: "100%",
+    borderRadius: 16,
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.3)",
+    marginTop: 16,
+  },
+  input: {
+    padding: 20,
+    fontSize: 17,
+    color: "#FFFFFF",
+    textAlign: "center",
+  },
+  inputLabel: {
+    fontSize: 15,
+    fontWeight: "500",
+    color: "rgba(255, 255, 255, 0.7)",
+    paddingTop: 12,
+    paddingHorizontal: 20,
+  },
+  inputGroup: {
+    width: "100%",
+    gap: 16,
+    marginTop: 16,
+  },
+});
