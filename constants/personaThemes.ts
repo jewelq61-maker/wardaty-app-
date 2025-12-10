@@ -1,5 +1,5 @@
 import { Persona } from "@/lib/types";
-import { BrandColors, CycleColors, PersonaAccents, Colors } from "./theme";
+import { DarkTheme, PersonaColors, CycleColors } from "./theme";
 
 export type ThemeMode = "light" | "dark";
 
@@ -81,56 +81,155 @@ export interface Theme {
 
 const personaConfigs: Record<Persona, PersonaConfig> = {
   single: {
-    accent: PersonaAccents.single,
+    accent: {
+      main: PersonaColors.single.primary,
+      light: PersonaColors.single.light,
+      dark: PersonaColors.single.dark,
+      soft: PersonaColors.single.soft,
+      gradient: PersonaColors.single.gradient,
+    },
     logoGradient: ["#8C64F0", "#FF5FA8"] as const,
   },
-  partner: {
-    accent: PersonaAccents.partner,
-    logoGradient: ["#8C64F0", "#7EC8E3"] as const,
-  },
   married: {
-    accent: PersonaAccents.married,
+    accent: {
+      main: PersonaColors.married.primary,
+      light: PersonaColors.married.light,
+      dark: PersonaColors.married.dark,
+      soft: PersonaColors.married.soft,
+      gradient: PersonaColors.married.gradient,
+    },
     logoGradient: ["#8C64F0", "#FF7C7C"] as const,
   },
   mother: {
-    accent: PersonaAccents.mother,
+    accent: {
+      main: PersonaColors.mother.primary,
+      light: PersonaColors.mother.light,
+      dark: PersonaColors.mother.dark,
+      soft: PersonaColors.mother.soft,
+      gradient: PersonaColors.mother.gradient,
+    },
     logoGradient: ["#8C64F0", "#9A63E8"] as const,
   },
 };
-
-function createLightColors(persona: Persona): ThemeColors {
-  const personaAccent = personaConfigs[persona].accent;
-  
-  return {
-    ...Colors.light,
-    background: Colors.light.backgroundRoot,
-    card: Colors.light.backgroundElevated,
-    textMain: Colors.light.text,
-    textSoft: Colors.light.textMuted,
-    badge: personaAccent.main,
-    chip: personaAccent.soft,
-    personaAccent: personaAccent.main,
-    personaAccentLight: personaAccent.light,
-    personaAccentDark: personaAccent.dark,
-    personaAccentSoft: personaAccent.soft,
-  };
-}
 
 function createDarkColors(persona: Persona): ThemeColors {
   const personaAccent = personaConfigs[persona].accent;
   
   return {
-    ...Colors.dark,
-    background: Colors.dark.backgroundRoot,
-    card: Colors.dark.backgroundElevated,
-    textMain: Colors.dark.text,
-    textSoft: Colors.dark.textMuted,
-    badge: personaAccent.light,
-    chip: personaAccent.soft,
-    personaAccent: personaAccent.light,
+    background: DarkTheme.background.root,
+    backgroundRoot: DarkTheme.background.root,
+    backgroundDefault: DarkTheme.background.root,
+    backgroundSecondary: DarkTheme.background.elevated,
+    backgroundTertiary: DarkTheme.background.card,
+    backgroundElevated: DarkTheme.background.elevated,
+    card: DarkTheme.background.card,
+    cardBorder: DarkTheme.border.default,
+    primary: personaAccent.main,
+    primaryLight: personaAccent.light,
+    primaryDark: personaAccent.dark,
+    primarySoft: personaAccent.soft,
+    secondary: DarkTheme.text.secondary,
+    secondaryLight: DarkTheme.text.tertiary,
+    secondaryDark: DarkTheme.text.primary,
+    accent: personaAccent.main,
+    accentLight: personaAccent.light,
+    accentDark: personaAccent.dark,
+    accentSoft: personaAccent.soft,
+    personaAccent: personaAccent.main,
     personaAccentLight: personaAccent.light,
-    personaAccentDark: personaAccent.main,
+    personaAccentDark: personaAccent.dark,
     personaAccentSoft: personaAccent.soft,
+    border: DarkTheme.border.default,
+    text: DarkTheme.text.primary,
+    textMain: DarkTheme.text.primary,
+    textSecondary: DarkTheme.text.secondary,
+    textSoft: DarkTheme.text.tertiary,
+    badge: personaAccent.main,
+    chip: personaAccent.soft,
+    buttonText: DarkTheme.text.primary,
+    tabIconDefault: DarkTheme.text.tertiary,
+    tabIconSelected: personaAccent.main,
+    link: personaAccent.main,
+    glassBackground: "rgba(37, 27, 64, 0.6)",
+    glassBorder: DarkTheme.border.subtle,
+    glowPrimary: personaAccent.main,
+    glowAccent: personaAccent.light,
+    overlay: DarkTheme.overlay.medium,
+    period: CycleColors.period,
+    periodLight: `${CycleColors.period}40`,
+    fertile: CycleColors.fertile,
+    fertileLight: `${CycleColors.fertile}40`,
+    normal: DarkTheme.border.default,
+    normalLight: DarkTheme.border.subtle,
+    ovulation: CycleColors.ovulation,
+    follicular: "#9A63E8",
+    luteal: "#FF7C7C",
+    qadha: "#FFB800",
+    success: "#4CAF50",
+    warning: "#FF9800",
+    error: "#F44336",
+    info: "#2196F3",
+  };
+}
+
+// Light theme (for onboarding only)
+function createLightColors(persona: Persona): ThemeColors {
+  const personaAccent = personaConfigs[persona].accent;
+  
+  return {
+    background: "#FFFFFF",
+    backgroundRoot: "#FFFFFF",
+    backgroundDefault: "#FFFFFF",
+    backgroundSecondary: "#F8F9FA",
+    backgroundTertiary: "#F0F1F3",
+    backgroundElevated: "#FFFFFF",
+    card: "#FFFFFF",
+    cardBorder: "rgba(0, 0, 0, 0.1)",
+    primary: personaAccent.main,
+    primaryLight: personaAccent.light,
+    primaryDark: personaAccent.dark,
+    primarySoft: personaAccent.soft,
+    secondary: "#6B7280",
+    secondaryLight: "#9CA3AF",
+    secondaryDark: "#374151",
+    accent: personaAccent.main,
+    accentLight: personaAccent.light,
+    accentDark: personaAccent.dark,
+    accentSoft: personaAccent.soft,
+    personaAccent: personaAccent.main,
+    personaAccentLight: personaAccent.light,
+    personaAccentDark: personaAccent.dark,
+    personaAccentSoft: personaAccent.soft,
+    border: "rgba(0, 0, 0, 0.1)",
+    text: "#1F2937",
+    textMain: "#1F2937",
+    textSecondary: "#6B7280",
+    textSoft: "#9CA3AF",
+    badge: personaAccent.main,
+    chip: personaAccent.soft,
+    buttonText: "#FFFFFF",
+    tabIconDefault: "#9CA3AF",
+    tabIconSelected: personaAccent.main,
+    link: personaAccent.main,
+    glassBackground: "rgba(255, 255, 255, 0.8)",
+    glassBorder: "rgba(0, 0, 0, 0.1)",
+    glowPrimary: personaAccent.main,
+    glowAccent: personaAccent.light,
+    overlay: "rgba(0, 0, 0, 0.3)",
+    period: CycleColors.period,
+    periodLight: `${CycleColors.period}40`,
+    fertile: CycleColors.fertile,
+    fertileLight: `${CycleColors.fertile}40`,
+    normal: "#E5E7EB",
+    normalLight: "#F3F4F6",
+    ovulation: CycleColors.ovulation,
+    follicular: "#9A63E8",
+    luteal: "#FF7C7C",
+    qadha: "#FFB800",
+    success: "#4CAF50",
+    warning: "#FF9800",
+    error: "#F44336",
+    info: "#2196F3",
   };
 }
 
@@ -147,20 +246,6 @@ export const personaThemes: Record<Persona, { light: Theme; dark: Theme }> = {
       persona: "single",
       colors: createDarkColors("single"),
       personaConfig: personaConfigs.single,
-    },
-  },
-  partner: {
-    light: {
-      mode: "light",
-      persona: "partner",
-      colors: createLightColors("partner"),
-      personaConfig: personaConfigs.partner,
-    },
-    dark: {
-      mode: "dark",
-      persona: "partner",
-      colors: createDarkColors("partner"),
-      personaConfig: personaConfigs.partner,
     },
   },
   married: {
