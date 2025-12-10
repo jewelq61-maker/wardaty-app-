@@ -668,7 +668,7 @@ export default function SettingsScreen() {
               onChangeText={setLmpDateInput}
               keyboardType={Platform.OS === "ios" ? "numbers-and-punctuation" : "default"}
             />
-            <Button onPress={handleEnablePregnancy} style={{ marginTop: Spacing.lg }}>
+            <Button onPress={handleEnablePregnancy} style={{ marginTop: Spacing.lg, width: "100%" }}>
               {isRTL ? "تفعيل" : "Enable"}
             </Button>
           </View>

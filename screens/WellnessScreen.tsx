@@ -302,7 +302,7 @@ export default function WellnessScreen() {
                         size={14}
                         color={MOOD_COLORS[mood as Mood]}
                       />
-                      <ThemedText type="small" style={{ marginLeft: 4 }}>
+                      <ThemedText type="small" style={{ marginStart: 4 }}>
                         {getMoodLabel(mood)}
                       </ThemedText>
                     </View>

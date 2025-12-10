@@ -187,7 +187,7 @@ function EnhancedProfileCard({
               <View style={[styles.badges, { flexDirection: layout.flexDirection }]}>
                 <View style={[styles.badge, { backgroundColor: theme.backgroundSecondary }]}>
                   <Feather name={getPersonaIcon()} size={14} color={theme.primary} />
-                  <ThemedText type="small" style={{ color: theme.primary, marginLeft: Spacing.xs }}>
+                  <ThemedText type="small" style={{ color: theme.primary, marginStart: Spacing.xs }}>
                     {getPersonaLabel()}
                   </ThemedText>
                 </View>
@@ -197,7 +197,7 @@ function EnhancedProfileCard({
                 {isSubscribed ? (
                   <View style={[styles.badge, { backgroundColor: theme.secondary }]}>
                     <Feather name="award" size={14} color="#FFFFFF" />
-                    <ThemedText type="small" style={{ color: "#FFFFFF", marginLeft: Spacing.xs }}>
+                    <ThemedText type="small" style={{ color: "#FFFFFF", marginStart: Spacing.xs }}>
                       Plus
                     </ThemedText>
                   </View>
@@ -246,7 +246,7 @@ function SubscriptionPromoCard({
         {features.map((feature, index) => (
           <View key={index} style={styles.promoFeatureItem}>
             <AppIcon name="checkmark" size={14} color={theme.qadha} weight="bold" />
-            <ThemedText type="small" style={{ marginLeft: Spacing.xs, color: theme.text }}>
+            <ThemedText type="small" style={{ marginStart: Spacing.xs, color: theme.text }}>
               {feature}
             </ThemedText>
           </View>
