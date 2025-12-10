@@ -72,13 +72,7 @@ export const PersonaColors = {
     flower: "#9A63E8",
     gradient: ["#9A63E8", "#B084F0"] as const,
   },
-  partner: {
-    primary: "#7EC8E3",    // Light blue (from website)
-    light: "#9ED8ED",
-    dark: "#68B2D0",
-    flower: "#7EC8E3",
-    gradient: ["#7EC8E3", "#9ED8ED"] as const,
-  },
+
 } as const;
 
 // ===================================

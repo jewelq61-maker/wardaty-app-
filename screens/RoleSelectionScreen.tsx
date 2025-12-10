@@ -79,13 +79,13 @@ export default function RoleSelectionScreen({
           <RoleOption
             icon="user"
             title={t("partnerMode", "iAmMainUser")}
-            description={t("onboarding", "selectPersona")}
+            description={t("partnerMode", "mainUserDesc")}
             onPress={handleSelectMainUser}
           />
           <RoleOption
             icon="users"
             title={t("partnerMode", "iAmPartner")}
-            description={t("partnerMode", "enterPartnerCode")}
+            description={t("partnerMode", "partnerDesc")}
             onPress={handleSelectPartner}
           />
         </View>

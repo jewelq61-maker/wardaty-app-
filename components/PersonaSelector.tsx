@@ -22,16 +22,14 @@ const personaImages: Record<Persona, ImageSource> = {
   single: require("@/assets/images/icon-single-pink.png"),
   married: require("@/assets/images/icon-married-coral.png"),
   mother: require("@/assets/images/icon-mother-purple.png"),
-  partner: require("@/assets/images/icon-partner-blue.png"),
 };
 
-const personaIds: Persona[] = ["single", "married", "mother", "partner"];
+const personaIds: Persona[] = ["single", "married", "mother"];
 
 const personaTranslationKeys: Record<Persona, { title: string; desc: string }> = {
   single: { title: "single", desc: "singleDesc" },
   married: { title: "married", desc: "marriedDesc" },
   mother: { title: "mother", desc: "motherDesc" },
-  partner: { title: "partner", desc: "partnerDesc" },
 };
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);

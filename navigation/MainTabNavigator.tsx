@@ -48,9 +48,11 @@ function CustomTabBar({ state, descriptors, navigation }: CustomTabBarProps) {
   const insets = useSafeAreaInsets();
   const { triggerFAB } = useFAB();
   const { t } = useLanguage();
-  const { settings } = useApp();
+  const { data } = useApp();
 
-  const personaColor = getPersonaPrimary(settings.persona || "single");
+  // Safe default if data not loaded yet
+  const persona = data?.settings?.persona || "single";
+  const personaColor = getPersonaPrimary(persona);
   const inactiveColor = "rgba(255, 255, 255, 0.5)";
 
   const TAB_BAR_HEIGHT = Layout.bottomNavHeight;
