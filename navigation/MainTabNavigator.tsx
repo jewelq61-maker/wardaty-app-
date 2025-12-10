@@ -14,18 +14,17 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { useApp } from "@/lib/AppContext";
 import { useFAB } from "@/contexts/FABContext";
 import {
-  DarkBackgrounds,
-  NeutralColors,
-  getPersonaPrimary,
-} from "@/constants/colors";
-import {
+  DarkTheme,
+  PersonaColors,
   Spacing,
   BorderRadius,
   Typography,
   IconSizes,
   Layout,
-  getGlowShadow,
-} from "@/constants/design-tokens";
+  Glass,
+  getPersonaPrimary,
+  getPersonaGlow,
+} from "@/constants/theme";
 
 export type MainTabParamList = {
   HomeTab: undefined;
@@ -178,7 +177,7 @@ function CustomTabBar({ state, descriptors, navigation }: CustomTabBarProps) {
         accessibilityRole="button"
         accessibilityLabel="Quick Add"
       >
-        <Feather name="plus" size={28} color={NeutralColors.white} />
+        <Feather name="plus" size={28} color={DarkTheme.text.primary} />
       </Pressable>
     </View>
   );
@@ -207,7 +206,7 @@ function CustomTabBar({ state, descriptors, navigation }: CustomTabBarProps) {
         <View
           style={[
             StyleSheet.absoluteFill,
-            { backgroundColor: "rgba(26, 19, 48, 0.95)" },
+            { backgroundColor: DarkTheme.background.elevated },
           ]}
         />
       )}
@@ -216,7 +215,7 @@ function CustomTabBar({ state, descriptors, navigation }: CustomTabBarProps) {
       <View
         style={[
           styles.topBorder,
-          { backgroundColor: "rgba(255, 255, 255, 0.1)" },
+          { backgroundColor: DarkTheme.border.subtle },
         ]}
       />
 

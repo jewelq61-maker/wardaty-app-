@@ -1,32 +1,77 @@
-import { Platform } from "react-native";
+// ===================================
+// WARDATY UNIFIED THEME SYSTEM
+// Dark-first design with glassmorphism
+// ===================================
 
-export const BrandColors = {
-  violet: {
-    main: "#9C27B0",
-    light: "#BA68C8",
-    dark: "#7B1FA2",
-    soft: "rgba(156, 39, 176, 0.15)",
+import { Platform } from "react-native";
+import { Persona } from "@/lib/types";
+
+// ===================================
+// 1) DARK THEME COLORS (Global - Default)
+// ===================================
+
+export const DarkTheme = {
+  // Backgrounds
+  background: {
+    root: "#0F0820",      // Darkest - main background
+    elevated: "#1A1330",  // Slightly elevated surfaces
+    card: "#251B40",      // Cards and containers
   },
-  coral: {
-    main: "#E91E63",
-    light: "#F06292",
-    dark: "#C2185B",
-    soft: "rgba(233, 30, 99, 0.15)",
+  
+  // Text
+  text: {
+    primary: "#FFFFFF",
+    secondary: "rgba(255, 255, 255, 0.7)",
+    tertiary: "rgba(255, 255, 255, 0.5)",
+    disabled: "rgba(255, 255, 255, 0.3)",
   },
-  // Apple Health inspired colors
-  pink: {
-    main: "#E91E63",
-    light: "#FF4081",
-    dark: "#C2185B",
-    soft: "rgba(233, 30, 99, 0.15)",
+  
+  // Borders
+  border: {
+    subtle: "rgba(255, 255, 255, 0.1)",
+    default: "rgba(255, 255, 255, 0.2)",
+    strong: "rgba(255, 255, 255, 0.3)",
   },
-  purple: {
-    main: "#9C27B0",
-    light: "#BA68C8",
-    dark: "#7B1FA2",
-    soft: "rgba(156, 39, 176, 0.15)",
+  
+  // Overlays
+  overlay: {
+    light: "rgba(0, 0, 0, 0.3)",
+    medium: "rgba(0, 0, 0, 0.5)",
+    heavy: "rgba(0, 0, 0, 0.7)",
   },
-};
+} as const;
+
+// ===================================
+// 2) PERSONA COLORS (Accents Only)
+// ===================================
+
+export const PersonaColors = {
+  single: {
+    primary: "#FF5FA8",
+    light: "#FF8FC4",
+    dark: "#E54D96",
+    glow: "rgba(255, 95, 168, 0.4)",
+    gradient: ["#9A63E8", "#FF5FA8"] as const,
+  },
+  married: {
+    primary: "#FF7C7C",
+    light: "#FF9E9E",
+    dark: "#E66666",
+    glow: "rgba(255, 124, 124, 0.4)",
+    gradient: ["#9A63E8", "#FF7C7C"] as const,
+  },
+  mother: {
+    primary: "#9A63E8",
+    light: "#B084F0",
+    dark: "#8450D9",
+    glow: "rgba(154, 99, 232, 0.4)",
+    gradient: ["#9A63E8", "#B084F0"] as const,
+  },
+} as const;
+
+// ===================================
+// 3) CYCLE COLORS
+// ===================================
 
 export const CycleColors = {
   period: "#FF3860",
@@ -42,187 +87,29 @@ export const CycleColors = {
   follicular: "#4CAF50",
   luteal: "#FF9800",
   lutealLight: "#FFCCAA",
+} as const;
+
+// ===================================
+// 4) GLASS EFFECTS
+// ===================================
+
+export const Glass = {
+  blur: 40,
+  tint: "rgba(37, 27, 64, 0.7)",  // card color with opacity
+  border: "rgba(255, 255, 255, 0.1)",
+  opacity: 0.8,
+} as const;
+
+export const GlassEffect = {
+  blur: 40,
+  opacity: 0.8,
+  borderWidth: 0.5,
+  tint: "dark" as const,
 };
 
-export const LightModePhaseColors = {
-  period: "#FF8FB5",
-  fertile: "#D4B9FF",
-  ovulation: "#C67BFF",
-  luteal: "#FFCCAA",
-  qadha: "#A5F3C6",
-  follicular: "#A5F3C6",
-};
-
-export const LightModeRingGradient = {
-  start: "#C8B8FF",
-  end: "#FFB7D6",
-};
-
-export const PersonaAccents = {
-  single: {
-    main: "#FF5FA8",
-    light: "#FF5FA8",
-    dark: "#FF5FA8",
-    soft: "rgba(255, 95, 168, 0.15)",
-    gradient: ["#8C64F0", "#FF5FA8"] as const,
-  },
-  partner: {
-    main: "#7EC8E3",
-    light: "#7EC8E3",
-    dark: "#7EC8E3",
-    soft: "rgba(126, 200, 227, 0.15)",
-    gradient: ["#8C64F0", "#7EC8E3"] as const,
-  },
-  married: {
-    main: "#FF7C7C",
-    light: "#FF7C7C",
-    dark: "#FF7C7C",
-    soft: "rgba(255, 124, 124, 0.15)",
-    gradient: ["#8C64F0", "#FF7C7C"] as const,
-  },
-  mother: {
-    main: "#9A63E8",
-    light: "#9A63E8",
-    dark: "#9A63E8",
-    soft: "rgba(154, 99, 232, 0.15)",
-    gradient: ["#8C64F0", "#9A63E8"] as const,
-  },
-};
-
-export const PremiumDark = {
-  card: "#1C1C1E", // Apple-style dark gray card
-  cardBlur: 40,
-  cardBorderGlow: "rgba(140, 100, 240, 0.25)",
-  cardShadow: "rgba(0, 0, 0, 0.5)",
-  cardRadius: 24,
-};
-
-export const Colors = {
-  light: {
-    text: "#1D1D1F",
-    textSecondary: "#666666",
-    textMuted: "#999999",
-    buttonText: "#FFFFFF",
-    tabIconDefault: "#8E8E93",
-    tabIconSelected: BrandColors.coral.main,
-    link: BrandColors.violet.main,
-    backgroundRoot: "#F5F5F7", // Apple-style light gray background
-    backgroundDefault: "#FFFFFF",
-    backgroundSecondary: "#F2F2F7",
-    backgroundTertiary: "#E5E5EA",
-    backgroundElevated: "#FFFFFF",
-    backgroundGlass: "rgba(255, 255, 255, 0.8)",
-    primary: BrandColors.violet.main,
-    primaryLight: BrandColors.violet.light,
-    primaryDark: BrandColors.violet.dark,
-    primarySoft: BrandColors.violet.soft,
-    accent: BrandColors.coral.main,
-    accentLight: BrandColors.coral.light,
-    accentDark: BrandColors.coral.dark,
-    accentSoft: BrandColors.coral.soft,
-    secondary: "#BA68C8",
-    secondaryLight: "#CE93D8",
-    secondaryDark: "#AB47BC",
-    period: CycleColors.period,
-    periodLight: CycleColors.periodLight,
-    fertile: CycleColors.fertile,
-    fertileLight: CycleColors.fertileLight,
-    normal: CycleColors.normal,
-    normalLight: CycleColors.normalLight,
-    ovulation: CycleColors.ovulation,
-    follicular: CycleColors.follicular,
-    luteal: CycleColors.luteal,
-    qadha: CycleColors.qadha,
-    warning: "#FF9500",
-    success: "#34C759",
-    error: "#FF3860",
-    info: "#5AC8FA",
-    border: "rgba(0, 0, 0, 0.1)",
-    cardBorder: "rgba(0, 0, 0, 0.05)",
-    glassBackground: "rgba(255, 255, 255, 0.85)",
-    glassBorder: "rgba(0, 0, 0, 0.1)",
-    glowPrimary: "rgba(140, 100, 240, 0.2)",
-    glowAccent: "rgba(255, 107, 157, 0.2)",
-    overlay: "rgba(0, 0, 0, 0.4)",
-  },
-  dark: {
-    text: "#FFFFFF",
-    textSecondary: "#EBEBF5",
-    textMuted: "#8E8E93",
-    buttonText: "#FFFFFF",
-    tabIconDefault: "#A0A0A8",
-    tabIconSelected: BrandColors.coral.main,
-    link: BrandColors.violet.light,
-    backgroundRoot: "#000000", // OLED Black
-    backgroundDefault: "#000000",
-    backgroundSecondary: "#1C1C1E",
-    backgroundTertiary: "#2C2C2E",
-    backgroundElevated: "#1C1C1E",
-    backgroundGlass: "rgba(28, 28, 30, 0.8)",
-    primary: BrandColors.violet.main,
-    primaryLight: BrandColors.violet.light,
-    primaryDark: BrandColors.violet.dark,
-    primarySoft: "rgba(140, 100, 240, 0.2)",
-    accent: BrandColors.coral.main,
-    accentLight: BrandColors.coral.light,
-    accentDark: BrandColors.coral.dark,
-    accentSoft: "rgba(255, 107, 157, 0.2)",
-    secondary: "#BA68C8",
-    secondaryLight: "#CE93D8",
-    secondaryDark: "#AB47BC",
-    period: CycleColors.period,
-    periodLight: CycleColors.periodLight,
-    fertile: CycleColors.fertile,
-    fertileLight: CycleColors.fertileLight,
-    normal: CycleColors.normal,
-    normalLight: CycleColors.normalLight,
-    ovulation: CycleColors.ovulation,
-    follicular: CycleColors.follicular,
-    luteal: CycleColors.luteal,
-    qadha: CycleColors.qadha,
-    warning: "#FF9F0A",
-    success: "#30D158",
-    error: "#FF453A",
-    info: "#64D2FF",
-    border: "rgba(255, 255, 255, 0.15)",
-    cardBorder: "rgba(255, 255, 255, 0.1)",
-    glassBackground: "rgba(28, 28, 30, 0.8)",
-    glassBorder: "rgba(255, 255, 255, 0.15)",
-    glowPrimary: "rgba(140, 100, 240, 0.3)",
-    glowAccent: "rgba(255, 107, 157, 0.3)",
-    overlay: "rgba(0, 0, 0, 0.8)",
-  },
-};
-
-export const Gradients = {
-  primary: [BrandColors.violet.main, BrandColors.coral.main] as const,
-  primarySubtle: [BrandColors.violet.light, BrandColors.coral.light] as const,
-  accent: [BrandColors.coral.main, BrandColors.coral.light] as const,
-  period: ["#FF3860", "#FF6B9D"] as const,
-  fertile: [BrandColors.violet.main, BrandColors.violet.light] as const,
-  normal: ["#FFB5C5", "#FFD4E0"] as const,
-  qadha: ["#4CAF50", "#81C784"] as const,
-  background: ["#000000", "#1C1C1E"] as const,
-  backgroundRadial: ["#1C1C1E", "#000000"] as const,
-  card: ["rgba(140, 100, 240, 0.12)", "rgba(255, 107, 157, 0.08)"] as const,
-  cardGlow: ["rgba(140, 100, 240, 0.2)", "rgba(255, 107, 157, 0.15)"] as const,
-  cardBorder: [BrandColors.violet.main, BrandColors.coral.main] as const,
-  fab: [BrandColors.coral.main, BrandColors.coral.light] as const,
-  glass: ["rgba(28, 28, 30, 0.9)", "rgba(28, 28, 30, 0.7)"] as const,
-  logo: {
-    single: [BrandColors.violet.main, "#FF5FA8"] as const,
-    partner: [BrandColors.violet.main, "#7EC8E3"] as const,
-    married: [BrandColors.violet.main, "#FF7C7C"] as const,
-    mother: [BrandColors.violet.main, "#9A63E8"] as const,
-  },
-  phasePill: {
-    period: ["#FF3860", "#FF6B9D"] as const,
-    fertile: ["#8C64F0", "#A684F5"] as const,
-    ovulation: ["#BA68C8", "#CE93D8"] as const,
-    follicular: ["#4CAF50", "#81C784"] as const,
-    luteal: ["#FF9800", "#FFB74D"] as const,
-  },
-};
+// ===================================
+// 5) SPACING SYSTEM
+// ===================================
 
 export const Spacing = {
   xs: 4,
@@ -236,19 +123,33 @@ export const Spacing = {
   inputHeight: 50,
   buttonHeight: 52,
   fabSize: 64,
-  tabBarHeight: 60,
-};
+  tabBarHeight: 72,
+} as const;
+
+// ===================================
+// 6) BORDER RADIUS
+// ===================================
 
 export const BorderRadius = {
   xs: 8,
   small: 12,
   medium: 16,
-  large: 24,
-  xlarge: 32,
+  large: 20,
+  xlarge: 24,
   full: 9999,
-};
+} as const;
+
+// ===================================
+// 7) TYPOGRAPHY
+// ===================================
 
 export const Typography = {
+  hero: {
+    fontSize: 48,
+    fontWeight: "700" as const,
+    lineHeight: 56,
+    fontFamily: "Tajawal-Bold",
+  },
   cycleDayNumber: {
     fontSize: 64,
     fontWeight: "700" as const,
@@ -297,6 +198,12 @@ export const Typography = {
     letterSpacing: 0,
     fontFamily: "Tajawal-Regular",
   },
+  bodyBold: {
+    fontSize: 17,
+    fontWeight: "600" as const,
+    letterSpacing: 0,
+    fontFamily: "Tajawal-Bold",
+  },
   callout: {
     fontSize: 16,
     fontWeight: "400" as const,
@@ -321,73 +228,142 @@ export const Typography = {
     letterSpacing: 0,
     fontFamily: "Tajawal-Medium",
   },
-};
+} as const;
+
+// ===================================
+// 8) SHADOWS & GLOWS
+// ===================================
 
 export const Shadows = {
   card: {
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.3,
     shadowRadius: 8,
-    elevation: 2,
+    elevation: 4,
   },
   cardSubtle: {
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.2,
     shadowRadius: 4,
-    elevation: 1,
+    elevation: 2,
   },
   cardHover: {
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
+    shadowOpacity: 0.4,
     shadowRadius: 12,
-    elevation: 4,
+    elevation: 6,
   },
   glow: {
-    shadowColor: BrandColors.violet.main,
+    shadowColor: "#9A63E8",
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 5,
+    shadowOpacity: 0.6,
+    shadowRadius: 12,
+    elevation: 8,
   },
   glowAccent: {
-    shadowColor: BrandColors.coral.main,
+    shadowColor: "#FF5FA8",
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 5,
+    shadowOpacity: 0.6,
+    shadowRadius: 12,
+    elevation: 8,
   },
   fab: {
-    shadowColor: BrandColors.coral.main,
+    shadowColor: "#FF5FA8",
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 6,
+    shadowOpacity: 0.5,
+    shadowRadius: 12,
+    elevation: 8,
   },
   floating: {
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.3,
     shadowRadius: 16,
     elevation: 10,
   },
   cycleRing: {
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.2,
     shadowRadius: 12,
     elevation: 4,
   },
   glass: {
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.2,
     shadowRadius: 10,
-    elevation: 2,
+    elevation: 4,
   },
-};
+} as const;
+
+export function getPersonaGlow(persona: Persona) {
+  return {
+    shadowColor: PersonaColors[persona].primary,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.6,
+    shadowRadius: 12,
+    elevation: 8,
+  };
+}
+
+// ===================================
+// 9) ICON SIZES
+// ===================================
+
+export const IconSizes = {
+  xs: 16,
+  sm: 20,
+  md: 24,
+  lg: 32,
+  xl: 40,
+  xxl: 48,
+} as const;
+
+// ===================================
+// 10) LAYOUT CONSTANTS
+// ===================================
+
+export const Layout = {
+  screenPadding: Spacing.xl,
+  cardPadding: Spacing.lg,
+  sectionSpacing: Spacing.xxl,
+  bottomNavHeight: 72,
+  fabSize: 56,
+} as const;
+
+// ===================================
+// 11) GRADIENTS
+// ===================================
+
+export const Gradients = {
+  primary: ["#9A63E8", "#FF5FA8"] as const,
+  primarySubtle: ["#B084F0", "#FF8FC4"] as const,
+  accent: ["#FF5FA8", "#FF8FC4"] as const,
+  period: ["#FF3860", "#FF6B9D"] as const,
+  fertile: ["#8C64F0", "#A684F5"] as const,
+  normal: ["#FFB5C5", "#FFD4E0"] as const,
+  qadha: ["#4CAF50", "#81C784"] as const,
+  background: ["#0F0820", "#1A1330"] as const,
+  card: ["rgba(154, 99, 232, 0.12)", "rgba(255, 95, 168, 0.08)"] as const,
+  cardGlow: ["rgba(154, 99, 232, 0.2)", "rgba(255, 95, 168, 0.15)"] as const,
+  fab: ["#FF5FA8", "#FF8FC4"] as const,
+  glass: ["rgba(37, 27, 64, 0.9)", "rgba(37, 27, 64, 0.7)"] as const,
+  phasePill: {
+    period: ["#FF3860", "#FF6B9D"] as const,
+    fertile: ["#8C64F0", "#A684F5"] as const,
+    ovulation: ["#BA68C8", "#CE93D8"] as const,
+    follicular: ["#4CAF50", "#81C784"] as const,
+    luteal: ["#FF9800", "#FFB74D"] as const,
+  },
+} as const;
+
+// ===================================
+// 12) ANIMATIONS
+// ===================================
 
 export const Animations = {
   spring: {
@@ -427,14 +403,35 @@ export const Animations = {
     delay: 100,
     duration: 400,
   },
-};
+} as const;
 
-export const GlassEffect = {
-  blur: 20,
-  opacity: 0.8,
-  borderWidth: 0.5,
-  tint: "light",
-};
+// ===================================
+// 13) HELPER FUNCTIONS
+// ===================================
+
+export function getPersonaPrimary(persona: Persona): string {
+  return PersonaColors[persona].primary;
+}
+
+export function getPersonaLight(persona: Persona): string {
+  return PersonaColors[persona].light;
+}
+
+export function getPersonaDark(persona: Persona): string {
+  return PersonaColors[persona].dark;
+}
+
+export function getPersonaGlowColor(persona: Persona): string {
+  return PersonaColors[persona].glow;
+}
+
+export function getPersonaGradient(persona: Persona): readonly [string, string] {
+  return PersonaColors[persona].gradient;
+}
+
+// ===================================
+// 14) FONTS
+// ===================================
 
 export const Fonts = Platform.select({
   ios: {
@@ -456,3 +453,96 @@ export const Fonts = Platform.select({
     mono: "SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
   },
 });
+
+// ===================================
+// 15) LEGACY SUPPORT (for gradual migration)
+// ===================================
+
+export const Colors = {
+  dark: {
+    text: DarkTheme.text.primary,
+    textSecondary: DarkTheme.text.secondary,
+    textMuted: DarkTheme.text.tertiary,
+    buttonText: DarkTheme.text.primary,
+    tabIconDefault: DarkTheme.text.tertiary,
+    tabIconSelected: PersonaColors.single.primary,
+    link: PersonaColors.mother.primary,
+    backgroundRoot: DarkTheme.background.root,
+    backgroundDefault: DarkTheme.background.root,
+    backgroundSecondary: DarkTheme.background.elevated,
+    backgroundTertiary: DarkTheme.background.card,
+    backgroundElevated: DarkTheme.background.elevated,
+    backgroundGlass: Glass.tint,
+    primary: PersonaColors.mother.primary,
+    primaryLight: PersonaColors.mother.light,
+    primaryDark: PersonaColors.mother.dark,
+    primarySoft: PersonaColors.mother.glow,
+    accent: PersonaColors.single.primary,
+    accentLight: PersonaColors.single.light,
+    accentDark: PersonaColors.single.dark,
+    accentSoft: PersonaColors.single.glow,
+    secondary: PersonaColors.mother.primary,
+    secondaryLight: PersonaColors.mother.light,
+    secondaryDark: PersonaColors.mother.dark,
+    period: CycleColors.period,
+    periodLight: CycleColors.periodLight,
+    fertile: CycleColors.fertile,
+    fertileLight: CycleColors.fertileLight,
+    normal: CycleColors.normal,
+    normalLight: CycleColors.normalLight,
+    ovulation: CycleColors.ovulation,
+    follicular: CycleColors.follicular,
+    luteal: CycleColors.luteal,
+    qadha: CycleColors.qadha,
+    warning: "#FF9F0A",
+    success: "#30D158",
+    error: "#FF453A",
+    info: "#64D2FF",
+    border: DarkTheme.border.default,
+    cardBorder: DarkTheme.border.subtle,
+    glassBackground: Glass.tint,
+    glassBorder: Glass.border,
+    glowPrimary: PersonaColors.mother.glow,
+    glowAccent: PersonaColors.single.glow,
+    overlay: DarkTheme.overlay.medium,
+  },
+};
+
+// Persona Accents (legacy)
+export const PersonaAccents = PersonaColors;
+
+// Brand Colors (legacy)
+export const BrandColors = {
+  violet: {
+    main: PersonaColors.mother.primary,
+    light: PersonaColors.mother.light,
+    dark: PersonaColors.mother.dark,
+    soft: PersonaColors.mother.glow,
+  },
+  coral: {
+    main: PersonaColors.single.primary,
+    light: PersonaColors.single.light,
+    dark: PersonaColors.single.dark,
+    soft: PersonaColors.single.glow,
+  },
+  pink: {
+    main: PersonaColors.single.primary,
+    light: PersonaColors.single.light,
+    dark: PersonaColors.single.dark,
+    soft: PersonaColors.single.glow,
+  },
+  purple: {
+    main: PersonaColors.mother.primary,
+    light: PersonaColors.mother.light,
+    dark: PersonaColors.mother.dark,
+    soft: PersonaColors.mother.glow,
+  },
+};
+
+export const PremiumDark = {
+  card: DarkTheme.background.card,
+  cardBlur: Glass.blur,
+  cardBorderGlow: PersonaColors.mother.glow,
+  cardShadow: "rgba(0, 0, 0, 0.5)",
+  cardRadius: BorderRadius.large,
+};
