@@ -10,15 +10,22 @@ import HomeStackNavigator from "@/navigation/HomeStackNavigator";
 import CalendarStackNavigator from "@/navigation/CalendarStackNavigator";
 import BeautyStackNavigator from "@/navigation/BeautyStackNavigator";
 import ProfileStackNavigator from "@/navigation/ProfileStackNavigator";
-import { AppIcon } from "@/components/AppIcon";
-import { useThemePersona } from "@/lib/ThemePersonaContext";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useApp } from "@/lib/AppContext";
 import { useFAB } from "@/contexts/FABContext";
+import {
+  DarkBackgrounds,
+  NeutralColors,
+  getPersonaPrimary,
+} from "@/constants/colors";
 import {
   Spacing,
   BorderRadius,
   Typography,
-} from "@/constants/theme";
+  IconSizes,
+  Layout,
+  getGlowShadow,
+} from "@/constants/design-tokens";
 
 export type MainTabParamList = {
   HomeTab: undefined;
@@ -29,7 +36,7 @@ export type MainTabParamList = {
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
-const FAB_SIZE = 64;
+const FAB_SIZE = 56;
 
 interface CustomTabBarProps {
   state: any;
@@ -38,17 +45,16 @@ interface CustomTabBarProps {
 }
 
 function CustomTabBar({ state, descriptors, navigation }: CustomTabBarProps) {
-  const { theme, isDark, persona } = useThemePersona();
   const insets = useSafeAreaInsets();
   const { triggerFAB } = useFAB();
   const { t } = useLanguage();
+  const { settings } = useApp();
 
-  const TAB_BAR_HEIGHT = Spacing.tabBarHeight + 16;
+  const personaColor = getPersonaPrimary(settings.persona || "single");
+  const inactiveColor = "rgba(255, 255, 255, 0.5)";
+
+  const TAB_BAR_HEIGHT = Layout.bottomNavHeight;
   const bottomPadding = Platform.OS === "ios" ? insets.bottom : Spacing.sm;
-
-  const personaAccent = theme.colors.personaAccent;
-  const personaAccentSoft = theme.colors.personaAccentSoft;
-  const inactiveColor = isDark ? "rgba(160, 160, 168, 0.7)" : "rgba(142, 142, 147, 0.8)";
 
   const getCurrentTabName = () => {
     const currentRoute = state.routes[state.index];
@@ -76,6 +82,21 @@ function CustomTabBar({ state, descriptors, navigation }: CustomTabBarProps) {
     }
   };
 
+  const getIconName = (routeName: string): any => {
+    switch (routeName) {
+      case "HomeTab":
+        return "home";
+      case "CalendarTab":
+        return "calendar";
+      case "BeautyTab":
+        return "heart";
+      case "ProfileTab":
+        return "user";
+      default:
+        return "circle";
+    }
+  };
+
   const renderTabItem = (route: any, index: number) => {
     const { options } = descriptors[route.key];
     const isFocused = state.index === index;
@@ -94,7 +115,7 @@ function CustomTabBar({ state, descriptors, navigation }: CustomTabBarProps) {
     };
 
     const iconName = getIconName(route.name);
-    const iconColor = isFocused ? personaAccent : inactiveColor;
+    const iconColor = isFocused ? personaColor : inactiveColor;
     const label = getTabLabel(route.name);
 
     return (
@@ -107,11 +128,10 @@ function CustomTabBar({ state, descriptors, navigation }: CustomTabBarProps) {
         accessibilityLabel={options.tabBarAccessibilityLabel}
       >
         <View style={styles.iconContainer}>
-          <AppIcon
+          <Feather
             name={iconName}
-            size={24}
+            size={IconSizes.base}
             color={iconColor}
-            weight={isFocused ? "bold" : "regular"}
           />
         </View>
         <Text
@@ -132,26 +152,31 @@ function CustomTabBar({ state, descriptors, navigation }: CustomTabBarProps) {
 
   const renderFAB = () => (
     <View style={styles.fabContainer}>
+      {/* Glow effect */}
       <View
         style={[
           styles.fabGlow,
-          { backgroundColor: personaAccent, opacity: 0.25 },
+          {
+            backgroundColor: personaColor,
+            opacity: 0.3,
+          },
         ]}
       />
+      {/* FAB Button */}
       <Pressable
         onPress={handleFABPress}
         style={({ pressed }) => [
           styles.fabButton,
           {
-            backgroundColor: personaAccent,
-            shadowColor: personaAccent,
+            backgroundColor: personaColor,
             transform: [{ scale: pressed ? 0.94 : 1 }],
           },
+          getGlowShadow(personaColor, "md"),
         ]}
         accessibilityRole="button"
         accessibilityLabel="Quick Add"
       >
-        <Feather name="plus" size={28} color="#FFFFFF" />
+        <Feather name="plus" size={28} color={NeutralColors.white} />
       </Pressable>
     </View>
   );
@@ -169,25 +194,31 @@ function CustomTabBar({ state, descriptors, navigation }: CustomTabBarProps) {
         },
       ]}
     >
+      {/* Background with blur */}
       {Platform.OS === "ios" ? (
         <BlurView
           intensity={80}
-          tint={isDark ? "dark" : "light"}
+          tint="dark"
           style={StyleSheet.absoluteFill}
         />
       ) : (
         <View
           style={[
             StyleSheet.absoluteFill,
-            { backgroundColor: isDark ? "rgba(28, 28, 30, 0.95)" : "rgba(255, 255, 255, 0.95)" },
+            { backgroundColor: "rgba(26, 19, 48, 0.95)" },
           ]}
         />
       )}
       
+      {/* Top border */}
       <View
-        style={[styles.glassBorder, { backgroundColor: theme.colors.glassBorder }]}
+        style={[
+          styles.topBorder,
+          { backgroundColor: "rgba(255, 255, 255, 0.1)" },
+        ]}
       />
 
+      {/* Tab bar content */}
       <View style={styles.tabBarContent}>
         {leftTabs.map((route: any, index: number) =>
           renderTabItem(route, index)
@@ -199,21 +230,6 @@ function CustomTabBar({ state, descriptors, navigation }: CustomTabBarProps) {
       </View>
     </View>
   );
-}
-
-function getIconName(routeName: string): string {
-  switch (routeName) {
-    case "HomeTab":
-      return "house";
-    case "CalendarTab":
-      return "calendar";
-    case "BeautyTab":
-      return "sparkles";
-    case "ProfileTab":
-      return "person.crop.circle";
-    default:
-      return "circle";
-  }
 }
 
 export default function MainTabNavigator() {
@@ -267,45 +283,44 @@ const styles = StyleSheet.create({
     right: 0,
     backgroundColor: "transparent",
     overflow: "visible",
-    borderTopLeftRadius: 0,
-    borderTopRightRadius: 0,
   },
-  glassBorder: {
+  topBorder: {
     position: "absolute",
     top: 0,
     left: 0,
     right: 0,
-    height: 0.5,
+    height: 1,
   },
   tabBarContent: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-around",
-    paddingHorizontal: Spacing.sm,
+    paddingHorizontal: Spacing.base,
   },
   tabItem: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: Spacing.xs,
-    minHeight: 50,
+    paddingVertical: Spacing.sm,
     gap: 4,
   },
   iconContainer: {
     alignItems: "center",
     justifyContent: "center",
+    marginBottom: 2,
   },
   tabLabel: {
-    fontSize: 10,
-    fontFamily: Typography.caption.fontFamily,
+    fontSize: Typography.caption.fontSize,
+    lineHeight: Typography.caption.lineHeight,
     textAlign: "center",
   },
   fabContainer: {
     flex: 0.8,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: -24,
+    marginTop: -28,
+    position: "relative",
   },
   fabButton: {
     width: FAB_SIZE,
@@ -313,18 +328,14 @@ const styles = StyleSheet.create({
     borderRadius: FAB_SIZE / 2,
     alignItems: "center",
     justifyContent: "center",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 12,
-    elevation: 8,
     zIndex: 2,
   },
   fabGlow: {
     position: "absolute",
-    top: -8,
-    width: FAB_SIZE + 20,
-    height: FAB_SIZE + 20,
-    borderRadius: (FAB_SIZE + 20) / 2,
+    top: -6,
+    width: FAB_SIZE + 16,
+    height: FAB_SIZE + 16,
+    borderRadius: (FAB_SIZE + 16) / 2,
     zIndex: 1,
   },
 });

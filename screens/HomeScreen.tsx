@@ -4,32 +4,88 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
+import { BlurView } from "expo-blur";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 
 import { ThemedText } from "@/components/ThemedText";
-import { useTheme } from "@/hooks/useTheme";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useApp } from "@/lib/AppContext";
+import { useLayout } from "@/lib/ThemePersonaContext";
 import {
   getCurrentCycleDay,
   getDaysUntilNextPeriod,
   getDetailedCyclePhase,
 } from "@/lib/cycle-utils";
-import { BrandColors } from "@/constants/colors";
+import {
+  DarkBackgrounds,
+  PersonaColors,
+  NeutralColors,
+  GlassStyles,
+  getPersonaPrimary,
+} from "@/constants/colors";
+import {
+  Spacing,
+  BorderRadius,
+  Typography,
+  Shadows,
+  IconSizes,
+  Layout,
+} from "@/constants/design-tokens";
 
 const { width } = Dimensions.get("window");
+
+interface QuickAction {
+  id: string;
+  icon: string;
+  titleAr: string;
+  titleEn: string;
+  screen: string;
+}
+
+const quickActions: QuickAction[] = [
+  {
+    id: "beauty",
+    icon: "heart",
+    titleAr: "الجمال",
+    titleEn: "Beauty",
+    screen: "Beauty",
+  },
+  {
+    id: "qadha",
+    icon: "moon",
+    titleAr: "القضاء",
+    titleEn: "Qadha",
+    screen: "Qadha",
+  },
+  {
+    id: "articles",
+    icon: "book-open",
+    titleAr: "المقالات",
+    titleEn: "Articles",
+    screen: "Articles",
+  },
+  {
+    id: "water",
+    icon: "droplet",
+    titleAr: "الماء",
+    titleEn: "Water",
+    screen: "Water",
+  },
+];
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
-  const { theme } = useTheme();
   const { t, language } = useLanguage();
+  const layout = useLayout();
   const { settings, logs } = useApp();
 
   const cycleDay = getCurrentCycleDay(logs, settings);
   const daysUntilPeriod = getDaysUntilNextPeriod(logs, settings);
   const phase = getDetailedCyclePhase(cycleDay, settings);
+
+  const personaColor = getPersonaPrimary(settings.persona || "single");
 
   const getTimeBasedGreeting = () => {
     const hour = new Date().getHours();
@@ -61,19 +117,19 @@ export default function HomeScreen() {
         contentContainerStyle={[
           styles.scrollContent,
           {
-            paddingTop: insets.top + 16,
-            paddingBottom: insets.bottom + 100,
+            paddingTop: insets.top + Spacing.lg,
+            paddingBottom: insets.bottom + Layout.bottomNavHeight + Spacing["2xl"],
           },
         ]}
         showsVerticalScrollIndicator={false}
       >
         {/* Header */}
-        <View style={styles.header}>
-          <View>
-            <ThemedText style={styles.greeting}>
+        <View style={[styles.header, { flexDirection: layout.flexDirection }]}>
+          <View style={{ flex: 1 }}>
+            <ThemedText style={[styles.greeting, { textAlign: layout.textAlign }]}>
               {greeting}
             </ThemedText>
-            <ThemedText style={styles.userName}>
+            <ThemedText style={[styles.userName, { textAlign: layout.textAlign }]}>
               {userName}
             </ThemedText>
           </View>
@@ -85,31 +141,30 @@ export default function HomeScreen() {
               { opacity: pressed ? 0.7 : 1 },
             ]}
           >
-            <Feather name="bell" size={22} color={BrandColors.violet.main} />
+            <Feather name="bell" size={IconSizes.base} color={personaColor} />
           </Pressable>
         </View>
 
         {/* Cycle Card */}
         <Animated.View
           entering={FadeInDown.delay(100).duration(600)}
-          style={styles.cardContainer}
         >
           <Pressable
             style={styles.cycleCard}
             onPress={() => handleCardPress("Calendar")}
           >
             <LinearGradient
-              colors={[BrandColors.violet.main, BrandColors.coral.main]}
+              colors={PersonaColors[settings.persona || "single"].gradient}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.cycleGradient}
             >
-              <View style={styles.cycleContent}>
+              <View style={[styles.cycleContent, { flexDirection: layout.flexDirection }]}>
                 <View style={styles.cycleInfo}>
-                  <ThemedText style={styles.cycleTitle}>
+                  <ThemedText style={[styles.cycleTitle, { textAlign: layout.textAlign }]}>
                     {language === "ar" ? "اليوم" : "Day"} {cycleDay}
                   </ThemedText>
-                  <ThemedText style={styles.cycleSubtitle}>
+                  <ThemedText style={[styles.cycleSubtitle, { textAlign: layout.textAlign }]}>
                     {phase.name}
                   </ThemedText>
                 </View>
@@ -127,165 +182,66 @@ export default function HomeScreen() {
           </Pressable>
         </Animated.View>
 
-        {/* Quick Actions Grid */}
-        <View style={styles.grid}>
-          <Animated.View
-            entering={FadeInDown.delay(200).duration(600)}
-            style={styles.gridItem}
-          >
-            <Pressable
-              style={styles.actionCard}
-              onPress={() => handleCardPress("Pregnancy")}
-            >
-              <View style={styles.actionIconContainer}>
-                <ThemedText style={styles.actionIcon}>🤰</ThemedText>
-              </View>
-              <ThemedText style={styles.actionTitle}>
-                {language === "ar" ? "الحمل" : "Pregnancy"}
-              </ThemedText>
-              <ThemedText style={styles.actionDescription}>
-                {language === "ar" ? "متابعة الحمل" : "Track pregnancy"}
-              </ThemedText>
-            </Pressable>
-          </Animated.View>
+        {/* Quick Actions */}
+        <View style={styles.section}>
+          <ThemedText style={[styles.sectionTitle, { textAlign: layout.textAlign }]}>
+            {language === "ar" ? "الإجراءات السريعة" : "Quick Actions"}
+          </ThemedText>
 
-          <Animated.View
-            entering={FadeInDown.delay(250).duration(600)}
-            style={styles.gridItem}
-          >
-            <Pressable
-              style={styles.actionCard}
-              onPress={() => handleCardPress("Wellness")}
-            >
-              <View style={styles.actionIconContainer}>
-                <ThemedText style={styles.actionIcon}>💪</ThemedText>
-              </View>
-              <ThemedText style={styles.actionTitle}>
-                {language === "ar" ? "الصحة" : "Wellness"}
-              </ThemedText>
-              <ThemedText style={styles.actionDescription}>
-                {language === "ar" ? "صحتك اليومية" : "Daily wellness"}
-              </ThemedText>
-            </Pressable>
-          </Animated.View>
-
-          <Animated.View
-            entering={FadeInDown.delay(300).duration(600)}
-            style={styles.gridItem}
-          >
-            <Pressable
-              style={styles.actionCard}
-              onPress={() => handleCardPress("Beauty")}
-            >
-              <View style={styles.actionIconContainer}>
-                <ThemedText style={styles.actionIcon}>✨</ThemedText>
-              </View>
-              <ThemedText style={styles.actionTitle}>
-                {language === "ar" ? "الجمال" : "Beauty"}
-              </ThemedText>
-              <ThemedText style={styles.actionDescription}>
-                {language === "ar" ? "روتين العناية" : "Beauty routine"}
-              </ThemedText>
-            </Pressable>
-          </Animated.View>
-
-          <Animated.View
-            entering={FadeInDown.delay(350).duration(600)}
-            style={styles.gridItem}
-          >
-            <Pressable
-              style={styles.actionCard}
-              onPress={() => handleCardPress("Daughters")}
-            >
-              <View style={styles.actionIconContainer}>
-                <ThemedText style={styles.actionIcon}>👧</ThemedText>
-              </View>
-              <ThemedText style={styles.actionTitle}>
-                {language === "ar" ? "البنات" : "Daughters"}
-              </ThemedText>
-              <ThemedText style={styles.actionDescription}>
-                {language === "ar" ? "متابعة البنات" : "Track daughters"}
-              </ThemedText>
-            </Pressable>
-          </Animated.View>
+          <View style={styles.actionsGrid}>
+            {quickActions.map((action, index) => (
+              <Animated.View
+                key={action.id}
+                entering={FadeInDown.delay(200 + index * 50).duration(600)}
+                style={styles.actionItem}
+              >
+                <Pressable
+                  style={styles.actionCard}
+                  onPress={() => handleCardPress(action.screen)}
+                >
+                  <View style={styles.glassCard}>
+                    <View style={[styles.actionIconContainer, { backgroundColor: `${personaColor}20` }]}>
+                      <Feather name={action.icon as any} size={IconSizes.lg} color={personaColor} />
+                    </View>
+                    <ThemedText style={[styles.actionTitle, { textAlign: "center" }]}>
+                      {language === "ar" ? action.titleAr : action.titleEn}
+                    </ThemedText>
+                  </View>
+                </Pressable>
+              </Animated.View>
+            ))}
+          </View>
         </View>
 
         {/* Today's Insights */}
-        <Animated.View
-          entering={FadeInDown.delay(400).duration(600)}
-          style={styles.sectionContainer}
-        >
-          <ThemedText style={styles.sectionTitle}>
-            {language === "ar" ? "نصائح اليوم" : "Today's Insights"}
+        <View style={styles.section}>
+          <ThemedText style={[styles.sectionTitle, { textAlign: layout.textAlign }]}>
+            {language === "ar" ? "رؤى اليوم" : "Today's Insights"}
           </ThemedText>
 
-          <Pressable
-            style={styles.insightCard}
-            onPress={() => handleCardPress("Articles")}
-          >
-            <View style={styles.insightContent}>
-              <View style={styles.insightIconContainer}>
-                <ThemedText style={styles.insightIcon}>💡</ThemedText>
+          <Animated.View entering={FadeInDown.delay(400).duration(600)}>
+            <View style={styles.glassCard}>
+              <View style={[styles.insightHeader, { flexDirection: layout.flexDirection }]}>
+                <View style={[styles.insightIconContainer, { backgroundColor: `${personaColor}20` }]}>
+                  <Feather name="activity" size={IconSizes.base} color={personaColor} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <ThemedText style={[styles.insightTitle, { textAlign: layout.textAlign }]}>
+                    {language === "ar" ? "الطاقة" : "Energy Level"}
+                  </ThemedText>
+                  <ThemedText style={[styles.insightValue, { textAlign: layout.textAlign, color: personaColor }]}>
+                    {language === "ar" ? "متوسطة" : "Moderate"}
+                  </ThemedText>
+                </View>
               </View>
-              <View style={styles.insightText}>
-                <ThemedText style={styles.insightTitle}>
-                  {phase.advice}
-                </ThemedText>
-                <ThemedText style={styles.insightSubtitle}>
-                  {language === "ar" ? "اقرأي المزيد" : "Read more"}
-                </ThemedText>
-              </View>
-              <Feather name="chevron-right" size={20} color={BrandColors.violet.main} />
+              <ThemedText style={[styles.insightDescription, { textAlign: layout.textAlign }]}>
+                {language === "ar" 
+                  ? "مستوى طاقتك متوسط اليوم. حاولي أخذ فترات راحة قصيرة."
+                  : "Your energy level is moderate today. Try taking short breaks."}
+              </ThemedText>
             </View>
-          </Pressable>
-        </Animated.View>
-
-        {/* Stats Card */}
-        <Animated.View
-          entering={FadeInDown.delay(450).duration(600)}
-          style={styles.cardContainer}
-        >
-          <Pressable
-            style={styles.statsCard}
-            onPress={() => handleCardPress("Stats")}
-          >
-            <ThemedText style={styles.statsTitle}>
-              {language === "ar" ? "الإحصائيات" : "Statistics"}
-            </ThemedText>
-            
-            <View style={styles.statsGrid}>
-              <View style={styles.statItem}>
-                <View style={styles.statIconContainer}>
-                  <Feather name="calendar" size={24} color={BrandColors.violet.main} />
-                </View>
-                <ThemedText style={styles.statNumber}>28</ThemedText>
-                <ThemedText style={styles.statLabel}>
-                  {language === "ar" ? "يوم" : "days"}
-                </ThemedText>
-              </View>
-              
-              <View style={styles.statItem}>
-                <View style={styles.statIconContainer}>
-                  <Feather name="clock" size={24} color={BrandColors.coral.main} />
-                </View>
-                <ThemedText style={styles.statNumber}>5</ThemedText>
-                <ThemedText style={styles.statLabel}>
-                  {language === "ar" ? "أيام" : "days"}
-                </ThemedText>
-              </View>
-              
-              <View style={styles.statItem}>
-                <View style={styles.statIconContainer}>
-                  <Feather name="trending-up" size={24} color={BrandColors.violet.main} />
-                </View>
-                <ThemedText style={styles.statNumber}>92%</ThemedText>
-                <ThemedText style={styles.statLabel}>
-                  {language === "ar" ? "دقة" : "accuracy"}
-                </ThemedText>
-              </View>
-            </View>
-          </Pressable>
-        </Animated.View>
+          </Animated.View>
+        </View>
       </ScrollView>
     </View>
   );
@@ -294,58 +250,51 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: DarkBackgrounds.base,
   },
   scrollContent: {
-    paddingHorizontal: 20,
+    paddingHorizontal: Layout.screenPaddingHorizontal,
   },
+
+  // Header
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 32,
-    paddingHorizontal: 4,
+    marginBottom: Spacing.xl,
   },
   greeting: {
-    fontSize: 16,
-    fontWeight: "400",
-    color: "#6B7280",
-    marginBottom: 4,
+    fontSize: Typography.body.fontSize,
+    lineHeight: Typography.body.lineHeight,
+    fontWeight: Typography.body.fontWeight,
+    color: "rgba(255, 255, 255, 0.7)",
+    marginBottom: Spacing.xs,
   },
   userName: {
-    fontSize: 32,
-    fontWeight: "700",
-    color: "#1F2937",
-    letterSpacing: -0.5,
+    fontSize: Typography.h2.fontSize,
+    lineHeight: Typography.h2.lineHeight,
+    fontWeight: Typography.h2.fontWeight,
+    color: NeutralColors.white,
   },
   notificationButton: {
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: "#F9FAFB",
-    justifyContent: "center",
+    backgroundColor: DarkBackgrounds.card,
     alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.1)",
   },
-  cardContainer: {
-    marginBottom: 20,
-  },
+
+  // Cycle Card
   cycleCard: {
-    height: 160,
-    borderRadius: 24,
+    borderRadius: BorderRadius.xl,
     overflow: "hidden",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 4,
+    marginBottom: Spacing.xl,
   },
   cycleGradient: {
-    flex: 1,
-    padding: 24,
+    padding: Spacing.xl,
   },
   cycleContent: {
-    flex: 1,
-    flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
   },
@@ -353,163 +302,114 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   cycleTitle: {
-    fontSize: 32,
-    fontWeight: "700",
-    color: "#FFFFFF",
-    marginBottom: 8,
+    fontSize: Typography.h1.fontSize,
+    lineHeight: Typography.h1.lineHeight,
+    fontWeight: Typography.h1.fontWeight,
+    color: NeutralColors.white,
+    marginBottom: Spacing.xs,
   },
   cycleSubtitle: {
-    fontSize: 16,
-    fontWeight: "400",
+    fontSize: Typography.body.fontSize,
+    lineHeight: Typography.body.lineHeight,
+    fontWeight: Typography.body.fontWeight,
     color: "rgba(255, 255, 255, 0.9)",
   },
   cycleDays: {
     alignItems: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    paddingVertical: Spacing.base,
+    paddingHorizontal: Spacing.lg,
+    borderRadius: BorderRadius.lg,
   },
   cycleDaysNumber: {
-    fontSize: 48,
-    fontWeight: "700",
-    color: "#FFFFFF",
+    fontSize: Typography.h1.fontSize,
+    lineHeight: Typography.h1.lineHeight,
+    fontWeight: Typography.h1.fontWeight,
+    color: NeutralColors.white,
   },
   cycleDaysLabel: {
-    fontSize: 14,
-    fontWeight: "400",
+    fontSize: Typography.caption.fontSize,
+    lineHeight: Typography.caption.lineHeight,
+    fontWeight: Typography.caption.fontWeight,
     color: "rgba(255, 255, 255, 0.9)",
   },
-  grid: {
+
+  // Section
+  section: {
+    marginBottom: Spacing.xl,
+  },
+  sectionTitle: {
+    fontSize: Typography.h3.fontSize,
+    lineHeight: Typography.h3.lineHeight,
+    fontWeight: Typography.h3.fontWeight,
+    color: NeutralColors.white,
+    marginBottom: Spacing.lg,
+  },
+
+  // Quick Actions Grid
+  actionsGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 16,
-    marginBottom: 32,
+    gap: Spacing.base,
   },
-  gridItem: {
-    width: (width - 56) / 2,
+  actionItem: {
+    width: (width - Layout.screenPaddingHorizontal * 2 - Spacing.base) / 2,
   },
   actionCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 20,
-    padding: 24,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
-    elevation: 2,
-    minHeight: 160,
+    width: "100%",
+  },
+  glassCard: {
+    backgroundColor: DarkBackgrounds.card,
+    borderRadius: BorderRadius.xl,
+    padding: Spacing.lg,
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.1)",
+    ...Shadows.dark.md,
   },
   actionIconContainer: {
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: "#F9FAFB",
-    justifyContent: "center",
     alignItems: "center",
-    marginBottom: 16,
-  },
-  actionIcon: {
-    fontSize: 28,
+    justifyContent: "center",
+    marginBottom: Spacing.md,
   },
   actionTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#1F2937",
-    marginBottom: 4,
+    fontSize: Typography.body.fontSize,
+    lineHeight: Typography.body.lineHeight,
+    fontWeight: Typography.body.fontWeight,
+    color: NeutralColors.white,
   },
-  actionDescription: {
-    fontSize: 14,
-    fontWeight: "400",
-    color: "#6B7280",
-  },
-  sectionContainer: {
-    marginBottom: 20,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: "#1F2937",
-    marginBottom: 16,
-    paddingHorizontal: 4,
-  },
-  insightCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 20,
-    padding: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  insightContent: {
-    flexDirection: "row",
+
+  // Insights
+  insightHeader: {
     alignItems: "center",
-    gap: 16,
+    marginBottom: Spacing.md,
+    gap: Spacing.md,
   },
   insightIconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: "#F9FAFB",
-    justifyContent: "center",
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     alignItems: "center",
-  },
-  insightIcon: {
-    fontSize: 24,
-  },
-  insightText: {
-    flex: 1,
+    justifyContent: "center",
   },
   insightTitle: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: "#1F2937",
-    marginBottom: 4,
+    fontSize: Typography.label.fontSize,
+    lineHeight: Typography.label.lineHeight,
+    fontWeight: Typography.label.fontWeight,
+    color: "rgba(255, 255, 255, 0.7)",
+    marginBottom: Spacing.xs,
   },
-  insightSubtitle: {
-    fontSize: 13,
-    fontWeight: "400",
-    color: "#6B7280",
+  insightValue: {
+    fontSize: Typography.h4.fontSize,
+    lineHeight: Typography.h4.lineHeight,
+    fontWeight: Typography.h4.fontWeight,
   },
-  statsCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 24,
-    padding: 24,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  statsTitle: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: "#1F2937",
-    marginBottom: 24,
-  },
-  statsGrid: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-  },
-  statItem: {
-    alignItems: "center",
-  },
-  statIconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: "#F9FAFB",
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  statNumber: {
-    fontSize: 28,
-    fontWeight: "700",
-    color: "#1F2937",
-    marginBottom: 4,
-  },
-  statLabel: {
-    fontSize: 13,
-    fontWeight: "400",
-    color: "#6B7280",
+  insightDescription: {
+    fontSize: Typography.bodySmall.fontSize,
+    lineHeight: Typography.bodySmall.lineHeight,
+    fontWeight: Typography.bodySmall.fontWeight,
+    color: "rgba(255, 255, 255, 0.7)",
   },
 });

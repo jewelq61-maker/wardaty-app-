@@ -1,5 +1,6 @@
 /**
  * WARDATY OFFICIAL COLOR SYSTEM
+ * Based on Wardaty website design (https://wardaty-lp-mh8upk2a.manus.space/)
  * 
  * This file contains ALL official colors used in the Wardaty app.
  * NO inline hex values are allowed anywhere else in the codebase.
@@ -30,59 +31,76 @@ export const BrandColors = {
 // ===================================
 
 export const DarkBackgrounds = {
-  base: "#0F0820",
-  elevated: "#1A1330",
-  card: "#251B40",
+  base: "#0F0820",      // Deepest background
+  elevated: "#1A1330",  // Elevated surfaces
+  card: "#251B40",      // Card backgrounds
 } as const;
 
 // ===================================
-// 3) GRADIENTS
+// 3) LIGHT MODE BACKGROUNDS
 // ===================================
 
-export const Gradients = {
-  main: {
-    colors: ["#8C64F0", "#FF6B9D"] as const,
-    angle: 135,
-  },
-  soft: {
-    colors: ["#A684F5", "#FFB5C5"] as const,
-    angle: 135,
-  },
+export const LightBackgrounds = {
+  base: "#F8F9FA",      // Main background (from website)
+  elevated: "#FFFFFF",  // Elevated surfaces
+  card: "#FFFFFF",      // Card backgrounds
 } as const;
 
 // ===================================
-// 4) PERSONA COLORS (EXACT APP COLORS)
+// 4) PERSONA COLORS (EXACT FROM WEBSITE)
 // ===================================
 
 export const PersonaColors = {
   single: {
-    flower: "#FF6BBD",
-    accentOverlay: "#FF6B9D",
-    secondary: "#A684F5",
-    gradient: ["#A684F5", "#FF6B9D"] as const,
+    primary: "#FF5FA8",    // Bright pink (from website)
+    light: "#FF8FC0",
+    dark: "#E54990",
+    flower: "#FF5FA8",
+    gradient: ["#FF5FA8", "#FF8FC0"] as const,
   },
   married: {
-    flower: "#FF8F8F",
-    accentOverlay: "#FF6B9D",
-    secondary: "#F2C27B", // warm gold
-    gradient: ["#8C64F0", "#F2C27B"] as const,
+    primary: "#FF7C7C",    // Coral/salmon (from website)
+    light: "#FF9E9E",
+    dark: "#E66666",
+    flower: "#FF7C7C",
+    gradient: ["#FF7C7C", "#FF9E9E"] as const,
   },
   mother: {
-    flower: "#A58BFF",
-    accentOverlay: "#34C759",
-    secondary: "#8CD7B1",
-    gradient: ["#8C64F0", "#34C759"] as const,
+    primary: "#9A63E8",    // Purple (from website)
+    light: "#B084F0",
+    dark: "#8450D9",
+    flower: "#9A63E8",
+    gradient: ["#9A63E8", "#B084F0"] as const,
   },
   partner: {
-    flower: "#8CD3F8",
-    accentOverlay: "#FF8FB5",
-    secondary: "#6FB9D8",
-    gradient: ["#8C64F0", "#8CD3F8"] as const,
+    primary: "#7EC8E3",    // Light blue (from website)
+    light: "#9ED8ED",
+    dark: "#68B2D0",
+    flower: "#7EC8E3",
+    gradient: ["#7EC8E3", "#9ED8ED"] as const,
   },
 } as const;
 
 // ===================================
-// 5) CYCLE COLORS
+// 5) GRADIENTS
+// ===================================
+
+export const Gradients = {
+  // Main brand gradient (violet → coral)
+  main: {
+    colors: ["#8C64F0", "#FF6B9D"] as const,
+    angle: 135,
+  },
+  // Soft gradient (light violet → light coral)
+  soft: {
+    colors: ["#A684F5", "#FFB5C5"] as const,
+    angle: 135,
+  },
+  // Persona-specific gradients are in PersonaColors
+} as const;
+
+// ===================================
+// 6) CYCLE COLORS
 // ===================================
 
 export const CycleColors = {
@@ -102,29 +120,7 @@ export const CycleColors = {
 } as const;
 
 // ===================================
-// 6) LIGHT MODE PHASE COLORS
-// ===================================
-
-export const LightModePhaseColors = {
-  period: "#FF8FB5",
-  fertile: "#D4B9FF",
-  ovulation: "#C67BFF",
-  luteal: "#FFCCAA",
-  qadha: "#A5F3C6",
-  follicular: "#A5F3C6",
-} as const;
-
-// ===================================
-// 7) LIGHT MODE RING GRADIENT
-// ===================================
-
-export const LightModeRingGradient = {
-  start: "#C8B8FF",
-  end: "#FFB7D6",
-} as const;
-
-// ===================================
-// 8) SEMANTIC COLORS
+// 7) SEMANTIC COLORS
 // ===================================
 
 export const SemanticColors = {
@@ -135,7 +131,7 @@ export const SemanticColors = {
 } as const;
 
 // ===================================
-// 9) NEUTRAL COLORS
+// 8) NEUTRAL COLORS
 // ===================================
 
 export const NeutralColors = {
@@ -156,18 +152,19 @@ export const NeutralColors = {
 } as const;
 
 // ===================================
-// 10) THEME COLORS (LIGHT & DARK)
+// 9) THEME COLORS (LIGHT & DARK)
 // ===================================
 
 export const LightTheme = {
   // Backgrounds
-  background: NeutralColors.white,
-  backgroundSecondary: NeutralColors.gray[50],
-  backgroundElevated: NeutralColors.white,
-  card: NeutralColors.white,
+  background: LightBackgrounds.base,
+  backgroundSecondary: LightBackgrounds.elevated,
+  backgroundElevated: LightBackgrounds.card,
+  card: LightBackgrounds.card,
+  cardSecondary: NeutralColors.gray[50],
   
   // Text
-  text: NeutralColors.gray[900],
+  text: "#2C3E50",                    // Dark navy (from website)
   textSecondary: NeutralColors.gray[600],
   textTertiary: NeutralColors.gray[400],
   
@@ -181,9 +178,11 @@ export const LightTheme = {
   // Borders & Dividers
   border: NeutralColors.gray[200],
   divider: NeutralColors.gray[100],
+  cardBorder: "rgba(0, 0, 0, 0.04)",
   
   // Shadows
-  shadow: "rgba(0, 0, 0, 0.1)",
+  shadow: "rgba(0, 0, 0, 0.06)",
+  shadowElevated: "rgba(0, 0, 0, 0.12)",
 } as const;
 
 export const DarkTheme = {
@@ -192,6 +191,7 @@ export const DarkTheme = {
   backgroundSecondary: DarkBackgrounds.elevated,
   backgroundElevated: DarkBackgrounds.card,
   card: DarkBackgrounds.card,
+  cardSecondary: "rgba(255, 255, 255, 0.05)",
   
   // Text
   text: NeutralColors.white,
@@ -208,29 +208,63 @@ export const DarkTheme = {
   // Borders & Dividers
   border: "rgba(255, 255, 255, 0.1)",
   divider: "rgba(255, 255, 255, 0.05)",
+  cardBorder: "rgba(255, 255, 255, 0.1)",
   
   // Shadows
   shadow: "rgba(0, 0, 0, 0.3)",
+  shadowElevated: "rgba(0, 0, 0, 0.5)",
 } as const;
 
 // ===================================
-// 11) HELPER FUNCTIONS
+// 10) GLASSMORPHISM STYLES
 // ===================================
+
+export const GlassStyles = {
+  light: {
+    background: "rgba(255, 255, 255, 0.7)",
+    blur: 10,
+    border: "rgba(255, 255, 255, 0.3)",
+    shadow: "rgba(0, 0, 0, 0.1)",
+  },
+  dark: {
+    background: "rgba(37, 27, 64, 0.6)",
+    blur: 20,
+    border: "rgba(255, 255, 255, 0.1)",
+    shadow: "rgba(0, 0, 0, 0.2)",
+  },
+} as const;
+
+// ===================================
+// 11) GLOW EFFECTS (for active states)
+// ===================================
+
+export function getPersonaGlow(persona: keyof typeof PersonaColors, opacity: number = 0.3) {
+  const color = PersonaColors[persona].primary;
+  return `0 0 20px ${color}${Math.round(opacity * 255).toString(16).padStart(2, '0')}`;
+}
+
+export function getBrandGlow(opacity: number = 0.3) {
+  return `0 0 20px ${BrandColors.violet.main}${Math.round(opacity * 255).toString(16).padStart(2, '0')}`;
+}
+
+// ===================================
+// 12) HELPER FUNCTIONS
+// ===================================
+
+export function getPersonaPrimary(persona: keyof typeof PersonaColors) {
+  return PersonaColors[persona].primary;
+}
 
 export function getPersonaGradient(persona: keyof typeof PersonaColors) {
   return PersonaColors[persona].gradient;
 }
 
-export function getPersonaAccent(persona: keyof typeof PersonaColors) {
-  return PersonaColors[persona].accentOverlay;
-}
-
-export function getPersonaSecondary(persona: keyof typeof PersonaColors) {
-  return PersonaColors[persona].secondary;
+export function getPersonaFlower(persona: keyof typeof PersonaColors) {
+  return PersonaColors[persona].flower;
 }
 
 // ===================================
-// 12) TYPE EXPORTS
+// 13) TYPE EXPORTS
 // ===================================
 
 export type Persona = keyof typeof PersonaColors;

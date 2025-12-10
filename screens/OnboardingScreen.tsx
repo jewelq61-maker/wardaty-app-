@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, StyleSheet, Pressable, TextInput, ScrollView } from "react-native";
+import { View, StyleSheet, Pressable, TextInput, ScrollView, Dimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
@@ -11,7 +11,10 @@ import { PersonaSelector } from "@/components/PersonaSelector";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useApp } from "@/lib/AppContext";
 import { Persona } from "@/lib/types";
-import { BrandColors } from "@/constants/colors";
+import { LightBackgrounds, BrandColors, Gradients, NeutralColors, PersonaColors } from "@/constants/colors";
+import { Spacing, BorderRadius, Typography, Shadows, Layout } from "@/constants/design-tokens";
+
+const { width } = Dimensions.get("window");
 
 type OnboardingStep = "language" | "welcome" | "persona" | "name" | "cycle";
 
@@ -74,6 +77,9 @@ export default function OnboardingScreen() {
       <ThemedText style={styles.title}>
         {t("onboarding.selectLanguage")}
       </ThemedText>
+      <ThemedText style={styles.subtitle}>
+        Choose your preferred language
+      </ThemedText>
       
       <View style={styles.languageContainer}>
         <Pressable
@@ -81,7 +87,10 @@ export default function OnboardingScreen() {
             styles.languageButton,
             language === "ar" && styles.languageButtonActive,
           ]}
-          onPress={() => setLanguage("ar")}
+          onPress={() => {
+            setLanguage("ar");
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          }}
         >
           <ThemedText style={[
             styles.languageButtonText,
@@ -96,7 +105,10 @@ export default function OnboardingScreen() {
             styles.languageButton,
             language === "en" && styles.languageButtonActive,
           ]}
-          onPress={() => setLanguage("en")}
+          onPress={() => {
+            setLanguage("en");
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          }}
         >
           <ThemedText style={[
             styles.languageButtonText,
@@ -106,19 +118,6 @@ export default function OnboardingScreen() {
           </ThemedText>
         </Pressable>
       </View>
-
-      <Pressable style={styles.primaryButton} onPress={handleNext}>
-        <LinearGradient
-          colors={[BrandColors.violet.main, BrandColors.coral.main]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.gradientButton}
-        >
-          <ThemedText style={styles.primaryButtonText}>
-            {t("common.continue")}
-          </ThemedText>
-        </LinearGradient>
-      </Pressable>
     </Animated.View>
   );
 
@@ -128,38 +127,12 @@ export default function OnboardingScreen() {
       exiting={FadeOutUp.duration(400)}
       style={styles.stepContainer}
     >
-      <View style={styles.iconContainer}>
-        <ThemedText style={styles.icon}>🌸</ThemedText>
-      </View>
-
-      <ThemedText style={styles.title}>
+      <ThemedText style={styles.hero}>
         {t("onboarding.welcome")}
       </ThemedText>
-      
-      <ThemedText style={styles.description}>
-        {t("onboarding.welcomeDescription")}
+      <ThemedText style={styles.subtitle}>
+        {t("onboarding.welcomeSubtitle")}
       </ThemedText>
-
-      <View style={styles.buttonGroup}>
-        <Pressable style={styles.secondaryButton} onPress={handleBack}>
-          <ThemedText style={styles.secondaryButtonText}>
-            {t("common.back")}
-          </ThemedText>
-        </Pressable>
-
-        <Pressable style={styles.primaryButton} onPress={handleNext}>
-          <LinearGradient
-            colors={[BrandColors.violet.main, BrandColors.coral.main]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.gradientButton}
-          >
-            <ThemedText style={styles.primaryButtonText}>
-              {t("common.continue")}
-            </ThemedText>
-          </LinearGradient>
-        </Pressable>
-      </View>
     </Animated.View>
   );
 
@@ -172,38 +145,17 @@ export default function OnboardingScreen() {
       <ThemedText style={styles.title}>
         {t("onboarding.selectPersona")}
       </ThemedText>
-      
-      <ThemedText style={styles.description}>
-        {t("onboarding.personaDescription")}
+      <ThemedText style={styles.subtitle}>
+        {t("onboarding.personaSubtitle")}
       </ThemedText>
-
-      <View style={styles.personaContainer}>
-        <PersonaSelector
-          selectedPersona={persona}
-          onSelect={setPersona}
-        />
-      </View>
-
-      <View style={styles.buttonGroup}>
-        <Pressable style={styles.secondaryButton} onPress={handleBack}>
-          <ThemedText style={styles.secondaryButtonText}>
-            {t("common.back")}
-          </ThemedText>
-        </Pressable>
-
-        <Pressable style={styles.primaryButton} onPress={handleNext}>
-          <LinearGradient
-            colors={[BrandColors.violet.main, BrandColors.coral.main]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.gradientButton}
-          >
-            <ThemedText style={styles.primaryButtonText}>
-              {t("common.continue")}
-            </ThemedText>
-          </LinearGradient>
-        </Pressable>
-      </View>
+      
+      <PersonaSelector
+        selected={persona}
+        onSelect={(p) => {
+          setPersona(p);
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        }}
+      />
     </Animated.View>
   );
 
@@ -216,43 +168,18 @@ export default function OnboardingScreen() {
       <ThemedText style={styles.title}>
         {t("onboarding.enterName")}
       </ThemedText>
-      
-      <ThemedText style={styles.description}>
-        {t("onboarding.nameDescription")}
+      <ThemedText style={styles.subtitle}>
+        {t("onboarding.nameSubtitle")}
       </ThemedText>
-
+      
       <TextInput
         style={styles.input}
         value={name}
         onChangeText={setName}
         placeholder={t("onboarding.namePlaceholder")}
-        placeholderTextColor="#9CA3AF"
+        placeholderTextColor={NeutralColors.gray[400]}
+        autoFocus
       />
-
-      <View style={styles.buttonGroup}>
-        <Pressable style={styles.secondaryButton} onPress={handleBack}>
-          <ThemedText style={styles.secondaryButtonText}>
-            {t("common.back")}
-          </ThemedText>
-        </Pressable>
-
-        <Pressable 
-          style={[styles.primaryButton, !name && styles.primaryButtonDisabled]} 
-          onPress={handleNext}
-          disabled={!name}
-        >
-          <LinearGradient
-            colors={[BrandColors.violet.main, BrandColors.coral.main]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.gradientButton}
-          >
-            <ThemedText style={styles.primaryButtonText}>
-              {t("common.continue")}
-            </ThemedText>
-          </LinearGradient>
-        </Pressable>
-      </View>
     </Animated.View>
   );
 
@@ -265,14 +192,13 @@ export default function OnboardingScreen() {
       <ThemedText style={styles.title}>
         {t("onboarding.cycleInfo")}
       </ThemedText>
-      
-      <ThemedText style={styles.description}>
-        {t("onboarding.cycleDescription")}
+      <ThemedText style={styles.subtitle}>
+        {t("onboarding.cycleSubtitle")}
       </ThemedText>
-
+      
       <View style={styles.inputGroup}>
         <View style={styles.inputWrapper}>
-          <ThemedText style={styles.inputLabel}>
+          <ThemedText style={styles.label}>
             {t("onboarding.cycleLength")}
           </ThemedText>
           <TextInput
@@ -281,12 +207,12 @@ export default function OnboardingScreen() {
             onChangeText={setCycleLength}
             keyboardType="number-pad"
             placeholder="28"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={NeutralColors.gray[400]}
           />
         </View>
-
+        
         <View style={styles.inputWrapper}>
-          <ThemedText style={styles.inputLabel}>
+          <ThemedText style={styles.label}>
             {t("onboarding.periodLength")}
           </ThemedText>
           <TextInput
@@ -295,30 +221,9 @@ export default function OnboardingScreen() {
             onChangeText={setPeriodLength}
             keyboardType="number-pad"
             placeholder="5"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={NeutralColors.gray[400]}
           />
         </View>
-      </View>
-
-      <View style={styles.buttonGroup}>
-        <Pressable style={styles.secondaryButton} onPress={handleBack}>
-          <ThemedText style={styles.secondaryButtonText}>
-            {t("common.back")}
-          </ThemedText>
-        </Pressable>
-
-        <Pressable style={styles.primaryButton} onPress={handleNext}>
-          <LinearGradient
-            colors={[BrandColors.violet.main, BrandColors.coral.main]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.gradientButton}
-          >
-            <ThemedText style={styles.primaryButtonText}>
-              {t("common.finish")}
-            </ThemedText>
-          </LinearGradient>
-        </Pressable>
       </View>
     </Animated.View>
   );
@@ -335,6 +240,36 @@ export default function OnboardingScreen() {
         {step === "name" && renderNameStep()}
         {step === "cycle" && renderCycleStep()}
       </ScrollView>
+
+      {/* Bottom Buttons */}
+      <View style={styles.bottomContainer}>
+        {step !== "language" && (
+          <Pressable
+            style={styles.secondaryButton}
+            onPress={handleBack}
+          >
+            <ThemedText style={styles.secondaryButtonText}>
+              {t("common.back")}
+            </ThemedText>
+          </Pressable>
+        )}
+        
+        <Pressable
+          style={[styles.primaryButton, step !== "language" && { flex: 1 }]}
+          onPress={handleNext}
+        >
+          <LinearGradient
+            colors={[Gradients.main.colors[0], Gradients.main.colors[1]]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.gradientButton}
+          >
+            <ThemedText style={styles.primaryButtonText}>
+              {step === "cycle" ? t("common.finish") : t("common.next")}
+            </ThemedText>
+          </LinearGradient>
+        </Pressable>
+      </View>
     </View>
   );
 }
@@ -342,138 +277,144 @@ export default function OnboardingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: LightBackgrounds.base,
   },
   scrollContent: {
     flexGrow: 1,
-    paddingHorizontal: 24,
+    paddingHorizontal: Layout.screenPaddingHorizontal,
+    paddingVertical: Spacing["3xl"],
   },
   stepContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingVertical: 48,
+    minHeight: 400,
   },
-  iconContainer: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    backgroundColor: "#F9FAFB",
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 32,
-  },
-  icon: {
-    fontSize: 64,
+  
+  // Typography
+  hero: {
+    fontSize: Typography.hero.fontSize,
+    lineHeight: Typography.hero.lineHeight,
+    fontWeight: Typography.hero.fontWeight,
+    color: "#2C3E50",
+    textAlign: "center",
+    marginBottom: Spacing.base,
   },
   title: {
-    fontSize: 36,
-    fontWeight: "700",
-    color: "#1F2937",
+    fontSize: Typography.h1.fontSize,
+    lineHeight: Typography.h1.lineHeight,
+    fontWeight: Typography.h1.fontWeight,
+    color: "#2C3E50",
     textAlign: "center",
-    marginBottom: 16,
-    letterSpacing: -0.5,
+    marginBottom: Spacing.base,
   },
-  description: {
-    fontSize: 18,
-    fontWeight: "400",
-    color: "#6B7280",
+  subtitle: {
+    fontSize: Typography.bodyLarge.fontSize,
+    lineHeight: Typography.bodyLarge.lineHeight,
+    fontWeight: Typography.bodyLarge.fontWeight,
+    color: NeutralColors.gray[600],
     textAlign: "center",
-    marginBottom: 48,
-    lineHeight: 28,
-    paddingHorizontal: 16,
+    marginBottom: Spacing["2xl"],
   },
+  label: {
+    fontSize: Typography.label.fontSize,
+    lineHeight: Typography.label.lineHeight,
+    fontWeight: Typography.label.fontWeight,
+    color: NeutralColors.gray[700],
+    marginBottom: Spacing.sm,
+  },
+  
+  // Language Selection
   languageContainer: {
     width: "100%",
-    gap: 16,
-    marginBottom: 48,
+    gap: Spacing.base,
   },
   languageButton: {
-    height: 64,
-    borderRadius: 16,
+    width: "100%",
+    paddingVertical: Spacing.lg,
+    paddingHorizontal: Spacing.xl,
+    backgroundColor: NeutralColors.white,
+    borderRadius: BorderRadius.xl,
     borderWidth: 2,
-    borderColor: "#E5E7EB",
-    backgroundColor: "#FFFFFF",
-    justifyContent: "center",
-    alignItems: "center",
+    borderColor: NeutralColors.gray[200],
+    ...Shadows.light.md,
   },
   languageButtonActive: {
     borderColor: BrandColors.violet.main,
     backgroundColor: BrandColors.violet.soft,
   },
   languageButtonText: {
-    fontSize: 20,
-    fontWeight: "600",
-    color: "#6B7280",
+    fontSize: Typography.button.fontSize,
+    lineHeight: Typography.button.lineHeight,
+    fontWeight: Typography.button.fontWeight,
+    color: NeutralColors.gray[700],
+    textAlign: "center",
   },
   languageButtonTextActive: {
     color: BrandColors.violet.main,
   },
-  personaContainer: {
+  
+  // Input
+  input: {
     width: "100%",
-    marginBottom: 48,
+    paddingVertical: Spacing.lg,
+    paddingHorizontal: Spacing.xl,
+    backgroundColor: NeutralColors.white,
+    borderRadius: BorderRadius.xl,
+    borderWidth: 1,
+    borderColor: NeutralColors.gray[200],
+    fontSize: Typography.body.fontSize,
+    lineHeight: Typography.body.lineHeight,
+    color: "#2C3E50",
+    ...Shadows.light.sm,
   },
   inputGroup: {
     width: "100%",
-    gap: 24,
-    marginBottom: 48,
+    gap: Spacing.lg,
   },
   inputWrapper: {
     width: "100%",
   },
-  inputLabel: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#374151",
-    marginBottom: 8,
-  },
-  input: {
-    height: 56,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: "#E5E7EB",
-    backgroundColor: "#FFFFFF",
-    paddingHorizontal: 16,
-    fontSize: 16,
-    color: "#1F2937",
-  },
-  buttonGroup: {
-    width: "100%",
+  
+  // Bottom Buttons
+  bottomContainer: {
     flexDirection: "row",
-    gap: 12,
+    gap: Spacing.base,
+    paddingHorizontal: Layout.screenPaddingHorizontal,
+    paddingBottom: Spacing.lg,
   },
   primaryButton: {
     flex: 1,
-    height: 56,
-    borderRadius: 28,
+    borderRadius: BorderRadius["2xl"],
     overflow: "hidden",
   },
-  primaryButtonDisabled: {
-    opacity: 0.5,
-  },
   gradientButton: {
-    flex: 1,
-    justifyContent: "center",
+    paddingVertical: Spacing.lg,
+    paddingHorizontal: Spacing.xl,
     alignItems: "center",
+    justifyContent: "center",
   },
   primaryButtonText: {
-    fontSize: 17,
-    fontWeight: "600",
-    color: "#FFFFFF",
+    fontSize: Typography.button.fontSize,
+    lineHeight: Typography.button.lineHeight,
+    fontWeight: Typography.button.fontWeight,
+    color: NeutralColors.white,
   },
   secondaryButton: {
-    flex: 1,
-    height: 56,
-    borderRadius: 28,
+    paddingVertical: Spacing.lg,
+    paddingHorizontal: Spacing.xl,
+    backgroundColor: NeutralColors.white,
+    borderRadius: BorderRadius["2xl"],
     borderWidth: 2,
     borderColor: BrandColors.violet.main,
-    backgroundColor: "#FFFFFF",
-    justifyContent: "center",
     alignItems: "center",
+    justifyContent: "center",
+    ...Shadows.light.sm,
   },
   secondaryButtonText: {
-    fontSize: 17,
-    fontWeight: "600",
+    fontSize: Typography.button.fontSize,
+    lineHeight: Typography.button.lineHeight,
+    fontWeight: Typography.button.fontWeight,
     color: BrandColors.violet.main,
   },
 });
