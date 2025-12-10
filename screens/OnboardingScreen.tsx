@@ -77,11 +77,12 @@ export default function OnboardingScreen() {
       exiting={FadeOutUp.duration(400)}
       style={styles.stepContainer}
     >
+      {/* Bilingual title - no translation needed */}
       <ThemedText style={styles.title}>
-        {t("onboarding", "chooseLanguage")}
+        Choose Language / اختر اللغة
       </ThemedText>
       <ThemedText style={styles.subtitle}>
-        {t("onboarding", "chooseLanguageDesc")}
+        Select your preferred language / اختر لغتك المفضلة
       </ThemedText>
       
       <View style={styles.languageContainer}>
