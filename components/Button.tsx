@@ -13,6 +13,7 @@ import {
   BorderRadius,
   Spacing,
   Animations,
+  Theme,
 } from "../constants/theme";
 
 interface ButtonProps {
