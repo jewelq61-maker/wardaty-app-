@@ -11,7 +11,7 @@ import { useTheme } from "../hooks/useTheme";
 import { useLanguage } from "../hooks/useLanguage";
 import { useLayout } from "../lib/ThemePersonaContext";
 import { useApp } from "../lib/AppContext";
-import { Theme } from "../constants/theme";
+import { Theme, GlassEffects } from "../constants/theme";
 import type { ArticlesStackParamList } from "../navigation/ArticlesStackNavigator";
 import { getAllArticles } from "../data/articles";
 
@@ -118,10 +118,10 @@ export default function ArticlesScreen() {
           {
             backgroundColor: isSelected
               ? categoryColor
-              : Theme.glass.light.backgroundColor,
+              : GlassEffects.light.backgroundColor,
             borderColor: isSelected
               ? categoryColor
-              : Theme.glass.light.borderColor,
+              : GlassEffects.light.borderColor,
             opacity: pressed ? 0.7 : 1,
           },
         ]}
@@ -261,9 +261,9 @@ const styles = StyleSheet.create({
     ...Theme.typography.callout,
   },
   articleCard: {
-    backgroundColor: Theme.glass.light.backgroundColor,
-    borderWidth: Theme.glass.light.borderWidth,
-    borderColor: Theme.glass.light.borderColor,
+    backgroundColor: GlassEffects.light.backgroundColor,
+    borderWidth: GlassEffects.light.borderWidth,
+    borderColor: GlassEffects.light.borderColor,
     borderRadius: Theme.borderRadius.large,
     padding: Theme.spacing.md,
     marginBottom: Theme.spacing.sm,

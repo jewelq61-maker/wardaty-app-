@@ -16,7 +16,7 @@ import {
   getDaysUntilNextPeriod,
   getDetailedCyclePhase,
 } from "../lib/cycle-utils";
-import { Theme } from "../constants/theme";
+import { Theme, GlassEffects } from "../constants/theme";
 import { articles } from "../data/articles";
 
 const { width } = Dimensions.get("window");
@@ -388,9 +388,9 @@ const styles = StyleSheet.create({
     borderRadius: Theme.borderRadius.full,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: Theme.glass.light.backgroundColor,
-    borderWidth: Theme.glass.light.borderWidth,
-    borderColor: Theme.glass.light.borderColor,
+    backgroundColor: GlassEffects.light.backgroundColor,
+    borderWidth: GlassEffects.light.borderWidth,
+    borderColor: GlassEffects.light.borderColor,
   },
   cycleCard: {
     marginBottom: Theme.spacing.xl,
@@ -456,9 +456,9 @@ const styles = StyleSheet.create({
     padding: Theme.spacing.xs,
   },
   actionCard: {
-    backgroundColor: Theme.glass.light.backgroundColor,
-    borderWidth: Theme.glass.light.borderWidth,
-    borderColor: Theme.glass.light.borderColor,
+    backgroundColor: GlassEffects.light.backgroundColor,
+    borderWidth: GlassEffects.light.borderWidth,
+    borderColor: GlassEffects.light.borderColor,
     borderRadius: Theme.borderRadius.large,
     padding: Theme.spacing.md,
     alignItems: "center",
@@ -479,9 +479,9 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   articleCard: {
-    backgroundColor: Theme.glass.light.backgroundColor,
-    borderWidth: Theme.glass.light.borderWidth,
-    borderColor: Theme.glass.light.borderColor,
+    backgroundColor: GlassEffects.light.backgroundColor,
+    borderWidth: GlassEffects.light.borderWidth,
+    borderColor: GlassEffects.light.borderColor,
     borderRadius: Theme.borderRadius.large,
     padding: Theme.spacing.md,
     marginBottom: Theme.spacing.sm,
@@ -516,9 +516,9 @@ const styles = StyleSheet.create({
     color: Theme.dark.text.tertiary,
   },
   insightCard: {
-    backgroundColor: Theme.glass.light.backgroundColor,
-    borderWidth: Theme.glass.light.borderWidth,
-    borderColor: Theme.glass.light.borderColor,
+    backgroundColor: GlassEffects.light.backgroundColor,
+    borderWidth: GlassEffects.light.borderWidth,
+    borderColor: GlassEffects.light.borderColor,
     borderRadius: Theme.borderRadius.large,
     padding: Theme.spacing.md,
   },
