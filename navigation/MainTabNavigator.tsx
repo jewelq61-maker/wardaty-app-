@@ -13,7 +13,7 @@ import ProfileStackNavigator from "./ProfileStackNavigator";
 import { useLanguage } from "../hooks/useLanguage";
 import { useApp } from "../lib/AppContext";
 import { useFAB } from "../contexts/FABContext";
-import { Theme } from "../constants/theme";
+import { Spacing, DarkTheme, getPersonaColor } from "../constants/theme";
 
 export type MainTabParamList = {
   HomeTab: undefined;
@@ -23,8 +23,6 @@ export type MainTabParamList = {
 };
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
-
-const FAB_SIZE = Theme.spacing.fabSize;
 
 interface CustomTabBarProps {
   state: any;
@@ -40,11 +38,12 @@ function CustomTabBar({ state, descriptors, navigation }: CustomTabBarProps) {
 
   // Safe default if data not loaded yet
   const persona = data?.settings?.persona || "single";
-  const personaColor = Theme.getPersonaColor(persona);
-  const inactiveColor = Theme.dark.text.tertiary;
+  const personaColor = getPersonaColor(persona);
+  const inactiveColor = DarkTheme.text.tertiary;
 
-  const TAB_BAR_HEIGHT = Theme.spacing.tabBarHeight;
-  const bottomPadding = Platform.OS === "ios" ? insets.bottom : Theme.spacing.sm;
+  const FAB_SIZE = Spacing.fabSize;
+  const TAB_BAR_HEIGHT = Spacing.tabBarHeight;
+  const bottomPadding = Platform.OS === "ios" ? insets.bottom : Spacing.sm;
 
   const handleFABPress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);

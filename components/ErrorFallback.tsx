@@ -10,7 +10,7 @@ import {
   useColorScheme,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import { Spacing, BorderRadius, Fonts } from "../constants/theme";
+import { Spacing, BorderRadius, Fonts, Typography } from "../constants/theme";
 
 const fallbackTheme = {
   light: {
@@ -174,12 +174,12 @@ const styles = StyleSheet.create({
     maxWidth: 600,
   },
   title: {
-    ...Theme.typography.title1,
+    ...Typography.title1,
     textAlign: "center",
     fontWeight: "700",
   },
   message: {
-    ...Theme.typography.callout,
+    ...Typography.callout,
     textAlign: "center",
     opacity: 0.7,
   },
@@ -202,7 +202,7 @@ const styles = StyleSheet.create({
     minWidth: 200,
   },
   buttonText: {
-    ...Theme.typography.callout,
+    ...Typography.callout,
     fontWeight: "600",
     textAlign: "center",
   },
@@ -246,7 +246,7 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
   },
   errorText: {
-    ...Theme.typography.caption1,
+    ...Typography.caption1,
     width: "100%",
   },
 });

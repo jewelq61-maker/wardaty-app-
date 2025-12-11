@@ -3,7 +3,7 @@ import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 import { isLiquidGlassAvailable } from "expo-glass-effect";
 
 import { useTheme } from "./useTheme";
-import { Theme } from "../constants/theme";
+import { Typography, Animations } from "../constants/theme";
 
 interface UseScreenOptionsParams {
   transparent?: boolean;
@@ -21,7 +21,7 @@ export function useScreenOptions({
     headerBlurEffect: isDark ? "dark" : "light",
     headerTintColor: theme.text,
     headerTitleStyle: {
-      ...Theme.typography.headline,
+      ...Typography.headline,
       color: theme.text,
     },
     headerStyle: {
@@ -44,7 +44,7 @@ export function useScreenOptions({
     
     // iOS animations
     animation: "default",
-    animationDuration: Theme.animations.timing.normal,
+    animationDuration: Animations.timing.normal,
     
     // iOS presentation
     presentation: "card",

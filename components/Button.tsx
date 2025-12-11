@@ -13,6 +13,7 @@ import {
   BorderRadius,
   Spacing,
   Animations,
+  Typography,
 } from "../constants/theme";
 
 interface ButtonProps {
@@ -231,7 +232,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
   },
   buttonText: {
-    ...Theme.typography.callout,
+    ...Typography.callout,
     fontWeight: "600",
   },
 });
