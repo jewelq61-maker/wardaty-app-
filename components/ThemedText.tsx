@@ -6,6 +6,7 @@ import { useApp } from "../lib/AppContext";
 import { Typography } from "../constants/theme";
 import { FontScale } from "../lib/types";
 
+// Force rebuild - v2
 const fontScaleMultipliers: Record<FontScale, number> = {
   small: 0.85,
   medium: 1,
@@ -148,9 +149,10 @@ export function ThemedText({
       default:
         baseStyle = typography.body;
     }
-    // Safety check
-    if (!baseStyle || !baseStyle.fontSize) {
-      console.warn(`Typography style not found for type: ${type}`);
+    
+    // Safety check - prevent undefined errors
+    if (!baseStyle || typeof baseStyle.fontSize === 'undefined') {
+      console.warn(`[ThemedText] Typography style not found for type: ${type}, using fallback`);
       return {
         fontSize: 17,
         lineHeight: 22,
