@@ -12,7 +12,7 @@ import { PersonaSelector } from "../components/PersonaSelector";
 import { useLanguage } from "../hooks/useLanguage";
 import { useApp } from "../lib/AppContext";
 import { Persona } from "../lib/types";
-import { DarkTheme, PersonaColors, Spacing, Typography } from "../constants/theme";
+import { DarkTheme, PersonaColors, Spacing, Typography, BorderRadius } from "../constants/theme";
 import { useLayout } from "../lib/ThemePersonaContext";
 
 const { width } = Dimensions.get("window");
@@ -598,7 +598,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.md,
     backgroundColor: DarkTheme.background.elevated,
-    borderRadius: Theme.borderRadius.large,
+    borderRadius: BorderRadius.large,
     borderWidth: 2,
     borderColor: DarkTheme.border.subtle,
     flexDirection: "row",
@@ -643,7 +643,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.md,
     backgroundColor: DarkTheme.background.elevated,
-    borderRadius: Theme.borderRadius.medium,
+    borderRadius: BorderRadius.medium,
     borderWidth: 1,
     borderColor: DarkTheme.border.default,
     ...Typography.callout,
@@ -660,7 +660,7 @@ const styles = StyleSheet.create({
   primaryButton: {
     flex: 1,
     minHeight: Spacing.buttonHeight,
-    borderRadius: Theme.borderRadius.large,
+    borderRadius: BorderRadius.large,
     backgroundColor: PersonaColors.single.primary,
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.lg,
@@ -683,7 +683,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.md,
     backgroundColor: DarkTheme.background.elevated,
-    borderRadius: Theme.borderRadius.large,
+    borderRadius: BorderRadius.large,
     borderWidth: 1,
     borderColor: DarkTheme.border.default,
     flexDirection: "row",

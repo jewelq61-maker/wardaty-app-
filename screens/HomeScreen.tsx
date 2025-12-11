@@ -16,7 +16,7 @@ import {
   getDaysUntilNextPeriod,
   getDetailedCyclePhase,
 } from "../lib/cycle-utils";
-import { Theme, GlassEffects } from "../constants/theme";
+import { DarkTheme, GlassEffects, Typography, Spacing, BorderRadius, Shadows, IconSizes } from "../constants/theme";
 import { articles } from "../data/articles";
 
 const { width } = Dimensions.get("window");
@@ -151,8 +151,8 @@ export default function HomeScreen() {
         contentContainerStyle={[
           styles.scrollContent,
           {
-            paddingTop: insets.top + Theme.spacing.md,
-            paddingBottom: insets.bottom + Theme.spacing.tabBarHeight + Theme.spacing.xxl,
+            paddingTop: insets.top + Spacing.md,
+            paddingBottom: insets.bottom + Spacing.tabBarHeight + Spacing.xxl,
           },
         ]}
         showsVerticalScrollIndicator={false}
@@ -175,7 +175,7 @@ export default function HomeScreen() {
               { opacity: pressed ? 0.6 : 1 },
             ]}
           >
-            <Feather name="bell" size={Theme.iconSizes.medium} color={personaColor.primary} />
+            <Feather name="bell" size={IconSizes.medium} color={personaColor.primary} />
           </Pressable>
         </View>
 
@@ -257,7 +257,7 @@ export default function HomeScreen() {
                   onPress={() => handleCardPress(action.screen)}
                 >
                   <View style={[styles.actionIconContainer, { backgroundColor: personaColor.glow }]}>
-                    <Feather name={action.icon as any} size={Theme.iconSizes.large} color={personaColor.primary} />
+                    <Feather name={action.icon as any} size={IconSizes.large} color={personaColor.primary} />
                   </View>
                   <ThemedText style={styles.actionTitle}>
                     {language === "ar" ? action.titleAr : action.titleEn}
@@ -295,7 +295,7 @@ export default function HomeScreen() {
               >
                 <View style={styles.articleContent}>
                   <View style={[styles.articleIconContainer, { backgroundColor: personaColor.glow }]}>
-                    <Feather name="book-open" size={Theme.iconSizes.medium} color={personaColor.primary} />
+                    <Feather name="book-open" size={IconSizes.medium} color={personaColor.primary} />
                   </View>
                   <View style={styles.articleText}>
                     <ThemedText style={[styles.articleTitle, { textAlign: layout.textAlign }]} numberOfLines={2}>
@@ -324,7 +324,7 @@ export default function HomeScreen() {
             <View style={styles.insightCard}>
               <View style={[styles.insightHeader, { flexDirection: layout.flexDirection }]}>
                 <View style={[styles.insightIconContainer, { backgroundColor: personaColor.glow }]}>
-                  <Feather name="activity" size={Theme.iconSizes.medium} color={personaColor.primary} />
+                  <Feather name="activity" size={IconSizes.medium} color={personaColor.primary} />
                 </View>
                 <View style={styles.insightTextContainer}>
                   <ThemedText style={[styles.insightTitle, { textAlign: layout.textAlign }]}>
@@ -351,7 +351,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Theme.dark.background.root,
+    backgroundColor: DarkTheme.background.root,
   },
   loadingContainer: {
     flex: 1,
@@ -359,33 +359,33 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   loadingText: {
-    ...Theme.typography.body,
-    color: Theme.dark.text.primary,
+    ...Typography.body,
+    color: DarkTheme.text.primary,
   },
   scrollContent: {
-    paddingHorizontal: Theme.spacing.screenPadding,
+    paddingHorizontal: Spacing.screenPadding,
   },
   header: {
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: Theme.spacing.lg,
+    marginBottom: Spacing.lg,
   },
   headerTextContainer: {
     flex: 1,
   },
   greeting: {
-    ...Theme.typography.subheadline,
-    color: Theme.dark.text.secondary,
-    marginBottom: Theme.spacing.xxxs,
+    ...Typography.subheadline,
+    color: DarkTheme.text.secondary,
+    marginBottom: Spacing.xxxs,
   },
   userName: {
-    ...Theme.typography.largeTitle,
-    color: Theme.dark.text.primary,
+    ...Typography.largeTitle,
+    color: DarkTheme.text.primary,
   },
   notificationButton: {
-    width: Theme.spacing.listItemHeight,
-    height: Theme.spacing.listItemHeight,
-    borderRadius: Theme.borderRadius.full,
+    width: Spacing.listItemHeight,
+    height: Spacing.listItemHeight,
+    borderRadius: BorderRadius.full,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: GlassEffects.light.backgroundColor,
@@ -393,13 +393,13 @@ const styles = StyleSheet.create({
     borderColor: GlassEffects.light.borderColor,
   },
   cycleCard: {
-    marginBottom: Theme.spacing.xl,
-    borderRadius: Theme.borderRadius.xlarge,
+    marginBottom: Spacing.xl,
+    borderRadius: BorderRadius.xlarge,
     overflow: "hidden",
-    ...Theme.shadows.large,
+    ...Shadows.large,
   },
   cycleGradient: {
-    padding: Theme.spacing.lg,
+    padding: Spacing.lg,
   },
   cycleContent: {
     alignItems: "center",
@@ -409,58 +409,58 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   cycleTitle: {
-    ...Theme.typography.title1,
+    ...Typography.title1,
     color: "#FFFFFF",
-    marginBottom: Theme.spacing.xxs,
+    marginBottom: Spacing.xxs,
   },
   cycleSubtitle: {
-    ...Theme.typography.callout,
+    ...Typography.callout,
     color: "rgba(255, 255, 255, 0.8)",
   },
   cycleDays: {
     alignItems: "center",
   },
   cycleDaysNumber: {
-    ...Theme.typography.largeTitle,
+    ...Typography.largeTitle,
     color: "#FFFFFF",
     fontWeight: "700",
   },
   cycleDaysLabel: {
-    ...Theme.typography.footnote,
+    ...Typography.footnote,
     color: "rgba(255, 255, 255, 0.8)",
   },
   section: {
-    marginBottom: Theme.spacing.xl,
+    marginBottom: Spacing.xl,
   },
   sectionHeader: {
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: Theme.spacing.md,
+    marginBottom: Spacing.md,
   },
   sectionTitle: {
-    ...Theme.typography.title3,
-    color: Theme.dark.text.primary,
-    marginBottom: Theme.spacing.md,
+    ...Typography.title3,
+    color: DarkTheme.text.primary,
+    marginBottom: Spacing.md,
   },
   seeAllButton: {
-    ...Theme.typography.callout,
+    ...Typography.callout,
     fontWeight: "600",
   },
   actionsGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    marginHorizontal: -Theme.spacing.xs,
+    marginHorizontal: -Spacing.xs,
   },
   actionItem: {
     width: "50%",
-    padding: Theme.spacing.xs,
+    padding: Spacing.xs,
   },
   actionCard: {
     backgroundColor: GlassEffects.light.backgroundColor,
     borderWidth: GlassEffects.light.borderWidth,
     borderColor: GlassEffects.light.borderColor,
-    borderRadius: Theme.borderRadius.large,
-    padding: Theme.spacing.md,
+    borderRadius: BorderRadius.large,
+    padding: Spacing.md,
     alignItems: "center",
     minHeight: 120,
     justifyContent: "center",
@@ -471,20 +471,20 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: Theme.spacing.sm,
+    marginBottom: Spacing.sm,
   },
   actionTitle: {
-    ...Theme.typography.callout,
-    color: Theme.dark.text.primary,
+    ...Typography.callout,
+    color: DarkTheme.text.primary,
     textAlign: "center",
   },
   articleCard: {
     backgroundColor: GlassEffects.light.backgroundColor,
     borderWidth: GlassEffects.light.borderWidth,
     borderColor: GlassEffects.light.borderColor,
-    borderRadius: Theme.borderRadius.large,
-    padding: Theme.spacing.md,
-    marginBottom: Theme.spacing.sm,
+    borderRadius: BorderRadius.large,
+    padding: Spacing.md,
+    marginBottom: Spacing.sm,
   },
   articleContent: {
     flexDirection: "row",
@@ -496,35 +496,35 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     alignItems: "center",
     justifyContent: "center",
-    marginEnd: Theme.spacing.sm,
+    marginEnd: Spacing.sm,
   },
   articleText: {
     flex: 1,
   },
   articleTitle: {
-    ...Theme.typography.headline,
-    color: Theme.dark.text.primary,
-    marginBottom: Theme.spacing.xxs,
+    ...Typography.headline,
+    color: DarkTheme.text.primary,
+    marginBottom: Spacing.xxs,
   },
   articleExcerpt: {
-    ...Theme.typography.footnote,
-    color: Theme.dark.text.secondary,
-    marginBottom: Theme.spacing.xxs,
+    ...Typography.footnote,
+    color: DarkTheme.text.secondary,
+    marginBottom: Spacing.xxs,
   },
   articleMeta: {
-    ...Theme.typography.caption1,
-    color: Theme.dark.text.tertiary,
+    ...Typography.caption1,
+    color: DarkTheme.text.tertiary,
   },
   insightCard: {
     backgroundColor: GlassEffects.light.backgroundColor,
     borderWidth: GlassEffects.light.borderWidth,
     borderColor: GlassEffects.light.borderColor,
-    borderRadius: Theme.borderRadius.large,
-    padding: Theme.spacing.md,
+    borderRadius: BorderRadius.large,
+    padding: Spacing.md,
   },
   insightHeader: {
     alignItems: "center",
-    marginBottom: Theme.spacing.sm,
+    marginBottom: Spacing.sm,
   },
   insightIconContainer: {
     width: 44,
@@ -532,22 +532,22 @@ const styles = StyleSheet.create({
     borderRadius: 22,
     alignItems: "center",
     justifyContent: "center",
-    marginEnd: Theme.spacing.sm,
+    marginEnd: Spacing.sm,
   },
   insightTextContainer: {
     flex: 1,
   },
   insightTitle: {
-    ...Theme.typography.callout,
-    color: Theme.dark.text.secondary,
-    marginBottom: Theme.spacing.xxxs,
+    ...Typography.callout,
+    color: DarkTheme.text.secondary,
+    marginBottom: Spacing.xxxs,
   },
   insightValue: {
-    ...Theme.typography.headline,
+    ...Typography.headline,
   },
   insightDescription: {
-    ...Theme.typography.footnote,
-    color: Theme.dark.text.secondary,
+    ...Typography.footnote,
+    color: DarkTheme.text.secondary,
     lineHeight: 20,
   },
 });

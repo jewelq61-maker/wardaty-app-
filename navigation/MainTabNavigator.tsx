@@ -13,7 +13,7 @@ import ProfileStackNavigator from "./ProfileStackNavigator";
 import { useLanguage } from "../hooks/useLanguage";
 import { useApp } from "../lib/AppContext";
 import { useFAB } from "../contexts/FABContext";
-import { Spacing, DarkTheme, getPersonaColor } from "../constants/theme";
+import { Spacing, DarkTheme, getPersonaColor, IconSizes, Animations, Shadows, Typography } from "../constants/theme";
 
 export type MainTabParamList = {
   HomeTab: undefined;
@@ -117,7 +117,7 @@ function CustomTabBar({ state, descriptors, navigation }: CustomTabBarProps) {
         <View style={styles.iconContainer}>
           <Feather
             name={iconName}
-            size={Theme.iconSizes.medium}
+            size={IconSizes.medium}
             color={iconColor}
           />
         </View>
@@ -156,9 +156,9 @@ function CustomTabBar({ state, descriptors, navigation }: CustomTabBarProps) {
           styles.fabButton,
           {
             backgroundColor: personaColor.primary,
-            transform: [{ scale: pressed ? Theme.animations.buttonScale : 1 }],
+            transform: [{ scale: pressed ? Animations.buttonScale : 1 }],
           },
-          Theme.shadows.large,
+          Shadows.large,
           {
             shadowColor: personaColor.primary,
             shadowOpacity: 0.4,
@@ -196,7 +196,7 @@ function CustomTabBar({ state, descriptors, navigation }: CustomTabBarProps) {
         <View
           style={[
             StyleSheet.absoluteFill,
-            { backgroundColor: Theme.dark.background.elevated },
+            { backgroundColor: DarkTheme.background.elevated },
           ]}
         />
       )}
@@ -205,7 +205,7 @@ function CustomTabBar({ state, descriptors, navigation }: CustomTabBarProps) {
       <View
         style={[
           styles.topBorder,
-          { backgroundColor: Theme.dark.border.subtle },
+          { backgroundColor: DarkTheme.border.subtle },
         ]}
       />
 
@@ -287,22 +287,22 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-around",
-    paddingHorizontal: Theme.spacing.xs,
+    paddingHorizontal: Spacing.xs,
   },
   tabItem: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: Theme.spacing.xs,
-    gap: Theme.spacing.xxxs,
-    minHeight: Theme.spacing.listItemHeight,
+    paddingVertical: Spacing.xs,
+    gap: Spacing.xxxs,
+    minHeight: Spacing.listItemHeight,
   },
   iconContainer: {
     alignItems: "center",
     justifyContent: "center",
   },
   tabLabel: {
-    ...Theme.typography.caption1,
+    ...Typography.caption1,
     textAlign: "center",
   },
   fabContainer: {

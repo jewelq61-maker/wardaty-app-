@@ -11,7 +11,7 @@ import { useTheme } from "../hooks/useTheme";
 import { useLanguage } from "../hooks/useLanguage";
 import { useLayout } from "../lib/ThemePersonaContext";
 import { useApp } from "../lib/AppContext";
-import { Theme, GlassEffects } from "../constants/theme";
+import { DarkTheme, GlassEffects, Typography, Spacing, BorderRadius, IconSizes } from "../constants/theme";
 import type { ArticlesStackParamList } from "../navigation/ArticlesStackNavigator";
 import { getAllArticles } from "../data/articles";
 
@@ -130,7 +130,7 @@ export default function ArticlesScreen() {
           style={[
             styles.categoryPillText,
             {
-              color: isSelected ? "#FFFFFF" : Theme.dark.text.secondary,
+              color: isSelected ? "#FFFFFF" : DarkTheme.text.secondary,
               fontWeight: isSelected ? "600" : "400",
             },
           ]}
@@ -154,7 +154,7 @@ export default function ArticlesScreen() {
       >
         <View style={styles.articleCardContent}>
           <View style={[styles.articleIcon, { backgroundColor: `${categoryColor}20` }]}>
-            <Feather name={item.icon as any} size={Theme.iconSizes.medium} color={categoryColor} />
+            <Feather name={item.icon as any} size={IconSizes.medium} color={categoryColor} />
           </View>
           <View style={styles.articleTextContent}>
             <ThemedText
@@ -200,8 +200,8 @@ export default function ArticlesScreen() {
         contentContainerStyle={[
           styles.listContent,
           {
-            paddingTop: insets.top + Theme.spacing.xl,
-            paddingBottom: insets.bottom + Theme.spacing.tabBarHeight + Theme.spacing.xl,
+            paddingTop: insets.top + Spacing.xl,
+            paddingBottom: insets.bottom + Spacing.tabBarHeight + Spacing.xl,
           },
         ]}
         ListHeaderComponent={
@@ -228,45 +228,45 @@ export default function ArticlesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Theme.dark.background.root,
+    backgroundColor: DarkTheme.background.root,
   },
   listContent: {
-    paddingHorizontal: Theme.spacing.screenPadding,
+    paddingHorizontal: Spacing.screenPadding,
   },
   header: {
-    marginBottom: Theme.spacing.lg,
+    marginBottom: Spacing.lg,
   },
   headerTitle: {
-    ...Theme.typography.largeTitle,
-    color: Theme.dark.text.primary,
-    marginBottom: Theme.spacing.xxs,
+    ...Typography.largeTitle,
+    color: DarkTheme.text.primary,
+    marginBottom: Spacing.xxs,
   },
   headerSubtitle: {
-    ...Theme.typography.callout,
-    color: Theme.dark.text.secondary,
-    marginBottom: Theme.spacing.md,
+    ...Typography.callout,
+    color: DarkTheme.text.secondary,
+    marginBottom: Spacing.md,
   },
   categoriesContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: Theme.spacing.xs,
+    gap: Spacing.xs,
   },
   categoryPill: {
-    paddingHorizontal: Theme.spacing.md,
-    paddingVertical: Theme.spacing.xs,
-    borderRadius: Theme.borderRadius.full,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.xs,
+    borderRadius: BorderRadius.full,
     borderWidth: 1,
   },
   categoryPillText: {
-    ...Theme.typography.callout,
+    ...Typography.callout,
   },
   articleCard: {
     backgroundColor: GlassEffects.light.backgroundColor,
     borderWidth: GlassEffects.light.borderWidth,
     borderColor: GlassEffects.light.borderColor,
-    borderRadius: Theme.borderRadius.large,
-    padding: Theme.spacing.md,
-    marginBottom: Theme.spacing.sm,
+    borderRadius: BorderRadius.large,
+    padding: Spacing.md,
+    marginBottom: Spacing.sm,
   },
   articleCardContent: {
     flexDirection: "row",
@@ -278,36 +278,36 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     alignItems: "center",
     justifyContent: "center",
-    marginEnd: Theme.spacing.sm,
+    marginEnd: Spacing.sm,
   },
   articleTextContent: {
     flex: 1,
   },
   articleTitle: {
-    ...Theme.typography.headline,
-    color: Theme.dark.text.primary,
-    marginBottom: Theme.spacing.xxs,
+    ...Typography.headline,
+    color: DarkTheme.text.primary,
+    marginBottom: Spacing.xxs,
   },
   articleExcerpt: {
-    ...Theme.typography.footnote,
-    color: Theme.dark.text.secondary,
-    marginBottom: Theme.spacing.xs,
+    ...Typography.footnote,
+    color: DarkTheme.text.secondary,
+    marginBottom: Spacing.xs,
   },
   articleMeta: {
     alignItems: "center",
     justifyContent: "space-between",
   },
   categoryBadge: {
-    paddingHorizontal: Theme.spacing.xs,
-    paddingVertical: Theme.spacing.xxxs,
-    borderRadius: Theme.borderRadius.small,
+    paddingHorizontal: Spacing.xs,
+    paddingVertical: Spacing.xxxs,
+    borderRadius: BorderRadius.small,
   },
   categoryBadgeText: {
-    ...Theme.typography.caption1,
+    ...Typography.caption1,
     fontWeight: "600",
   },
   readTime: {
-    ...Theme.typography.caption1,
-    color: Theme.dark.text.tertiary,
+    ...Typography.caption1,
+    color: DarkTheme.text.tertiary,
   },
 });
