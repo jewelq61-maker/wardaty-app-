@@ -55,6 +55,9 @@ export default function OnboardingScreen() {
   const [lastPeriodDate, setLastPeriodDate] = useState("");
   const [waterGoal, setWaterGoal] = useState("8");
   const [sleepGoal, setSleepGoal] = useState("8");
+  
+  // Debug: Reset counter (tap logo 5 times to reset)
+  const [resetTapCount, setResetTapCount] = useState(0);
 
   // Load saved progress on mount
   useEffect(() => {
@@ -118,6 +121,36 @@ export default function OnboardingScreen() {
     } catch (error) {
       console.error("Failed to clear onboarding progress:", error);
     }
+  };
+
+  // Debug: Handle logo tap for reset
+  const handleLogoTap = async () => {
+    const newCount = resetTapCount + 1;
+    setResetTapCount(newCount);
+    
+    if (newCount >= 5) {
+      // Reset everything
+      await clearProgress();
+      setStep("language");
+      setSelectedLanguage(null);
+      setRole(null);
+      setPersona("single");
+      setName("");
+      setAge("");
+      setCycleLength("28");
+      setPeriodLength("5");
+      setLastPeriodDate("");
+      setWaterGoal("8");
+      setSleepGoal("8");
+      setResetTapCount(0);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      alert("Onboarding reset! Starting from Language Selection.");
+    } else {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+    
+    // Reset counter after 2 seconds
+    setTimeout(() => setResetTapCount(0), 2000);
   };
 
   // Validation
@@ -219,7 +252,9 @@ export default function OnboardingScreen() {
       exiting={FadeOutUp.duration(400)}
       style={styles.stepContainer}
     >
-      <Feather name="globe" size={48} color={DarkTheme.text.primary} style={{ marginBottom: Spacing.xl }} />
+      <Pressable onPress={handleLogoTap}>
+        <Feather name="globe" size={48} color={DarkTheme.text.primary} style={{ marginBottom: Spacing.xl }} />
+      </Pressable>
       
       <ThemedText style={styles.title}>
         Choose Language / اختر اللغة
@@ -281,7 +316,9 @@ export default function OnboardingScreen() {
       exiting={FadeOutUp.duration(400)}
       style={styles.stepContainer}
     >
-      <Feather name="users" size={48} color={DarkTheme.text.primary} style={{ marginBottom: Spacing.xl }} />
+      <Pressable onPress={handleLogoTap}>
+        <Feather name="users" size={48} color={DarkTheme.text.primary} style={{ marginBottom: Spacing.xl }} />
+      </Pressable>
       
       <ThemedText style={styles.title}>
         {t("onboarding", "selectRole")}
