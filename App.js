@@ -11,12 +11,12 @@ import * as SplashScreen from "expo-splash-screen";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/query-client";
 
-import RootStackNavigator from "@/navigation/RootStackNavigator";
-import { ErrorBoundary } from "@/components/ErrorBoundary";
-import { AppProvider } from "@/lib/AppContext";
-import { ThemePersonaProvider, useThemePersona } from "@/lib/ThemePersonaContext";
-import { PartnerProvider } from "@/lib/PartnerContext";
-import { FABProvider } from "@/contexts/FABContext";
+import RootStackNavigator from "./navigation/RootStackNavigator";
+import { ErrorBoundary } from "./components/ErrorBoundary";
+import { AppProvider } from "./lib/AppContext";
+import { ThemePersonaProvider, useThemePersona } from "./lib/ThemePersonaContext";
+import { PartnerProvider } from "./lib/PartnerContext";
+import { FABProvider } from "./contexts/FABContext";
 
 SplashScreen.preventAutoHideAsync();
 
