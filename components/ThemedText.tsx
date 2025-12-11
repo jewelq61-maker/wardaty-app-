@@ -6,7 +6,6 @@ import { useApp } from "../lib/AppContext";
 import { Typography } from "../constants/theme";
 import { FontScale } from "../lib/types";
 
-// Force rebuild - v2
 const fontScaleMultipliers: Record<FontScale, number> = {
   small: 0.85,
   medium: 1,
@@ -76,6 +75,13 @@ const ArabicTypography = {
   },
 };
 
+// Default fallback style
+const DEFAULT_STYLE = {
+  fontSize: 17,
+  lineHeight: 22,
+  fontFamily: "Tajawal-Regular",
+};
+
 export type ThemedTextProps = TextProps & {
   lightColor?: string;
   darkColor?: string;
@@ -113,58 +119,29 @@ export function ThemedText({
   };
 
   const getTypeStyle = () => {
-    const typography = isArabic ? ArabicTypography : Typography;
-    let baseStyle: any;
-    switch (type) {
-      case "largeTitle":
-        baseStyle = typography.largeTitle;
-        break;
-      case "h1":
-        baseStyle = typography.h1;
-        break;
-      case "h2":
-        baseStyle = typography.h2;
-        break;
-      case "h3":
-        baseStyle = typography.h3;
-        break;
-      case "h4":
-        baseStyle = typography.h4;
-        break;
-      case "body":
-        baseStyle = typography.body;
-        break;
-      case "callout":
-        baseStyle = typography.callout;
-        break;
-      case "caption":
-        baseStyle = typography.caption;
-        break;
-      case "small":
-        baseStyle = typography.small;
-        break;
-      case "link":
-        baseStyle = typography.link;
-        break;
-      default:
-        baseStyle = typography.body;
-    }
-    
-    // Safety check - prevent undefined errors
-    if (!baseStyle || typeof baseStyle.fontSize === 'undefined') {
-      console.warn(`[ThemedText] Typography style not found for type: ${type}, using fallback`);
+    try {
+      const typography = isArabic ? ArabicTypography : Typography;
+      
+      // Get base style with fallback
+      let baseStyle = typography[type] || typography.body || DEFAULT_STYLE;
+      
+      // Safety check
+      if (!baseStyle || typeof baseStyle.fontSize !== 'number') {
+        console.warn(`[ThemedText] Invalid style for type: ${type}, using default`);
+        baseStyle = DEFAULT_STYLE;
+      }
+      
       return {
-        fontSize: 17,
-        lineHeight: 22,
-        fontFamily: "Tajawal-Regular",
+        fontFamily: baseStyle.fontFamily || DEFAULT_STYLE.fontFamily,
+        fontSize: Math.round(baseStyle.fontSize * scaleMultiplier),
+        lineHeight: baseStyle.lineHeight ? Math.round(baseStyle.lineHeight * scaleMultiplier) : undefined,
+        letterSpacing: baseStyle.letterSpacing,
+        fontWeight: baseStyle.fontWeight,
       };
+    } catch (error) {
+      console.error('[ThemedText] Error in getTypeStyle:', error);
+      return DEFAULT_STYLE;
     }
-    
-    return {
-      ...baseStyle,
-      fontSize: Math.round(baseStyle.fontSize * scaleMultiplier),
-      lineHeight: baseStyle.lineHeight ? Math.round(baseStyle.lineHeight * scaleMultiplier) : undefined,
-    };
   };
 
   return (
