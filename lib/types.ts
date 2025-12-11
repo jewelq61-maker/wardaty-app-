@@ -1,4 +1,4 @@
-export type Persona = "single" | "married" | "mother";
+export type Persona = "single" | "married" | "mother" | "partner";
 
 export type Mood = "great" | "good" | "okay" | "bad" | "terrible" | "anxious";
 

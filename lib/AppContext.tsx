@@ -60,6 +60,7 @@ interface AppContextType {
   activateSubscription: (planCode: "monthly" | "yearly", startTrial?: boolean) => Promise<void>;
   cancelSubscription: () => Promise<void>;
   updateSettings: (settings: Partial<UserSettings>) => Promise<void>;
+  updateData: (updates: Partial<AppData>) => Promise<void>;
   addCycleLog: (log: Omit<CycleLog, "date"> & { date?: string }) => Promise<void>;
   updateDailyLog: (updates: Partial<DailyLog>) => Promise<void>;
   getTodaysDailyLog: () => DailyLog;
@@ -213,6 +214,21 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const newSettings = { ...data.settings, ...updates };
     setData((prev) => ({ ...prev, settings: newSettings }));
     await saveSettings(newSettings);
+  }
+
+  async function updateData(updates: Partial<AppData>) {
+    const newData = { ...data, ...updates };
+    setData(newData);
+    // Save individual parts
+    if (updates.settings) {
+      await saveSettings(newData.settings);
+    }
+    if (updates.cycleLogs) {
+      await saveCycleLogs(newData.cycleLogs);
+    }
+    if (updates.dailyLogs) {
+      await saveDailyLogs(newData.dailyLogs);
+    }
   }
 
   async function addCycleLog(log: Omit<CycleLog, "date"> & { date?: string }) {
@@ -733,6 +749,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         activateSubscription: activateSubscriptionFn,
         cancelSubscription: cancelSubscriptionFn,
         updateSettings,
+        updateData,
         addCycleLog,
         updateDailyLog,
         getTodaysDailyLog,

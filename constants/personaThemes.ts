@@ -49,6 +49,14 @@ const LocalPersonaColors = {
     glow: "rgba(6, 214, 160, 0.3)",
     gradient: ["#06D6A0", "#4DE3BA"] as const,
   },
+  partner: {
+    primary: "#7EC8E3",
+    light: "#A0D9ED",
+    dark: "#5BA8C3",
+    soft: "rgba(126, 200, 227, 0.15)",
+    glow: "rgba(126, 200, 227, 0.3)",
+    gradient: ["#7EC8E3", "#A0D9ED"] as const,
+  },
 } as const;
 
 export type ThemeMode = "light" | "dark";
@@ -159,6 +167,16 @@ const personaConfigs: Record<Persona, PersonaConfig> = {
       gradient: LocalPersonaColors.mother.gradient,
     },
     logoGradient: ["#8C64F0", "#9A63E8"] as const,
+  },
+  partner: {
+    accent: {
+      main: LocalPersonaColors.partner.primary,
+      light: LocalPersonaColors.partner.light,
+      dark: LocalPersonaColors.partner.dark,
+      soft: LocalPersonaColors.partner.soft,
+      gradient: LocalPersonaColors.partner.gradient,
+    },
+    logoGradient: ["#7EC8E3", "#A0D9ED"] as const,
   },
 };
 
@@ -330,6 +348,20 @@ function getPersonaThemes(): Record<Persona, { light: Theme; dark: Theme }> {
       persona: "mother",
       colors: createDarkColors("mother"),
       personaConfig: personaConfigs.mother,
+    },
+  },
+  partner: {
+    light: {
+      mode: "light",
+      persona: "partner",
+      colors: createLightColors("partner"),
+      personaConfig: personaConfigs.partner,
+    },
+    dark: {
+      mode: "dark",
+      persona: "partner",
+      colors: createDarkColors("partner"),
+      personaConfig: personaConfigs.partner,
     },
   },
   };

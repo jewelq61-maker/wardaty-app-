@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import MainTabNavigator from "./MainTabNavigator";
-import OnboardingScreen from "../screens/OnboardingScreen";
+import { OnboardingScreenNew } from "../screens/OnboardingScreenNew";
 import RoleSelectionScreen from "../screens/RoleSelectionScreen";
 import PartnerCodeEntryScreen from "../screens/PartnerCodeEntryScreen";
 import PartnerHomeScreen from "../screens/PartnerHomeScreen";
@@ -100,10 +100,9 @@ export default function RootStackNavigator() {
         {needsOnboarding && selectedRole === "main" ? (
           <Stack.Screen
             name="Onboarding"
+            component={OnboardingScreenNew}
             options={{ headerShown: false }}
-          >
-            {() => <OnboardingScreen onBack={handleBackToRoleSelection} />}
-          </Stack.Screen>
+          />
         ) : null}
         <Stack.Screen
           name="Main"
