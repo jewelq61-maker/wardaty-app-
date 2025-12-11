@@ -2,7 +2,7 @@ import React from "react";
 import { View, StyleSheet, Image, ImageSourcePropType } from "react-native";
 
 import { ThemedText } from "@/components/ThemedText";
-import { Spacing } from "@/constants/theme";
+import { Theme } from "@/constants/theme";
 import { useApp } from "@/lib/AppContext";
 import { useLayout, useLogoColors } from "@/lib/ThemePersonaContext";
 import type { Persona } from "@/lib/types";
@@ -32,7 +32,7 @@ export function HeaderTitle({ title = "Wardaty", showIcon = true }: HeaderTitleP
       {showIcon ? (
         <Image
           source={iconSource}
-          style={[styles.icon, { [layout.marginEnd]: Spacing.sm }]}
+          style={[styles.icon, { [layout.marginEnd]: Theme.spacing.sm }]}
           resizeMode="contain"
         />
       ) : null}
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   title: {
-    fontSize: 18,
+    ...Theme.typography.headline,
     fontWeight: "700",
   },
 });

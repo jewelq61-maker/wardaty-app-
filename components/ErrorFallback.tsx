@@ -174,16 +174,14 @@ const styles = StyleSheet.create({
     maxWidth: 600,
   },
   title: {
+    ...Theme.typography.title1,
     textAlign: "center",
-    lineHeight: 40,
-    fontSize: 28,
     fontWeight: "700",
   },
   message: {
+    ...Theme.typography.callout,
     textAlign: "center",
     opacity: 0.7,
-    lineHeight: 24,
-    fontSize: 16,
   },
   topButton: {
     position: "absolute",
@@ -204,9 +202,9 @@ const styles = StyleSheet.create({
     minWidth: 200,
   },
   buttonText: {
+    ...Theme.typography.callout,
     fontWeight: "600",
     textAlign: "center",
-    fontSize: 16,
   },
   modalOverlay: {
     flex: 1,
@@ -248,8 +246,7 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
   },
   errorText: {
-    fontSize: 12,
-    lineHeight: 18,
+    ...Theme.typography.caption1,
     width: "100%",
   },
 });

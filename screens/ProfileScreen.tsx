@@ -71,17 +71,17 @@ function StatPill({
         <AppIcon name={icon} size={16} color={color} weight="semibold" />
       </View>
       <View style={styles.statPillText}>
-        <ThemedText type="small" style={{ color: theme.textSecondary, fontSize: 11 }}>
+        <ThemedText type="small" style={{ color: theme.textSecondary }}>
           {label}
         </ThemedText>
         <View style={{ flexDirection: "row", alignItems: "center", gap: Spacing.xs }}>
-          <ThemedText type="h4" style={{ color: theme.text, fontSize: 16 }}>
+          <ThemedText type="h4" style={{ color: theme.text }}>
             {value}
           </ThemedText>
           {trend && (
             <View style={{ flexDirection: "row", alignItems: "center", gap: 2 }}>
               <Feather name={getTrendIcon()!} size={12} color={getTrendColor()} />
-              <ThemedText type="small" style={{ color: getTrendColor(), fontSize: 10 }}>
+              <ThemedText type="small" style={{ color: getTrendColor() }}>
                 {trend.percentage}%
               </ThemedText>
             </View>

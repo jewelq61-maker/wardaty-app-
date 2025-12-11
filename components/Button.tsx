@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
   },
   buttonText: {
+    ...Theme.typography.callout,
     fontWeight: "600",
-    fontSize: 16,
   },
 });
