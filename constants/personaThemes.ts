@@ -233,7 +233,13 @@ function createLightColors(persona: Persona): ThemeColors {
   };
 }
 
-export const personaThemes: Record<Persona, { light: Theme; dark: Theme }> = {
+// Lazy initialization to avoid circular dependency issues
+let _personaThemes: Record<Persona, { light: Theme; dark: Theme }> | null = null;
+
+function getPersonaThemes(): Record<Persona, { light: Theme; dark: Theme }> {
+  if (_personaThemes) return _personaThemes;
+  
+  _personaThemes = {
   single: {
     light: {
       mode: "light",
@@ -276,10 +282,15 @@ export const personaThemes: Record<Persona, { light: Theme; dark: Theme }> = {
       personaConfig: personaConfigs.mother,
     },
   },
-};
+  };
+  
+  return _personaThemes;
+}
+
+export const personaThemes = getPersonaThemes();
 
 export function getTheme(persona: Persona, mode: ThemeMode): Theme {
-  return personaThemes[persona][mode];
+  return getPersonaThemes()[persona][mode];
 }
 
 export function getDefaultTheme(): Theme {
