@@ -12,7 +12,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { HapticsUtils } from "../lib/haptics";
-import { Theme } from "../constants/theme";
+import { Animations } from "../constants/theme";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -51,7 +51,7 @@ interface PressableWithHapticProps extends PressableProps {
 export function PressableWithHaptic({
   hapticType = "light",
   scaleOnPress = true,
-  scaleValue = Theme.animations.buttonScale,
+  scaleValue = Animations.buttonScale,
   opacityOnPress = false,
   opacityValue = 0.6,
   onPress,
@@ -80,11 +80,11 @@ export function PressableWithHaptic({
 
   const handlePressIn = (event: any) => {
     if (scaleOnPress) {
-      scale.value = withSpring(scaleValue, Theme.animations.spring);
+      scale.value = withSpring(scaleValue, Animations.spring);
     }
     
     if (opacityOnPress) {
-      opacity.value = withTiming(opacityValue, { duration: Theme.animations.timing.fast });
+      opacity.value = withTiming(opacityValue, { duration: Animations.timing.fast });
     }
     
     onPressIn?.(event);
@@ -92,11 +92,11 @@ export function PressableWithHaptic({
 
   const handlePressOut = (event: any) => {
     if (scaleOnPress) {
-      scale.value = withSpring(1, Theme.animations.spring);
+      scale.value = withSpring(1, Animations.spring);
     }
     
     if (opacityOnPress) {
-      opacity.value = withTiming(1, { duration: Theme.animations.timing.fast });
+      opacity.value = withTiming(1, { duration: Animations.timing.fast });
     }
     
     onPressOut?.(event);
@@ -158,7 +158,7 @@ export function CardPressable(props: PressableWithHapticProps) {
     <PressableWithHaptic
       hapticType="light"
       scaleOnPress={true}
-      scaleValue={Theme.animations.cardScale}
+      scaleValue={Animations.cardScale}
       {...props}
     />
   );

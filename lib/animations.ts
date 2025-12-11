@@ -12,7 +12,7 @@ import {
   Easing,
   SharedValue,
 } from "react-native-reanimated";
-import { Theme } from "../constants/theme";
+import { Animations } from "../constants/theme";
 
 // ===================================
 // SPRING ANIMATIONS
@@ -23,7 +23,7 @@ import { Theme } from "../constants/theme";
  */
 export function spring(value: number, callback?: () => void) {
   "worklet";
-  return withSpring(value, Theme.animations.spring, callback);
+  return withSpring(value, Animations.spring, callback);
 }
 
 /**
@@ -31,7 +31,7 @@ export function spring(value: number, callback?: () => void) {
  */
 export function springGentle(value: number, callback?: () => void) {
   "worklet";
-  return withSpring(value, Theme.animations.springGentle, callback);
+  return withSpring(value, Animations.springGentle, callback);
 }
 
 /**
@@ -39,7 +39,7 @@ export function springGentle(value: number, callback?: () => void) {
  */
 export function springBouncy(value: number, callback?: () => void) {
   "worklet";
-  return withSpring(value, Theme.animations.springBouncy, callback);
+  return withSpring(value, Animations.springBouncy, callback);
 }
 
 // ===================================
@@ -54,7 +54,7 @@ export function timingFast(value: number, callback?: () => void) {
   return withTiming(
     value,
     {
-      duration: Theme.animations.timing.fast,
+      duration: Animations.timing.fast,
       easing: Easing.bezier(0.25, 0.1, 0.25, 1),
     },
     callback
@@ -69,7 +69,7 @@ export function timingNormal(value: number, callback?: () => void) {
   return withTiming(
     value,
     {
-      duration: Theme.animations.timing.normal,
+      duration: Animations.timing.normal,
       easing: Easing.bezier(0.25, 0.1, 0.25, 1),
     },
     callback
@@ -84,7 +84,7 @@ export function timingSlow(value: number, callback?: () => void) {
   return withTiming(
     value,
     {
-      duration: Theme.animations.timing.slow,
+      duration: Animations.timing.slow,
       easing: Easing.bezier(0.25, 0.1, 0.25, 1),
     },
     callback
@@ -180,9 +180,9 @@ export function slideOutLeft(distance: number, delay = 0, callback?: () => void)
 export function bounce(callback?: () => void) {
   "worklet";
   return withSequence(
-    withSpring(0.9, Theme.animations.springBouncy),
-    withSpring(1.1, Theme.animations.springBouncy),
-    withSpring(1, Theme.animations.spring, callback)
+    withSpring(0.9, Animations.springBouncy),
+    withSpring(1.1, Animations.springBouncy),
+    withSpring(1, Animations.spring, callback)
   );
 }
 
@@ -260,8 +260,8 @@ export function rotateLoop(duration = 1000) {
 export function buttonPress(callback?: () => void) {
   "worklet";
   return withSequence(
-    withSpring(Theme.animations.buttonScale, Theme.animations.spring),
-    withSpring(1, Theme.animations.spring, callback)
+    withSpring(Animations.buttonScale, Animations.spring),
+    withSpring(1, Animations.spring, callback)
   );
 }
 
@@ -271,9 +271,9 @@ export function buttonPress(callback?: () => void) {
 export function buttonSuccess(callback?: () => void) {
   "worklet";
   return withSequence(
-    withSpring(0.9, Theme.animations.springBouncy),
-    withSpring(1.05, Theme.animations.springBouncy),
-    withSpring(1, Theme.animations.spring, callback)
+    withSpring(0.9, Animations.springBouncy),
+    withSpring(1.05, Animations.springBouncy),
+    withSpring(1, Animations.spring, callback)
   );
 }
 
@@ -295,8 +295,8 @@ export function buttonError(callback?: () => void) {
 export function cardPress(callback?: () => void) {
   "worklet";
   return withSequence(
-    withSpring(Theme.animations.cardScale, Theme.animations.spring),
-    withSpring(1, Theme.animations.spring, callback)
+    withSpring(Animations.cardScale, Animations.spring),
+    withSpring(1, Animations.spring, callback)
   );
 }
 
@@ -308,8 +308,8 @@ export function cardAppear(delay = 0, callback?: () => void) {
   return withDelay(
     delay,
     withSequence(
-      withSpring(0.9, Theme.animations.springGentle),
-      withSpring(1, Theme.animations.spring, callback)
+      withSpring(0.9, Animations.springGentle),
+      withSpring(1, Animations.spring, callback)
     )
   );
 }
