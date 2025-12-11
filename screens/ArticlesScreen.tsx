@@ -6,14 +6,14 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 
-import { ThemedText } from "@/components/ThemedText";
-import { useTheme } from "@/hooks/useTheme";
-import { useLanguage } from "@/hooks/useLanguage";
-import { useLayout } from "@/lib/ThemePersonaContext";
-import { useApp } from "@/lib/AppContext";
-import { Theme } from "@/constants/theme";
-import type { ArticlesStackParamList } from "@/navigation/ArticlesStackNavigator";
-import { getAllArticles } from "@/data/articles";
+import { ThemedText } from "../components/ThemedText";
+import { useTheme } from "../hooks/useTheme";
+import { useLanguage } from "../hooks/useLanguage";
+import { useLayout } from "../lib/ThemePersonaContext";
+import { useApp } from "../lib/AppContext";
+import { Theme } from "../constants/theme";
+import type { ArticlesStackParamList } from "../navigation/ArticlesStackNavigator";
+import { getAllArticles } from "../data/articles";
 
 interface Article {
   id: string;
