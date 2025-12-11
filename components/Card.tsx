@@ -9,7 +9,7 @@ import * as Haptics from "expo-haptics";
 
 import { ThemedText } from "./ThemedText";
 import { useTheme } from "../hooks/useTheme";
-import { Spacing, BorderRadius, Animations, GlassEffect } from "../constants/theme";
+import { Spacing, BorderRadius, Animations, GlassEffects } from "../constants/theme";
 
 interface CardProps {
   elevation?: number;
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   cardInner: {
-    borderRadius: BorderRadius.large - GlassEffect.borderWidth,
+    borderRadius: BorderRadius.large - GlassEffects.light.borderWidth,
     overflow: "hidden",
     position: "relative",
   },
