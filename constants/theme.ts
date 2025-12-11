@@ -149,6 +149,14 @@ export const Typography = {
   // iOS standard text styles
   ...iOSTypography,
   
+  // Aliases for ThemedText compatibility
+  h1: iOSTypography.largeTitle,
+  h2: iOSTypography.title1,
+  h3: iOSTypography.title2,
+  h4: iOSTypography.title3,
+  small: iOSTypography.caption1,
+  link: iOSTypography.body,
+  
   // Wardaty-specific styles (for special cases)
   hero: {
     fontSize: 48,
