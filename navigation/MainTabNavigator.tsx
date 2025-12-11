@@ -313,9 +313,9 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   fabButton: {
-    width: FAB_SIZE,
-    height: FAB_SIZE,
-    borderRadius: FAB_SIZE / 2,
+    width: Spacing.fabSize,
+    height: Spacing.fabSize,
+    borderRadius: Spacing.fabSize / 2,
     alignItems: "center",
     justifyContent: "center",
     zIndex: 2,
@@ -323,9 +323,9 @@ const styles = StyleSheet.create({
   fabGlow: {
     position: "absolute",
     top: -6,
-    width: FAB_SIZE + 16,
-    height: FAB_SIZE + 16,
-    borderRadius: (FAB_SIZE + 16) / 2,
+    width: Spacing.fabSize + 16,
+    height: Spacing.fabSize + 16,
+    borderRadius: (Spacing.fabSize + 16) / 2,
     zIndex: 1,
   },
 });
