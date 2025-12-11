@@ -95,6 +95,19 @@ export const SemanticColors = {
 } as const;
 
 // ===================================
+// 3.5) CYCLE COLORS (Period tracking)
+// ===================================
+
+export const CycleColors = {
+  period: "#FF5FA8",        // Pink for period days
+  fertile: "#06D6A0",       // Green for fertile window
+  ovulation: "#FFB703",     // Yellow for ovulation
+  follicular: "#9A63E8",    // Purple for follicular phase
+  luteal: "#FF8C42",        // Orange for luteal phase
+  normal: "#E5E7EB",        // Gray for normal days
+} as const;
+
+// ===================================
 // 4) GLASSMORPHISM EFFECTS
 // ===================================
 
