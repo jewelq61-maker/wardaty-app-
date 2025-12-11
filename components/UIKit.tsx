@@ -15,7 +15,7 @@ import {
   BorderRadius,
   Spacing,
   Animations,
-  GlassEffect,
+  GlassEffects,
   Shadows,
   Gradients,
 } from "../constants/theme";
@@ -528,7 +528,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   glassCardInner: {
-    borderRadius: BorderRadius.large - GlassEffect.borderWidth,
+    borderRadius: BorderRadius.large - GlassEffects.light.borderWidth,
     overflow: "hidden",
   },
   glassCardPadding: {
@@ -545,7 +545,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   frostedButtonInner: {
-    borderRadius: BorderRadius.medium - GlassEffect.borderWidth,
+    borderRadius: BorderRadius.medium - GlassEffects.light.borderWidth,
     alignItems: "center",
     justifyContent: "center",
     overflow: "hidden",
