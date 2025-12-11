@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
-import { View, StyleSheet, Pressable, TextInput, ScrollView, Dimensions, Platform } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, StyleSheet, Pressable, TextInput, ScrollView, Dimensions, Platform, Modal } from "react-native";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import Animated, { FadeInDown, FadeOutUp } from "react-native-reanimated";
@@ -50,6 +51,7 @@ export default function OnboardingScreen() {
   const [cycleLength, setCycleLength] = useState("28");
   const [periodLength, setPeriodLength] = useState("5");
   const [lastPeriodDate, setLastPeriodDate] = useState("");
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const [waterGoal, setWaterGoal] = useState("8");
   const [sleepGoal, setSleepGoal] = useState("8");
   
@@ -196,7 +198,7 @@ export default function OnboardingScreen() {
           name,
           age: ageNum,
           cycleSettings: {
-            ...settings.cycleSettings,
+            ...(settings?.cycleSettings || {}),
             cycleLength: cycleLengthNum,
             periodLength: periodLengthNum,
             lastPeriodStart: lastPeriodDate || new Date().toISOString().split("T")[0],
@@ -415,14 +417,30 @@ export default function OnboardingScreen() {
               <ThemedText style={styles.label}>
                 {t("onboarding", "lastPeriodDate")} ({t("common", "optional")})
               </ThemedText>
-              <TextInput
-                style={[styles.input, { textAlign: isRTL ? "right" : "left" }]}
-                value={lastPeriodDate}
-                onChangeText={setLastPeriodDate}
-                placeholder="YYYY-MM-DD"
-                placeholderTextColor={DarkTheme.text.tertiary}
-                keyboardType={Platform.OS === "ios" ? "numbers-and-punctuation" : "default"}
-              />
+              <Pressable
+                style={[styles.input, { flexDirection: isRTL ? "row-reverse" : "row", alignItems: "center", justifyContent: "space-between" }]}
+                onPress={() => setShowDatePicker(true)}
+              >
+                <ThemedText style={{ color: lastPeriodDate ? DarkTheme.text.primary : DarkTheme.text.tertiary }}>
+                  {lastPeriodDate || "YYYY-MM-DD"}
+                </ThemedText>
+                <Feather name="calendar" size={20} color={DarkTheme.text.secondary} />
+              </Pressable>
+              
+              {showDatePicker && (
+                <DateTimePicker
+                  value={lastPeriodDate ? new Date(lastPeriodDate) : new Date()}
+                  mode="date"
+                  display={Platform.OS === "ios" ? "spinner" : "default"}
+                  onChange={(event, selectedDate) => {
+                    setShowDatePicker(Platform.OS === "ios");
+                    if (selectedDate) {
+                      setLastPeriodDate(selectedDate.toISOString().split("T")[0]);
+                    }
+                  }}
+                  maximumDate={new Date()}
+                />
+              )}
             </View>
 
         {/* Wellness Goals (Optional) */}
