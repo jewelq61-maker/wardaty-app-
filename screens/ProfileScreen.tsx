@@ -40,14 +40,30 @@ function StatPill({
   value,
   color,
   onPress,
+  trend,
 }: {
   icon: AppIconName;
   label: string;
   value: string | number;
   color: string;
   onPress?: () => void;
+  trend?: { direction: "up" | "down" | "neutral"; percentage: number };
 }) {
   const { theme, isDark } = useTheme();
+
+  const getTrendIcon = () => {
+    if (!trend) return null;
+    if (trend.direction === "up") return "trending-up";
+    if (trend.direction === "down") return "trending-down";
+    return "minus";
+  };
+
+  const getTrendColor = () => {
+    if (!trend) return theme.textSecondary;
+    if (trend.direction === "up") return theme.qadha;
+    if (trend.direction === "down") return theme.error;
+    return theme.textSecondary;
+  };
 
   const content = (
     <View style={styles.statPillContent}>
@@ -58,9 +74,19 @@ function StatPill({
         <ThemedText type="small" style={{ color: theme.textSecondary, fontSize: 11 }}>
           {label}
         </ThemedText>
-        <ThemedText type="h4" style={{ color: theme.text, fontSize: 16 }}>
-          {value}
-        </ThemedText>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: Spacing.xs }}>
+          <ThemedText type="h4" style={{ color: theme.text, fontSize: 16 }}>
+            {value}
+          </ThemedText>
+          {trend && (
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 2 }}>
+              <Feather name={getTrendIcon()!} size={12} color={getTrendColor()} />
+              <ThemedText type="small" style={{ color: getTrendColor(), fontSize: 10 }}>
+                {trend.percentage}%
+              </ThemedText>
+            </View>
+          )}
+        </View>
       </View>
     </View>
   );
@@ -398,6 +424,63 @@ export default function ProfileScreen() {
   const subscriptionStatus = getSubscriptionStatusText();
   const subscriptionStatusText = isArabic ? subscriptionStatus.ar : subscriptionStatus.en;
 
+  // Wellness Stats calculations with trends
+  const getWeeklyWellnessStats = () => {
+    const today = new Date();
+    
+    // This week
+    const startOfThisWeek = new Date(today);
+    startOfThisWeek.setDate(today.getDate() - 7);
+    startOfThisWeek.setHours(0, 0, 0, 0);
+
+    const thisWeekLogs = data.dailyLogs.filter((log) => {
+      const logDate = new Date(log.date);
+      return logDate >= startOfThisWeek;
+    });
+
+    // Last week
+    const startOfLastWeek = new Date(today);
+    startOfLastWeek.setDate(today.getDate() - 14);
+    const endOfLastWeek = new Date(today);
+    endOfLastWeek.setDate(today.getDate() - 7);
+
+    const lastWeekLogs = data.dailyLogs.filter((log) => {
+      const logDate = new Date(log.date);
+      return logDate >= startOfLastWeek && logDate < endOfLastWeek;
+    });
+
+    // This week stats
+    const totalWater = thisWeekLogs.reduce((sum, log) => sum + (log.waterCups || 0), 0);
+    const totalSleep = thisWeekLogs.reduce((sum, log) => sum + (log.sleepHours || 0), 0);
+    const daysWithData = thisWeekLogs.filter(log => (log.waterCups || 0) > 0 || (log.sleepHours || 0) > 0).length;
+
+    const avgWater = daysWithData > 0 ? Math.round(totalWater / daysWithData) : 0;
+    const avgSleep = daysWithData > 0 ? Math.round((totalSleep / daysWithData) * 10) / 10 : 0;
+
+    // Last week stats
+    const lastWeekTotalWater = lastWeekLogs.reduce((sum, log) => sum + (log.waterCups || 0), 0);
+    const lastWeekTotalSleep = lastWeekLogs.reduce((sum, log) => sum + (log.sleepHours || 0), 0);
+    const lastWeekDaysWithData = lastWeekLogs.filter(log => (log.waterCups || 0) > 0 || (log.sleepHours || 0) > 0).length;
+
+    const lastWeekAvgWater = lastWeekDaysWithData > 0 ? Math.round(lastWeekTotalWater / lastWeekDaysWithData) : 0;
+    const lastWeekAvgSleep = lastWeekDaysWithData > 0 ? Math.round((lastWeekTotalSleep / lastWeekDaysWithData) * 10) / 10 : 0;
+
+    // Calculate trends
+    const waterTrend = lastWeekAvgWater > 0 ? {
+      direction: avgWater > lastWeekAvgWater ? "up" as const : avgWater < lastWeekAvgWater ? "down" as const : "neutral" as const,
+      percentage: Math.abs(Math.round(((avgWater - lastWeekAvgWater) / lastWeekAvgWater) * 100)),
+    } : undefined;
+
+    const sleepTrend = lastWeekAvgSleep > 0 ? {
+      direction: avgSleep > lastWeekAvgSleep ? "up" as const : avgSleep < lastWeekAvgSleep ? "down" as const : "neutral" as const,
+      percentage: Math.abs(Math.round(((avgSleep - lastWeekAvgSleep) / lastWeekAvgSleep) * 100)),
+    } : undefined;
+
+    return { avgWater, avgSleep, daysTracked: daysWithData, waterTrend, sleepTrend };
+  };
+
+  const wellnessStats = getWeeklyWellnessStats();
+
   return (
     <ScrollView
       style={{ flex: 1, backgroundColor: theme.backgroundRoot }}
@@ -526,6 +609,41 @@ export default function ProfileScreen() {
               label={t("profile", "routinesThisWeek")}
               value={weeklyBeautyCount}
               color={theme.primaryLight}
+            />
+          </View>
+        </View>
+      </Animated.View>
+
+      <Animated.View entering={FadeInDown.duration(400).delay(325)}>
+        <View style={styles.section}>
+          <ThemedText
+            type="caption"
+            style={{
+              color: theme.textSecondary,
+              marginBottom: Spacing.sm,
+              textTransform: "uppercase",
+              letterSpacing: 1,
+              textAlign: layout.textAlign,
+            }}
+          >
+            {t("wellness", "title")}
+          </ThemedText>
+          <View style={styles.statsRow}>
+            <StatPill
+              icon="drop"
+              label={t("wellness", "avgDailyWater")}
+              value={`${wellnessStats.avgWater} ${t("wellness", "glasses")}`}
+              color={theme.accent}
+              onPress={() => navigation.navigate("Wellness")}
+              trend={wellnessStats.waterTrend}
+            />
+            <StatPill
+              icon="moon"
+              label={t("wellness", "avgDailySleep")}
+              value={`${wellnessStats.avgSleep} ${t("wellness", "hours")}`}
+              color={theme.secondary}
+              onPress={() => navigation.navigate("Wellness")}
+              trend={wellnessStats.sleepTrend}
             />
           </View>
         </View>
