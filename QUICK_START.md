@@ -69,7 +69,15 @@ npx eas-cli build --platform ios --profile preview
 - Fixed `GlassEffect` → `GlassEffects` import in UIKit.tsx
 - Updated all usages to `GlassEffects.light.borderWidth`
 
+✅ **Fixed babel-preset-expo missing** (Dec 11, 2025)
+- Added `babel-preset-expo` to devDependencies
+
 ## Troubleshooting
+
+**Cannot find module 'babel-preset-expo':**
+```bash
+npm install
+```
 
 **Port already in use:**
 ```bash
