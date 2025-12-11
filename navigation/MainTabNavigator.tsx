@@ -13,19 +13,7 @@ import ProfileStackNavigator from "@/navigation/ProfileStackNavigator";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useApp } from "@/lib/AppContext";
 import { useFAB } from "@/contexts/FABContext";
-import {
-  DarkTheme,
-  PersonaColors,
-  Spacing,
-  BorderRadius,
-  Typography,
-  IconSizes,
-  Layout,
-  Glass,
-  getPersonaPrimary,
-  getPersonaGlow,
-} from "@/constants/theme";
-import { getGlowShadow } from "@/constants/design-tokens";
+import { Theme } from "@/constants/theme";
 
 export type MainTabParamList = {
   HomeTab: undefined;
@@ -36,7 +24,7 @@ export type MainTabParamList = {
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
-const FAB_SIZE = 56;
+const FAB_SIZE = Theme.spacing.fabSize;
 
 interface CustomTabBarProps {
   state: any;
@@ -52,16 +40,11 @@ function CustomTabBar({ state, descriptors, navigation }: CustomTabBarProps) {
 
   // Safe default if data not loaded yet
   const persona = data?.settings?.persona || "single";
-  const personaColor = getPersonaPrimary(persona);
-  const inactiveColor = "rgba(255, 255, 255, 0.5)";
+  const personaColor = Theme.getPersonaColor(persona);
+  const inactiveColor = Theme.dark.text.tertiary;
 
-  const TAB_BAR_HEIGHT = Layout.bottomNavHeight;
-  const bottomPadding = Platform.OS === "ios" ? insets.bottom : Spacing.sm;
-
-  const getCurrentTabName = () => {
-    const currentRoute = state.routes[state.index];
-    return currentRoute?.name || "HomeTab";
-  };
+  const TAB_BAR_HEIGHT = Theme.spacing.tabBarHeight;
+  const bottomPadding = Platform.OS === "ios" ? insets.bottom : Theme.spacing.sm;
 
   const handleFABPress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -117,14 +100,17 @@ function CustomTabBar({ state, descriptors, navigation }: CustomTabBarProps) {
     };
 
     const iconName = getIconName(route.name);
-    const iconColor = isFocused ? personaColor : inactiveColor;
+    const iconColor = isFocused ? personaColor.primary : inactiveColor;
     const label = getTabLabel(route.name);
 
     return (
       <Pressable
         key={route.key}
         onPress={onPress}
-        style={styles.tabItem}
+        style={({ pressed }) => [
+          styles.tabItem,
+          { opacity: pressed ? 0.6 : 1 },
+        ]}
         accessibilityRole="button"
         accessibilityState={isFocused ? { selected: true } : {}}
         accessibilityLabel={options.tabBarAccessibilityLabel}
@@ -132,7 +118,7 @@ function CustomTabBar({ state, descriptors, navigation }: CustomTabBarProps) {
         <View style={styles.iconContainer}>
           <Feather
             name={iconName}
-            size={IconSizes.base}
+            size={Theme.iconSizes.medium}
             color={iconColor}
           />
         </View>
@@ -159,7 +145,7 @@ function CustomTabBar({ state, descriptors, navigation }: CustomTabBarProps) {
         style={[
           styles.fabGlow,
           {
-            backgroundColor: personaColor,
+            backgroundColor: personaColor.primary,
             opacity: 0.3,
           },
         ]}
@@ -170,15 +156,19 @@ function CustomTabBar({ state, descriptors, navigation }: CustomTabBarProps) {
         style={({ pressed }) => [
           styles.fabButton,
           {
-            backgroundColor: personaColor,
-            transform: [{ scale: pressed ? 0.94 : 1 }],
+            backgroundColor: personaColor.primary,
+            transform: [{ scale: pressed ? Theme.animations.buttonScale : 1 }],
           },
-          getGlowShadow(personaColor, "md"),
+          Theme.shadows.large,
+          {
+            shadowColor: personaColor.primary,
+            shadowOpacity: 0.4,
+          },
         ]}
         accessibilityRole="button"
         accessibilityLabel="Quick Add"
       >
-        <Feather name="plus" size={28} color={DarkTheme.text.primary} />
+        <Feather name="plus" size={28} color="#FFFFFF" />
       </Pressable>
     </View>
   );
@@ -207,7 +197,7 @@ function CustomTabBar({ state, descriptors, navigation }: CustomTabBarProps) {
         <View
           style={[
             StyleSheet.absoluteFill,
-            { backgroundColor: DarkTheme.background.elevated },
+            { backgroundColor: Theme.dark.background.elevated },
           ]}
         />
       )}
@@ -216,7 +206,7 @@ function CustomTabBar({ state, descriptors, navigation }: CustomTabBarProps) {
       <View
         style={[
           styles.topBorder,
-          { backgroundColor: DarkTheme.border.subtle },
+          { backgroundColor: Theme.dark.border.subtle },
         ]}
       />
 
@@ -291,30 +281,29 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    height: 1,
+    height: StyleSheet.hairlineWidth,
   },
   tabBarContent: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-around",
-    paddingHorizontal: Spacing.base,
+    paddingHorizontal: Theme.spacing.xs,
   },
   tabItem: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: Spacing.sm,
-    gap: 4,
+    paddingVertical: Theme.spacing.xs,
+    gap: Theme.spacing.xxxs,
+    minHeight: Theme.spacing.listItemHeight,
   },
   iconContainer: {
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 2,
   },
   tabLabel: {
-    fontSize: Typography.caption.fontSize,
-    lineHeight: Typography.caption.lineHeight,
+    ...Theme.typography.caption1,
     textAlign: "center",
   },
   fabContainer: {

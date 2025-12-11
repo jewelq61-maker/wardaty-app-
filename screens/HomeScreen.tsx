@@ -1,10 +1,9 @@
-import { useState } from "react";
+import React from "react";
 import { View, StyleSheet, ScrollView, Pressable, Dimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
-import { BlurView } from "expo-blur";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 
@@ -17,21 +16,8 @@ import {
   getDaysUntilNextPeriod,
   getDetailedCyclePhase,
 } from "@/lib/cycle-utils";
-import {
-  DarkBackgrounds,
-  PersonaColors,
-  NeutralColors,
-  GlassStyles,
-  getPersonaPrimary,
-} from "@/constants/colors";
-import {
-  Spacing,
-  BorderRadius,
-  Typography,
-  Shadows,
-  IconSizes,
-  Layout,
-} from "@/constants/design-tokens";
+import { Theme } from "@/constants/theme";
+import { articles } from "@/data/articles";
 
 const { width } = Dimensions.get("window");
 
@@ -81,12 +67,12 @@ export default function HomeScreen() {
   const layout = useLayout();
   const { data } = useApp();
   
-  // Safety check: if data is not loaded yet, show loading or use defaults
+  // Safety check
   if (!data || !data.settings) {
     return (
       <View style={styles.container}>
-        <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-          <ThemedText style={{ color: NeutralColors.white }}>
+        <View style={styles.loadingContainer}>
+          <ThemedText style={styles.loadingText}>
             {language === "ar" ? "جارٍ التحميل..." : "Loading..."}
           </ThemedText>
         </View>
@@ -95,16 +81,15 @@ export default function HomeScreen() {
   }
 
   const settings = data.settings;
-  const logs = data.cycleLogs;
   const pregnancySettings = data.pregnancySettings;
   const { getPregnancyWeek, getPregnancyDaysRemaining } = useApp();
 
-  // Check if pregnancy mode is enabled
+  // Check pregnancy mode
   const isPregnancyMode = pregnancySettings?.enabled || false;
   const pregnancyWeek = isPregnancyMode ? getPregnancyWeek() : null;
   const daysRemaining = isPregnancyMode ? getPregnancyDaysRemaining() : null;
 
-  // Safe defaults when no period data exists
+  // Cycle data
   const cycleDay = settings.lastPeriodStart 
     ? getCurrentCycleDay(settings.lastPeriodStart, settings.cycleLength)
     : 1;
@@ -121,7 +106,7 @@ export default function HomeScreen() {
     : "follicular";
   const phase = { name: phaseResult };
 
-  const personaColor = getPersonaPrimary(settings.persona || "single");
+  const personaColor = Theme.getPersonaColor(settings.persona || "single");
 
   const getTimeBasedGreeting = () => {
     const hour = new Date().getHours();
@@ -147,21 +132,34 @@ export default function HomeScreen() {
     navigation.navigate(screen as never);
   };
 
+  const handleArticlePress = (articleId: string) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    navigation.navigate("ArticleDetail" as never, { articleId } as never);
+  };
+
+  const handleSeeAllArticles = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    navigation.navigate("ProfileTab" as never);
+  };
+
+  // Get featured articles (first 3)
+  const featuredArticles = articles.slice(0, 3);
+
   return (
     <View style={styles.container}>
       <ScrollView
         contentContainerStyle={[
           styles.scrollContent,
           {
-            paddingTop: insets.top + Spacing.lg,
-            paddingBottom: insets.bottom + Layout.bottomNavHeight + Spacing["2xl"],
+            paddingTop: insets.top + Theme.spacing.md,
+            paddingBottom: insets.bottom + Theme.spacing.tabBarHeight + Theme.spacing.xxl,
           },
         ]}
         showsVerticalScrollIndicator={false}
       >
         {/* Header */}
         <View style={[styles.header, { flexDirection: layout.flexDirection }]}>
-          <View style={{ flex: 1 }}>
+          <View style={styles.headerTextContainer}>
             <ThemedText style={[styles.greeting, { textAlign: layout.textAlign }]}>
               {greeting}
             </ThemedText>
@@ -174,23 +172,21 @@ export default function HomeScreen() {
             onPress={handleNotificationPress}
             style={({ pressed }) => [
               styles.notificationButton,
-              { opacity: pressed ? 0.7 : 1 },
+              { opacity: pressed ? 0.6 : 1 },
             ]}
           >
-            <Feather name="bell" size={IconSizes.base} color={personaColor} />
+            <Feather name="bell" size={Theme.iconSizes.medium} color={personaColor.primary} />
           </Pressable>
         </View>
 
         {/* Cycle or Pregnancy Card */}
-        <Animated.View
-          entering={FadeInDown.delay(100).duration(600)}
-        >
+        <Animated.View entering={FadeInDown.delay(100).duration(600)}>
           <Pressable
             style={styles.cycleCard}
             onPress={() => handleCardPress(isPregnancyMode ? "Pregnancy" : "Calendar")}
           >
             <LinearGradient
-              colors={PersonaColors[settings.persona || "single"].gradient}
+              colors={personaColor.gradient}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.cycleGradient}
@@ -254,21 +250,68 @@ export default function HomeScreen() {
                 style={styles.actionItem}
               >
                 <Pressable
-                  style={styles.actionCard}
+                  style={({ pressed }) => [
+                    styles.actionCard,
+                    { opacity: pressed ? 0.7 : 1 },
+                  ]}
                   onPress={() => handleCardPress(action.screen)}
                 >
-                  <View style={styles.glassCard}>
-                    <View style={[styles.actionIconContainer, { backgroundColor: `${personaColor}20` }]}>
-                      <Feather name={action.icon as any} size={IconSizes.lg} color={personaColor} />
-                    </View>
-                    <ThemedText style={[styles.actionTitle, { textAlign: "center" }]}>
-                      {language === "ar" ? action.titleAr : action.titleEn}
-                    </ThemedText>
+                  <View style={[styles.actionIconContainer, { backgroundColor: personaColor.glow }]}>
+                    <Feather name={action.icon as any} size={Theme.iconSizes.large} color={personaColor.primary} />
                   </View>
+                  <ThemedText style={styles.actionTitle}>
+                    {language === "ar" ? action.titleAr : action.titleEn}
+                  </ThemedText>
                 </Pressable>
               </Animated.View>
             ))}
           </View>
+        </View>
+
+        {/* Featured Articles */}
+        <View style={styles.section}>
+          <View style={[styles.sectionHeader, { flexDirection: layout.flexDirection }]}>
+            <ThemedText style={[styles.sectionTitle, { textAlign: layout.textAlign }]}>
+              {language === "ar" ? "مقالات مميزة" : "Featured Articles"}
+            </ThemedText>
+            <Pressable onPress={handleSeeAllArticles}>
+              <ThemedText style={[styles.seeAllButton, { color: personaColor.primary }]}>
+                {language === "ar" ? "عرض الكل" : "See All"}
+              </ThemedText>
+            </Pressable>
+          </View>
+
+          {featuredArticles.map((article, index) => (
+            <Animated.View
+              key={article.id}
+              entering={FadeInDown.delay(300 + index * 100).duration(600)}
+            >
+              <Pressable
+                style={({ pressed }) => [
+                  styles.articleCard,
+                  { opacity: pressed ? 0.7 : 1 },
+                ]}
+                onPress={() => handleArticlePress(article.id)}
+              >
+                <View style={styles.articleContent}>
+                  <View style={[styles.articleIconContainer, { backgroundColor: personaColor.glow }]}>
+                    <Feather name="book-open" size={Theme.iconSizes.medium} color={personaColor.primary} />
+                  </View>
+                  <View style={styles.articleText}>
+                    <ThemedText style={[styles.articleTitle, { textAlign: layout.textAlign }]} numberOfLines={2}>
+                      {language === "ar" ? article.titleAr : article.titleEn}
+                    </ThemedText>
+                    <ThemedText style={[styles.articleExcerpt, { textAlign: layout.textAlign }]} numberOfLines={2}>
+                      {language === "ar" ? article.excerptAr : article.excerptEn}
+                    </ThemedText>
+                    <ThemedText style={[styles.articleMeta, { textAlign: layout.textAlign }]}>
+                      {article.readTime} {language === "ar" ? "دقائق" : "min read"}
+                    </ThemedText>
+                  </View>
+                </View>
+              </Pressable>
+            </Animated.View>
+          ))}
         </View>
 
         {/* Today's Insights */}
@@ -277,17 +320,17 @@ export default function HomeScreen() {
             {language === "ar" ? "رؤى اليوم" : "Today's Insights"}
           </ThemedText>
 
-          <Animated.View entering={FadeInDown.delay(400).duration(600)}>
-            <View style={styles.glassCard}>
+          <Animated.View entering={FadeInDown.delay(600).duration(600)}>
+            <View style={styles.insightCard}>
               <View style={[styles.insightHeader, { flexDirection: layout.flexDirection }]}>
-                <View style={[styles.insightIconContainer, { backgroundColor: `${personaColor}20` }]}>
-                  <Feather name="activity" size={IconSizes.base} color={personaColor} />
+                <View style={[styles.insightIconContainer, { backgroundColor: personaColor.glow }]}>
+                  <Feather name="activity" size={Theme.iconSizes.medium} color={personaColor.primary} />
                 </View>
-                <View style={{ flex: 1 }}>
+                <View style={styles.insightTextContainer}>
                   <ThemedText style={[styles.insightTitle, { textAlign: layout.textAlign }]}>
                     {language === "ar" ? "الطاقة" : "Energy Level"}
                   </ThemedText>
-                  <ThemedText style={[styles.insightValue, { textAlign: layout.textAlign, color: personaColor }]}>
+                  <ThemedText style={[styles.insightValue, { textAlign: layout.textAlign, color: personaColor.primary }]}>
                     {language === "ar" ? "متوسطة" : "Moderate"}
                   </ThemedText>
                 </View>
@@ -308,49 +351,55 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: DarkBackgrounds.base,
+    backgroundColor: Theme.dark.background.root,
   },
-  scrollContent: {
-    paddingHorizontal: Layout.screenPaddingHorizontal,
-  },
-
-  // Header
-  header: {
-    alignItems: "center",
-    marginBottom: Spacing.xl,
-  },
-  greeting: {
-    fontSize: Typography.body.fontSize,
-    lineHeight: Typography.body.lineHeight,
-    fontWeight: Typography.body.fontWeight,
-    color: "rgba(255, 255, 255, 0.7)",
-    marginBottom: Spacing.xs,
-  },
-  userName: {
-    fontSize: Typography.h2.fontSize,
-    lineHeight: Typography.h2.lineHeight,
-    fontWeight: Typography.h2.fontWeight,
-    color: NeutralColors.white,
-  },
-  notificationButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: DarkBackgrounds.card,
+  loadingContainer: {
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.1)",
   },
-
-  // Cycle Card
+  loadingText: {
+    ...Theme.typography.body,
+    color: Theme.dark.text.primary,
+  },
+  scrollContent: {
+    paddingHorizontal: Theme.spacing.screenPadding,
+  },
+  header: {
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: Theme.spacing.lg,
+  },
+  headerTextContainer: {
+    flex: 1,
+  },
+  greeting: {
+    ...Theme.typography.subheadline,
+    color: Theme.dark.text.secondary,
+    marginBottom: Theme.spacing.xxxs,
+  },
+  userName: {
+    ...Theme.typography.largeTitle,
+    color: Theme.dark.text.primary,
+  },
+  notificationButton: {
+    width: Theme.spacing.listItemHeight,
+    height: Theme.spacing.listItemHeight,
+    borderRadius: Theme.borderRadius.full,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: Theme.glass.light.backgroundColor,
+    borderWidth: Theme.glass.light.borderWidth,
+    borderColor: Theme.glass.light.borderColor,
+  },
   cycleCard: {
-    borderRadius: BorderRadius.xl,
+    marginBottom: Theme.spacing.xl,
+    borderRadius: Theme.borderRadius.xlarge,
     overflow: "hidden",
-    marginBottom: Spacing.xl,
+    ...Theme.shadows.large,
   },
   cycleGradient: {
-    padding: Spacing.xl,
+    padding: Theme.spacing.lg,
   },
   cycleContent: {
     alignItems: "center",
@@ -360,69 +409,61 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   cycleTitle: {
-    fontSize: Typography.h1.fontSize,
-    lineHeight: Typography.h1.lineHeight,
-    fontWeight: Typography.h1.fontWeight,
-    color: NeutralColors.white,
-    marginBottom: Spacing.xs,
+    ...Theme.typography.title1,
+    color: "#FFFFFF",
+    marginBottom: Theme.spacing.xxs,
   },
   cycleSubtitle: {
-    fontSize: Typography.body.fontSize,
-    lineHeight: Typography.body.lineHeight,
-    fontWeight: Typography.body.fontWeight,
-    color: "rgba(255, 255, 255, 0.9)",
+    ...Theme.typography.callout,
+    color: "rgba(255, 255, 255, 0.8)",
   },
   cycleDays: {
     alignItems: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
-    paddingVertical: Spacing.base,
-    paddingHorizontal: Spacing.lg,
-    borderRadius: BorderRadius.lg,
   },
   cycleDaysNumber: {
-    fontSize: Typography.h1.fontSize,
-    lineHeight: Typography.h1.lineHeight,
-    fontWeight: Typography.h1.fontWeight,
-    color: NeutralColors.white,
+    ...Theme.typography.largeTitle,
+    color: "#FFFFFF",
+    fontWeight: "700",
   },
   cycleDaysLabel: {
-    fontSize: Typography.caption.fontSize,
-    lineHeight: Typography.caption.lineHeight,
-    fontWeight: Typography.caption.fontWeight,
-    color: "rgba(255, 255, 255, 0.9)",
+    ...Theme.typography.footnote,
+    color: "rgba(255, 255, 255, 0.8)",
   },
-
-  // Section
   section: {
-    marginBottom: Spacing.xl,
+    marginBottom: Theme.spacing.xl,
+  },
+  sectionHeader: {
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: Theme.spacing.md,
   },
   sectionTitle: {
-    fontSize: Typography.h3.fontSize,
-    lineHeight: Typography.h3.lineHeight,
-    fontWeight: Typography.h3.fontWeight,
-    color: NeutralColors.white,
-    marginBottom: Spacing.lg,
+    ...Theme.typography.title3,
+    color: Theme.dark.text.primary,
+    marginBottom: Theme.spacing.md,
   },
-
-  // Quick Actions Grid
+  seeAllButton: {
+    ...Theme.typography.callout,
+    fontWeight: "600",
+  },
   actionsGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: Spacing.base,
+    marginHorizontal: -Theme.spacing.xs,
   },
   actionItem: {
-    width: (width - Layout.screenPaddingHorizontal * 2 - Spacing.base) / 2,
+    width: "50%",
+    padding: Theme.spacing.xs,
   },
   actionCard: {
-    width: "100%",
-  },
-  glassCard: {
-    backgroundColor: DarkBackgrounds.card,
-    borderRadius: BorderRadius.xl,
-    padding: Spacing.lg,
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.1)",
-    ...Shadows.dark.md,
+    backgroundColor: Theme.glass.light.backgroundColor,
+    borderWidth: Theme.glass.light.borderWidth,
+    borderColor: Theme.glass.light.borderColor,
+    borderRadius: Theme.borderRadius.large,
+    padding: Theme.spacing.md,
+    alignItems: "center",
+    minHeight: 120,
+    justifyContent: "center",
   },
   actionIconContainer: {
     width: 56,
@@ -430,20 +471,60 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: Spacing.md,
+    marginBottom: Theme.spacing.sm,
   },
   actionTitle: {
-    fontSize: Typography.body.fontSize,
-    lineHeight: Typography.body.lineHeight,
-    fontWeight: Typography.body.fontWeight,
-    color: NeutralColors.white,
+    ...Theme.typography.callout,
+    color: Theme.dark.text.primary,
+    textAlign: "center",
   },
-
-  // Insights
+  articleCard: {
+    backgroundColor: Theme.glass.light.backgroundColor,
+    borderWidth: Theme.glass.light.borderWidth,
+    borderColor: Theme.glass.light.borderColor,
+    borderRadius: Theme.borderRadius.large,
+    padding: Theme.spacing.md,
+    marginBottom: Theme.spacing.sm,
+  },
+  articleContent: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+  },
+  articleIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    alignItems: "center",
+    justifyContent: "center",
+    marginEnd: Theme.spacing.sm,
+  },
+  articleText: {
+    flex: 1,
+  },
+  articleTitle: {
+    ...Theme.typography.headline,
+    color: Theme.dark.text.primary,
+    marginBottom: Theme.spacing.xxs,
+  },
+  articleExcerpt: {
+    ...Theme.typography.footnote,
+    color: Theme.dark.text.secondary,
+    marginBottom: Theme.spacing.xxs,
+  },
+  articleMeta: {
+    ...Theme.typography.caption1,
+    color: Theme.dark.text.tertiary,
+  },
+  insightCard: {
+    backgroundColor: Theme.glass.light.backgroundColor,
+    borderWidth: Theme.glass.light.borderWidth,
+    borderColor: Theme.glass.light.borderColor,
+    borderRadius: Theme.borderRadius.large,
+    padding: Theme.spacing.md,
+  },
   insightHeader: {
     alignItems: "center",
-    marginBottom: Spacing.md,
-    gap: Spacing.md,
+    marginBottom: Theme.spacing.sm,
   },
   insightIconContainer: {
     width: 44,
@@ -451,23 +532,22 @@ const styles = StyleSheet.create({
     borderRadius: 22,
     alignItems: "center",
     justifyContent: "center",
+    marginEnd: Theme.spacing.sm,
+  },
+  insightTextContainer: {
+    flex: 1,
   },
   insightTitle: {
-    fontSize: Typography.label.fontSize,
-    lineHeight: Typography.label.lineHeight,
-    fontWeight: Typography.label.fontWeight,
-    color: "rgba(255, 255, 255, 0.7)",
-    marginBottom: Spacing.xs,
+    ...Theme.typography.callout,
+    color: Theme.dark.text.secondary,
+    marginBottom: Theme.spacing.xxxs,
   },
   insightValue: {
-    fontSize: Typography.h4.fontSize,
-    lineHeight: Typography.h4.lineHeight,
-    fontWeight: Typography.h4.fontWeight,
+    ...Theme.typography.headline,
   },
   insightDescription: {
-    fontSize: Typography.bodySmall.fontSize,
-    lineHeight: Typography.bodySmall.lineHeight,
-    fontWeight: Typography.bodySmall.fontWeight,
-    color: "rgba(255, 255, 255, 0.7)",
+    ...Theme.typography.footnote,
+    color: Theme.dark.text.secondary,
+    lineHeight: 20,
   },
 });
