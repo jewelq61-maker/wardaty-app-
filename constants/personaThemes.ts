@@ -1,4 +1,4 @@
-import { Persona } from "@/lib/types";
+import { Persona } from "../lib/types";
 import { DarkTheme, PersonaColors, CycleColors } from "./theme";
 
 export type ThemeMode = "light" | "dark";

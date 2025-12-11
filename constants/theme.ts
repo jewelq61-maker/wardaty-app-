@@ -4,7 +4,7 @@
 // ===================================
 
 import { Platform } from "react-native";
-import { Persona } from "@/lib/types";
+import { Persona } from "../lib/types";
 import { iOSTokens, iOSTypography, iOSSpacing, iOSBorderRadius, iOSShadows } from "./ios-tokens";
 
 // ===================================
