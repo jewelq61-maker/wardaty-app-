@@ -287,14 +287,12 @@ function getPersonaThemes(): Record<Persona, { light: Theme; dark: Theme }> {
   return _personaThemes;
 }
 
-export const personaThemes = getPersonaThemes();
-
 export function getTheme(persona: Persona, mode: ThemeMode): Theme {
   return getPersonaThemes()[persona][mode];
 }
 
 export function getDefaultTheme(): Theme {
-  return personaThemes.single.dark;
+  return getPersonaThemes().single.dark;
 }
 
 export function getLogoGradient(persona: Persona): readonly [string, string] {
