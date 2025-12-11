@@ -16,7 +16,7 @@ import {
   getDaysUntilNextPeriod,
   getDetailedCyclePhase,
 } from "../lib/cycle-utils";
-import { DarkTheme, GlassEffects, Typography, Spacing, BorderRadius, Shadows, IconSizes } from "../constants/theme";
+import { DarkTheme, GlassEffects, Typography, Spacing, BorderRadius, Shadows, IconSizes, getPersonaColor } from "../constants/theme";
 import { articles } from "../data/articles";
 
 const { width } = Dimensions.get("window");
@@ -106,7 +106,7 @@ export default function HomeScreen() {
     : "follicular";
   const phase = { name: phaseResult };
 
-  const personaColor = Theme.getPersonaColor(settings.persona || "single");
+  const personaColor = getPersonaColor(settings.persona || "single");
 
   const getTimeBasedGreeting = () => {
     const hour = new Date().getHours();

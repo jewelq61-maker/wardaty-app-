@@ -11,7 +11,7 @@ import { useTheme } from "../hooks/useTheme";
 import { useLanguage } from "../hooks/useLanguage";
 import { useLayout } from "../lib/ThemePersonaContext";
 import { useApp } from "../lib/AppContext";
-import { DarkTheme, GlassEffects, Typography, Spacing, BorderRadius, IconSizes } from "../constants/theme";
+import { DarkTheme, GlassEffects, Typography, Spacing, BorderRadius, IconSizes, getPersonaColor, SemanticColors } from "../constants/theme";
 import type { ArticlesStackParamList } from "../navigation/ArticlesStackNavigator";
 import { getAllArticles } from "../data/articles";
 
@@ -44,7 +44,7 @@ export default function ArticlesScreen() {
   const { data: appData } = useApp();
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
-  const personaColor = Theme.getPersonaColor(appData.settings.persona || "single");
+  const personaColor = getPersonaColor(appData.settings.persona || "single");
 
   // Use local articles data
   const allArticles = getAllArticles();
@@ -74,11 +74,11 @@ export default function ArticlesScreen() {
       case "health":
         return personaColor.primary;
       case "beauty":
-        return Theme.semantic.error;
+        return SemanticColors.error;
       case "faith":
         return personaColor.dark;
       case "wellness":
-        return Theme.semantic.success;
+        return SemanticColors.success;
       default:
         return personaColor.primary;
     }

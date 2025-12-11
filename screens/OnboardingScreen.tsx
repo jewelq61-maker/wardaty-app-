@@ -12,7 +12,7 @@ import { PersonaSelector } from "../components/PersonaSelector";
 import { useLanguage } from "../hooks/useLanguage";
 import { useApp } from "../lib/AppContext";
 import { Persona } from "../lib/types";
-import { DarkTheme, PersonaColors, Spacing, Typography, BorderRadius } from "../constants/theme";
+import { DarkTheme, PersonaColors, Spacing, Typography, BorderRadius, Shadows } from "../constants/theme";
 import { useLayout } from "../lib/ThemePersonaContext";
 
 const { width } = Dimensions.get("window");
@@ -668,7 +668,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: Spacing.sm,
-    ...Theme.shadows.small,
+    ...Shadows.small,
   },
   primaryButtonDisabled: {
     opacity: 0.5,
