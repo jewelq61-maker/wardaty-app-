@@ -108,10 +108,15 @@ export interface UserSettings {
   name: string;
   nameAr: string;
   nameEn: string;
+  age?: number;
   language: "ar" | "en";
   theme: "light" | "dark" | "system";
   calendarType: "gregorian" | "hijri" | "both";
   cycleSettings: CycleSettings;
+  wellnessGoals?: {
+    waterCups: number;
+    sleepHours: number;
+  };
   notificationsEnabled: boolean;
   isSubscribed: boolean;
   onboardingComplete: boolean;
