@@ -3,8 +3,8 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import * as Haptics from "expo-haptics";
 
-import { useApp } from "@/lib/AppContext";
-import type { RootStackParamList } from "@/navigation/RootStackNavigator";
+import { useApp } from "../lib/AppContext";
+import type { RootStackParamList } from "../navigation/RootStackNavigator";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 

@@ -8,9 +8,9 @@ import Animated, {
 } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 
-import { ThemedText } from "@/components/ThemedText";
-import { useTheme } from "@/hooks/useTheme";
-import { useLayout } from "@/lib/ThemePersonaContext";
+import { ThemedText } from "./ThemedText";
+import { useTheme } from "../hooks/useTheme";
+import { useLayout } from "../lib/ThemePersonaContext";
 import {
   BorderRadius,
   Spacing,
@@ -18,7 +18,7 @@ import {
   GlassEffect,
   Shadows,
   Gradients,
-} from "@/constants/theme";
+} from "../constants/theme";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 

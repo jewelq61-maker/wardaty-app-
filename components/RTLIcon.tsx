@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet, ViewStyle } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import { shouldMirrorIcon } from "@/lib/rtl-utils";
+import { shouldMirrorIcon } from "../lib/rtl-utils";
 
 type FeatherIconName = React.ComponentProps<typeof Feather>["name"];
 

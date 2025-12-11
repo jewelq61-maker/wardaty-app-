@@ -7,9 +7,9 @@ import Animated, {
 } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 
-import { ThemedText } from "@/components/ThemedText";
-import { useTheme } from "@/hooks/useTheme";
-import { Spacing, BorderRadius, Animations, GlassEffect } from "@/constants/theme";
+import { ThemedText } from "./ThemedText";
+import { useTheme } from "../hooks/useTheme";
+import { Spacing, BorderRadius, Animations, GlassEffect } from "../constants/theme";
 
 interface CardProps {
   elevation?: number;

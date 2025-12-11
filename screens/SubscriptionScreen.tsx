@@ -8,15 +8,15 @@ import { Feather } from "@expo/vector-icons";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import * as Haptics from "expo-haptics";
 
-import { ThemedText } from "@/components/ThemedText";
-import { Button } from "@/components/Button";
-import { useTheme } from "@/hooks/useTheme";
-import { useLanguage } from "@/hooks/useLanguage";
-import { useLayout } from "@/lib/ThemePersonaContext";
-import { Spacing, BorderRadius } from "@/constants/theme";
-import { useApp } from "@/lib/AppContext";
-import { apiRequest, getApiUrl } from "@/lib/query-client";
-import { ProfileStackParamList } from "@/navigation/ProfileStackNavigator";
+import { ThemedText } from "../components/ThemedText";
+import { Button } from "../components/Button";
+import { useTheme } from "../hooks/useTheme";
+import { useLanguage } from "../hooks/useLanguage";
+import { useLayout } from "../lib/ThemePersonaContext";
+import { Spacing, BorderRadius } from "../constants/theme";
+import { useApp } from "../lib/AppContext";
+import { apiRequest, getApiUrl } from "../lib/query-client";
+import { ProfileStackParamList } from "../navigation/ProfileStackNavigator";
 
 interface Plan {
   code: string;

@@ -12,15 +12,15 @@ import { useQuery } from "@tanstack/react-query";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RouteProp } from "@react-navigation/native";
-import { ThemedText } from "@/components/ThemedText";
-import { Card } from "@/components/Card";
-import { useTheme } from "@/hooks/useTheme";
-import { useLanguage } from "@/hooks/useLanguage";
-import { useLayout } from "@/lib/ThemePersonaContext";
-import { useApp } from "@/lib/AppContext";
-import { Spacing, BorderRadius } from "@/constants/theme";
-import { getApiUrl } from "@/lib/query-client";
-import { getAllArticles, getRelatedArticles } from "@/data/articles";
+import { ThemedText } from "../components/ThemedText";
+import { Card } from "../components/Card";
+import { useTheme } from "../hooks/useTheme";
+import { useLanguage } from "../hooks/useLanguage";
+import { useLayout } from "../lib/ThemePersonaContext";
+import { useApp } from "../lib/AppContext";
+import { Spacing, BorderRadius } from "../constants/theme";
+import { getApiUrl } from "../lib/query-client";
+import { getAllArticles, getRelatedArticles } from "../data/articles";
 
 interface Article {
   id: string;

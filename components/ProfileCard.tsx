@@ -1,10 +1,10 @@
 import React from "react";
 import { View, StyleSheet, Image } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import { ThemedText } from "@/components/ThemedText";
-import { useTheme } from "@/hooks/useTheme";
-import { Spacing, BorderRadius } from "@/constants/theme";
-import { Persona } from "@/lib/types";
+import { ThemedText } from "./ThemedText";
+import { useTheme } from "../hooks/useTheme";
+import { Spacing, BorderRadius } from "../constants/theme";
+import { Persona } from "../lib/types";
 
 interface ProfileCardProps {
   name: string;

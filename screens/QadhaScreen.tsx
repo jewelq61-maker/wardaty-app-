@@ -4,15 +4,15 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { Feather } from "@expo/vector-icons";
 
-import { ThemedText } from "@/components/ThemedText";
-import { Button } from "@/components/Button";
-import { QadhaCounter } from "@/components/QadhaCounter";
-import { useTheme } from "@/hooks/useTheme";
-import { useLanguage } from "@/hooks/useLanguage";
-import { Spacing, BorderRadius } from "@/constants/theme";
-import { useApp } from "@/lib/AppContext";
-import { useLayout } from "@/lib/ThemePersonaContext";
-import { formatDate } from "@/lib/cycle-utils";
+import { ThemedText } from "../components/ThemedText";
+import { Button } from "../components/Button";
+import { QadhaCounter } from "../components/QadhaCounter";
+import { useTheme } from "../hooks/useTheme";
+import { useLanguage } from "../hooks/useLanguage";
+import { Spacing, BorderRadius } from "../constants/theme";
+import { useApp } from "../lib/AppContext";
+import { useLayout } from "../lib/ThemePersonaContext";
+import { formatDate } from "../lib/cycle-utils";
 
 export default function QadhaScreen() {
   const insets = useSafeAreaInsets();

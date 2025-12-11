@@ -2,8 +2,8 @@ import { Platform } from "react-native";
 import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 import { isLiquidGlassAvailable } from "expo-glass-effect";
 
-import { useTheme } from "@/hooks/useTheme";
-import { Theme } from "@/constants/theme";
+import { useTheme } from "./useTheme";
+import { Theme } from "../constants/theme";
 
 interface UseScreenOptionsParams {
   transparent?: boolean;

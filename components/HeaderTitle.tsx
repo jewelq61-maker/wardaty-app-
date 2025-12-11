@@ -1,11 +1,11 @@
 import React from "react";
 import { View, StyleSheet, Image, ImageSourcePropType } from "react-native";
 
-import { ThemedText } from "@/components/ThemedText";
-import { Theme } from "@/constants/theme";
-import { useApp } from "@/lib/AppContext";
-import { useLayout, useLogoColors } from "@/lib/ThemePersonaContext";
-import type { Persona } from "@/lib/types";
+import { ThemedText } from "./ThemedText";
+import { Theme } from "../constants/theme";
+import { useApp } from "../lib/AppContext";
+import { useLayout, useLogoColors } from "../lib/ThemePersonaContext";
+import type { Persona } from "../lib/types";
 
 const personaIcons: Record<Persona, ImageSourcePropType> = {
   single: require("@/assets/images/icon-single-pink.png"),

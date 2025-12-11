@@ -5,12 +5,12 @@ import { useHeaderHeight } from "@react-navigation/elements";
 import { Feather } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
 
-import { ThemedText } from "@/components/ThemedText";
-import { Button } from "@/components/Button";
-import { useTheme } from "@/hooks/useTheme";
-import { useLanguage } from "@/hooks/useLanguage";
-import { useLayout } from "@/lib/ThemePersonaContext";
-import { Spacing, BorderRadius } from "@/constants/theme";
+import { ThemedText } from "../components/ThemedText";
+import { Button } from "../components/Button";
+import { useTheme } from "../hooks/useTheme";
+import { useLanguage } from "../hooks/useLanguage";
+import { useLayout } from "../lib/ThemePersonaContext";
+import { Spacing, BorderRadius } from "../constants/theme";
 
 interface MoyasarStatus {
   configured: boolean;

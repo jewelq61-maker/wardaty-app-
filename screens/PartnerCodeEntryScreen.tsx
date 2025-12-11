@@ -5,15 +5,15 @@ import { Feather } from "@expo/vector-icons";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 
-import { ThemedText } from "@/components/ThemedText";
-import { Button } from "@/components/Button";
-import { useTheme } from "@/hooks/useTheme";
-import { useLanguage } from "@/hooks/useLanguage";
-import { useLayout } from "@/lib/ThemePersonaContext";
-import { usePartner } from "@/lib/PartnerContext";
-import { Spacing, BorderRadius } from "@/constants/theme";
-import { Card } from "@/components/Card";
-import { KeyboardAwareScrollViewCompat } from "@/components/KeyboardAwareScrollViewCompat";
+import { ThemedText } from "../components/ThemedText";
+import { Button } from "../components/Button";
+import { useTheme } from "../hooks/useTheme";
+import { useLanguage } from "../hooks/useLanguage";
+import { useLayout } from "../lib/ThemePersonaContext";
+import { usePartner } from "../lib/PartnerContext";
+import { Spacing, BorderRadius } from "../constants/theme";
+import { Card } from "../components/Card";
+import { KeyboardAwareScrollViewCompat } from "../components/KeyboardAwareScrollViewCompat";
 
 interface PartnerCodeEntryScreenProps {
   onBack: () => void;

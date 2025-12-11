@@ -7,17 +7,17 @@ import Animated, {
   FadeIn,
 } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
-import { ThemedText } from "@/components/ThemedText";
-import { useTheme } from "@/hooks/useTheme";
-import { useLanguage } from "@/hooks/useLanguage";
-import { Spacing, BorderRadius } from "@/constants/theme";
-import { CycleSettings } from "@/lib/types";
+import { ThemedText } from "./ThemedText";
+import { useTheme } from "../hooks/useTheme";
+import { useLanguage } from "../hooks/useLanguage";
+import { Spacing, BorderRadius } from "../constants/theme";
+import { CycleSettings } from "../lib/types";
 import {
   getUpcomingDays,
   getDayOfWeek,
   getCyclePhase,
   getTodayString,
-} from "@/lib/cycle-utils";
+} from "../lib/cycle-utils";
 
 interface DaysStripProps {
   cycleSettings: CycleSettings;

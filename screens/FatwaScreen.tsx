@@ -8,12 +8,12 @@ import Animated, {
   withTiming,
   useSharedValue,
 } from "react-native-reanimated";
-import { ThemedText } from "@/components/ThemedText";
-import { Card } from "@/components/Card";
-import { useTheme } from "@/hooks/useTheme";
-import { useLanguage } from "@/hooks/useLanguage";
-import { useLayout, LayoutDirection } from "@/lib/ThemePersonaContext";
-import { Spacing, BorderRadius } from "@/constants/theme";
+import { ThemedText } from "../components/ThemedText";
+import { Card } from "../components/Card";
+import { useTheme } from "../hooks/useTheme";
+import { useLanguage } from "../hooks/useLanguage";
+import { useLayout, LayoutDirection } from "../lib/ThemePersonaContext";
+import { Spacing, BorderRadius } from "../constants/theme";
 
 interface Fatwa {
   id: string;

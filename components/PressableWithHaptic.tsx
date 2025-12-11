@@ -11,8 +11,8 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
-import { HapticsUtils } from "@/lib/haptics";
-import { Theme } from "@/constants/theme";
+import { HapticsUtils } from "../lib/haptics";
+import { Theme } from "../constants/theme";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 

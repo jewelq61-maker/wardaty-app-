@@ -1,15 +1,15 @@
 import React, { useState, useCallback } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import MainTabNavigator from "@/navigation/MainTabNavigator";
-import OnboardingScreen from "@/screens/OnboardingScreen";
-import RoleSelectionScreen from "@/screens/RoleSelectionScreen";
-import PartnerCodeEntryScreen from "@/screens/PartnerCodeEntryScreen";
-import PartnerHomeScreen from "@/screens/PartnerHomeScreen";
-import SubscriptionScreen from "@/screens/SubscriptionScreen";
-import { useScreenOptions } from "@/hooks/useScreenOptions";
-import { useApp } from "@/lib/AppContext";
-import { usePartner } from "@/lib/PartnerContext";
-import { PersonaThemeSync } from "@/components/PersonaThemeSync";
+import MainTabNavigator from "./MainTabNavigator";
+import OnboardingScreen from "../screens/OnboardingScreen";
+import RoleSelectionScreen from "../screens/RoleSelectionScreen";
+import PartnerCodeEntryScreen from "../screens/PartnerCodeEntryScreen";
+import PartnerHomeScreen from "../screens/PartnerHomeScreen";
+import SubscriptionScreen from "../screens/SubscriptionScreen";
+import { useScreenOptions } from "../hooks/useScreenOptions";
+import { useApp } from "../lib/AppContext";
+import { usePartner } from "../lib/PartnerContext";
+import { PersonaThemeSync } from "../components/PersonaThemeSync";
 
 export type RootStackParamList = {
   RoleSelection: undefined;

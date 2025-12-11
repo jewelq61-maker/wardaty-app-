@@ -21,15 +21,15 @@ import Animated, {
 } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 
-import { ThemedText } from "@/components/ThemedText";
-import { KeyboardAwareScrollViewCompat } from "@/components/KeyboardAwareScrollViewCompat";
-import { Button } from "@/components/Button";
-import { useTheme } from "@/hooks/useTheme";
-import { useLanguage } from "@/hooks/useLanguage";
-import { useLayout, useThemePersona } from "@/lib/ThemePersonaContext";
-import { Spacing, BorderRadius, Animations } from "@/constants/theme";
-import { useApp } from "@/lib/AppContext";
-import { Persona } from "@/lib/types";
+import { ThemedText } from "../components/ThemedText";
+import { KeyboardAwareScrollViewCompat } from "../components/KeyboardAwareScrollViewCompat";
+import { Button } from "../components/Button";
+import { useTheme } from "../hooks/useTheme";
+import { useLanguage } from "../hooks/useLanguage";
+import { useLayout, useThemePersona } from "../lib/ThemePersonaContext";
+import { Spacing, BorderRadius, Animations } from "../constants/theme";
+import { useApp } from "../lib/AppContext";
+import { Persona } from "../lib/types";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 

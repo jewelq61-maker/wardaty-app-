@@ -7,16 +7,16 @@ import { Feather } from "@expo/vector-icons";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 
-import { ThemedText } from "@/components/ThemedText";
-import { useTheme } from "@/hooks/useTheme";
-import { useLanguage } from "@/hooks/useLanguage";
-import { useApp } from "@/lib/AppContext";
+import { ThemedText } from "../components/ThemedText";
+import { useTheme } from "../hooks/useTheme";
+import { useLanguage } from "../hooks/useLanguage";
+import { useApp } from "../lib/AppContext";
 import {
   getCurrentCycleDay,
   getDaysUntilNextPeriod,
   getDetailedCyclePhase,
-} from "@/lib/cycle-utils";
-import { BrandColors } from "@/constants/colors";
+} from "../lib/cycle-utils";
+import { BrandColors } from "../constants/colors";
 
 const { width } = Dimensions.get("window");
 

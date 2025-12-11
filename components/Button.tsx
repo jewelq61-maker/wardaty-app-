@@ -7,13 +7,13 @@ import Animated, {
 } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 
-import { ThemedText } from "@/components/ThemedText";
-import { useTheme } from "@/hooks/useTheme";
+import { ThemedText } from "./ThemedText";
+import { useTheme } from "../hooks/useTheme";
 import {
   BorderRadius,
   Spacing,
   Animations,
-} from "@/constants/theme";
+} from "../constants/theme";
 
 interface ButtonProps {
   onPress?: () => void;

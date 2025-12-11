@@ -7,11 +7,11 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
-import { ThemedText } from "@/components/ThemedText";
-import { useLanguage } from "@/hooks/useLanguage";
-import { Spacing, BorderRadius, Typography, Shadows, IconSizes } from "@/constants/design-tokens";
-import { PersonaColors, NeutralColors, LightBackgrounds } from "@/constants/colors";
-import { Persona } from "@/lib/types";
+import { ThemedText } from "./ThemedText";
+import { useLanguage } from "../hooks/useLanguage";
+import { Spacing, BorderRadius, Typography, Shadows, IconSizes } from "../constants/design-tokens";
+import { PersonaColors, NeutralColors, LightBackgrounds } from "../constants/colors";
+import { Persona } from "../lib/types";
 
 interface PersonaSelectorProps {
   selected: Persona;

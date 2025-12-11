@@ -3,10 +3,10 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Pressable } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { HeaderButton } from "@react-navigation/elements";
-import BeautyScreen from "@/screens/BeautyScreen";
-import ProductsScreen from "@/screens/ProductsScreen";
-import { useScreenOptions } from "@/hooks/useScreenOptions";
-import { useTheme } from "@/hooks/useTheme";
+import BeautyScreen from "../screens/BeautyScreen";
+import ProductsScreen from "../screens/ProductsScreen";
+import { useScreenOptions } from "../hooks/useScreenOptions";
+import { useTheme } from "../hooks/useTheme";
 
 export type BeautyStackParamList = {
   Beauty: undefined;

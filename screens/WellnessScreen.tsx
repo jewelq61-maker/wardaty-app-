@@ -3,15 +3,15 @@ import { View, StyleSheet, ScrollView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { Feather } from "@expo/vector-icons";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
-import { Card } from "@/components/Card";
-import { useTheme } from "@/hooks/useTheme";
-import { useApp } from "@/lib/AppContext";
-import { useLanguage } from "@/hooks/useLanguage";
-import { useLayout } from "@/lib/ThemePersonaContext";
-import { Spacing, BorderRadius } from "@/constants/theme";
-import { Mood } from "@/lib/types";
+import { ThemedText } from "../components/ThemedText";
+import { ThemedView } from "../components/ThemedView";
+import { Card } from "../components/Card";
+import { useTheme } from "../hooks/useTheme";
+import { useApp } from "../lib/AppContext";
+import { useLanguage } from "../hooks/useLanguage";
+import { useLayout } from "../lib/ThemePersonaContext";
+import { Spacing, BorderRadius } from "../constants/theme";
+import { Mood } from "../lib/types";
 
 const MOOD_ICONS: Record<Mood, keyof typeof Feather.glyphMap> = {
   great: "smile",

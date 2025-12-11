@@ -4,11 +4,11 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
 import Animated, { FadeInDown } from "react-native-reanimated";
 
-import { ThemedText } from "@/components/ThemedText";
-import { useTheme } from "@/hooks/useTheme";
-import { useLanguage } from "@/hooks/useLanguage";
-import { useLayout, LayoutDirection } from "@/lib/ThemePersonaContext";
-import { Spacing, BorderRadius } from "@/constants/theme";
+import { ThemedText } from "../components/ThemedText";
+import { useTheme } from "../hooks/useTheme";
+import { useLanguage } from "../hooks/useLanguage";
+import { useLayout, LayoutDirection } from "../lib/ThemePersonaContext";
+import { Spacing, BorderRadius } from "../constants/theme";
 
 function GlassCard({
   children,

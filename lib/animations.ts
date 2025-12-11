@@ -12,7 +12,7 @@ import {
   Easing,
   SharedValue,
 } from "react-native-reanimated";
-import { Theme } from "@/constants/theme";
+import { Theme } from "../constants/theme";
 
 // ===================================
 // SPRING ANIMATIONS

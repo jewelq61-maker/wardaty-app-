@@ -7,10 +7,10 @@ import Animated, {
 } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 
-import { AppIcon, AppIconName } from "@/components/AppIcon";
-import { ThemedText } from "@/components/ThemedText";
-import { useTheme } from "@/hooks/useTheme";
-import { Spacing, BorderRadius, Animations } from "@/constants/theme";
+import { AppIcon, AppIconName } from "./AppIcon";
+import { ThemedText } from "./ThemedText";
+import { useTheme } from "../hooks/useTheme";
+import { Spacing, BorderRadius, Animations } from "../constants/theme";
 
 export interface FeatureCardProps {
   title: string;

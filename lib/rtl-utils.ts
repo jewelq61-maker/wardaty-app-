@@ -1,5 +1,5 @@
 import { I18nManager, StyleSheet, ViewStyle, TextStyle, ImageStyle } from "react-native";
-import { Spacing } from "@/constants/theme";
+import { Spacing } from "../constants/theme";
 
 type NamedStyles<T> = { [P in keyof T]: ViewStyle | TextStyle | ImageStyle };
 

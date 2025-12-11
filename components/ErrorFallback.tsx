@@ -10,7 +10,7 @@ import {
   useColorScheme,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import { Spacing, BorderRadius, Fonts } from "@/constants/theme";
+import { Spacing, BorderRadius, Fonts } from "../constants/theme";
 
 const fallbackTheme = {
   light: {

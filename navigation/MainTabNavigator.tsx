@@ -6,14 +6,14 @@ import { BlurView } from "expo-blur";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 
-import HomeStackNavigator from "@/navigation/HomeStackNavigator";
-import CalendarStackNavigator from "@/navigation/CalendarStackNavigator";
-import BeautyStackNavigator from "@/navigation/BeautyStackNavigator";
-import ProfileStackNavigator from "@/navigation/ProfileStackNavigator";
-import { useLanguage } from "@/hooks/useLanguage";
-import { useApp } from "@/lib/AppContext";
-import { useFAB } from "@/contexts/FABContext";
-import { Theme } from "@/constants/theme";
+import HomeStackNavigator from "./HomeStackNavigator";
+import CalendarStackNavigator from "./CalendarStackNavigator";
+import BeautyStackNavigator from "./BeautyStackNavigator";
+import ProfileStackNavigator from "./ProfileStackNavigator";
+import { useLanguage } from "../hooks/useLanguage";
+import { useApp } from "../lib/AppContext";
+import { useFAB } from "../contexts/FABContext";
+import { Theme } from "../constants/theme";
 
 export type MainTabParamList = {
   HomeTab: undefined;

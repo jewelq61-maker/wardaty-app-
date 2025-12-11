@@ -5,17 +5,17 @@ import { useHeaderHeight } from "@react-navigation/elements";
 import { useNavigation } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
 
-import { ThemedText } from "@/components/ThemedText";
-import { Button } from "@/components/Button";
-import { SettingsItem } from "@/components/SettingsItem";
-import { useTheme } from "@/hooks/useTheme";
-import { useLanguage } from "@/hooks/useLanguage";
-import { useLayout } from "@/lib/ThemePersonaContext";
-import { Spacing, BorderRadius } from "@/constants/theme";
-import { useApp } from "@/lib/AppContext";
-import { usePaywall } from "@/hooks/usePaywall";
-import { FontScale } from "@/lib/types";
-import { Language } from "@/lib/translations";
+import { ThemedText } from "../components/ThemedText";
+import { Button } from "../components/Button";
+import { SettingsItem } from "../components/SettingsItem";
+import { useTheme } from "../hooks/useTheme";
+import { useLanguage } from "../hooks/useLanguage";
+import { useLayout } from "../lib/ThemePersonaContext";
+import { Spacing, BorderRadius } from "../constants/theme";
+import { useApp } from "../lib/AppContext";
+import { usePaywall } from "../hooks/usePaywall";
+import { FontScale } from "../lib/types";
+import { Language } from "../lib/translations";
 
 const languages: { id: Language; label: string }[] = [
   { id: "ar", label: "العربية" },

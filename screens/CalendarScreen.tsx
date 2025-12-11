@@ -12,25 +12,25 @@ import Animated, {
   withTiming,
   runOnJS,
 } from "react-native-reanimated";
-import { ThemedText } from "@/components/ThemedText";
-import { Button } from "@/components/Button";
-import { KeyboardAwareScrollViewCompat } from "@/components/KeyboardAwareScrollViewCompat";
-import { useTheme } from "@/hooks/useTheme";
-import { useLanguage } from "@/hooks/useLanguage";
-import { Spacing, BorderRadius, Shadows } from "@/constants/theme";
-import { useApp } from "@/lib/AppContext";
-import { useLayout } from "@/lib/ThemePersonaContext";
-import { useFABHandler } from "@/contexts/FABContext";
+import { ThemedText } from "../components/ThemedText";
+import { Button } from "../components/Button";
+import { KeyboardAwareScrollViewCompat } from "../components/KeyboardAwareScrollViewCompat";
+import { useTheme } from "../hooks/useTheme";
+import { useLanguage } from "../hooks/useLanguage";
+import { Spacing, BorderRadius, Shadows } from "../constants/theme";
+import { useApp } from "../lib/AppContext";
+import { useLayout } from "../lib/ThemePersonaContext";
+import { useFABHandler } from "../contexts/FABContext";
 import {
   getCyclePhase,
   getDetailedCyclePhase,
   getTodayString,
   getCycleDayForDate,
   DetailedCyclePhase,
-} from "@/lib/cycle-utils";
-import { getHijriDate } from "@/lib/beauty-planner-engine";
-import { generateBeautyPlan } from "@/lib/beauty-planner-engine";
-import type { CycleLog, DailyLog } from "@/lib/types";
+} from "../lib/cycle-utils";
+import { getHijriDate } from "../lib/beauty-planner-engine";
+import { generateBeautyPlan } from "../lib/beauty-planner-engine";
+import type { CycleLog, DailyLog } from "../lib/types";
 
 const WEEKDAY_KEYS_EN = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const WEEKDAY_KEYS_AR = ["ح", "ن", "ث", "ر", "خ", "ج", "س"];

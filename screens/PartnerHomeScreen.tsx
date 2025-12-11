@@ -5,15 +5,15 @@ import { Feather } from "@expo/vector-icons";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
-import { Button } from "@/components/Button";
-import { Card } from "@/components/Card";
-import { useTheme } from "@/hooks/useTheme";
-import { useLanguage } from "@/hooks/useLanguage";
-import { useLayout } from "@/lib/ThemePersonaContext";
-import { usePartner, PartnerSummary } from "@/lib/PartnerContext";
-import { Spacing, BorderRadius } from "@/constants/theme";
+import { ThemedText } from "../components/ThemedText";
+import { ThemedView } from "../components/ThemedView";
+import { Button } from "../components/Button";
+import { Card } from "../components/Card";
+import { useTheme } from "../hooks/useTheme";
+import { useLanguage } from "../hooks/useLanguage";
+import { useLayout } from "../lib/ThemePersonaContext";
+import { usePartner, PartnerSummary } from "../lib/PartnerContext";
+import { Spacing, BorderRadius } from "../constants/theme";
 
 export default function PartnerHomeScreen() {
   const insets = useSafeAreaInsets();

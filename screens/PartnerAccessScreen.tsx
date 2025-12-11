@@ -7,16 +7,16 @@ import * as Haptics from "expo-haptics";
 import * as Clipboard from "expo-clipboard";
 import { useHeaderHeight } from "@react-navigation/elements";
 
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
-import { Button } from "@/components/Button";
-import { Card } from "@/components/Card";
-import { useTheme } from "@/hooks/useTheme";
-import { useLanguage } from "@/hooks/useLanguage";
-import { useLayout } from "@/lib/ThemePersonaContext";
-import { usePaywall } from "@/hooks/usePaywall";
-import { getApiUrl, apiRequest } from "@/lib/query-client";
-import { Spacing, BorderRadius } from "@/constants/theme";
+import { ThemedText } from "../components/ThemedText";
+import { ThemedView } from "../components/ThemedView";
+import { Button } from "../components/Button";
+import { Card } from "../components/Card";
+import { useTheme } from "../hooks/useTheme";
+import { useLanguage } from "../hooks/useLanguage";
+import { useLayout } from "../lib/ThemePersonaContext";
+import { usePaywall } from "../hooks/usePaywall";
+import { getApiUrl, apiRequest } from "../lib/query-client";
+import { Spacing, BorderRadius } from "../constants/theme";
 
 interface GeneratedCode {
   code: string;

@@ -1,11 +1,11 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
-import { ThemedText } from "@/components/ThemedText";
-import { useTheme } from "@/hooks/useTheme";
-import { useLanguage } from "@/hooks/useLanguage";
-import { Spacing, BorderRadius } from "@/constants/theme";
-import { DetailedCyclePhase } from "@/lib/cycle-utils";
+import { ThemedText } from "./ThemedText";
+import { useTheme } from "../hooks/useTheme";
+import { useLanguage } from "../hooks/useLanguage";
+import { Spacing, BorderRadius } from "../constants/theme";
+import { DetailedCyclePhase } from "../lib/cycle-utils";
 
 interface PhaseBannerProps {
   phase: DetailedCyclePhase;

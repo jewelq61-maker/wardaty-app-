@@ -7,13 +7,13 @@ import * as Haptics from "expo-haptics";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Feather } from "@expo/vector-icons";
 
-import { ThemedText } from "@/components/ThemedText";
-import { PersonaSelector } from "@/components/PersonaSelector";
-import { useLanguage } from "@/hooks/useLanguage";
-import { useApp } from "@/lib/AppContext";
-import { Persona } from "@/lib/types";
-import { Theme } from "@/constants/theme";
-import { useLayout } from "@/lib/ThemePersonaContext";
+import { ThemedText } from "../components/ThemedText";
+import { PersonaSelector } from "../components/PersonaSelector";
+import { useLanguage } from "../hooks/useLanguage";
+import { useApp } from "../lib/AppContext";
+import { Persona } from "../lib/types";
+import { Theme } from "../constants/theme";
+import { useLayout } from "../lib/ThemePersonaContext";
 
 const { width } = Dimensions.get("window");
 

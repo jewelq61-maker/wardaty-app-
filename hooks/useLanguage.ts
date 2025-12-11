@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from "react";
 import { I18nManager, Platform } from "react-native";
-import { useApp } from "@/lib/AppContext";
-import { translations, Language, TranslationKeys } from "@/lib/translations";
+import { useApp } from "../lib/AppContext";
+import { translations, Language, TranslationKeys } from "../lib/translations";
 
 export function useLanguage() {
   const { data, updateSettings } = useApp();

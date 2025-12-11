@@ -3,12 +3,12 @@ import { View, StyleSheet, Pressable } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 
-import { ThemedText } from "@/components/ThemedText";
-import { Button } from "@/components/Button";
-import { useTheme } from "@/hooks/useTheme";
-import { Spacing, BorderRadius } from "@/constants/theme";
-import { usePaywall } from "@/hooks/usePaywall";
-import { useApp } from "@/lib/AppContext";
+import { ThemedText } from "./ThemedText";
+import { Button } from "./Button";
+import { useTheme } from "../hooks/useTheme";
+import { Spacing, BorderRadius } from "../constants/theme";
+import { usePaywall } from "../hooks/usePaywall";
+import { useApp } from "../lib/AppContext";
 
 interface LockedFeatureProps {
   title?: string;

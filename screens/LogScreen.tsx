@@ -4,14 +4,14 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
 
-import { ThemedText } from "@/components/ThemedText";
-import { Button } from "@/components/Button";
-import { MoodTracker } from "@/components/MoodTracker";
-import { useTheme } from "@/hooks/useTheme";
-import { useLanguage } from "@/hooks/useLanguage";
-import { Spacing, BorderRadius } from "@/constants/theme";
-import { useApp } from "@/lib/AppContext";
-import { Mood } from "@/lib/types";
+import { ThemedText } from "../components/ThemedText";
+import { Button } from "../components/Button";
+import { MoodTracker } from "../components/MoodTracker";
+import { useTheme } from "../hooks/useTheme";
+import { useLanguage } from "../hooks/useLanguage";
+import { Spacing, BorderRadius } from "../constants/theme";
+import { useApp } from "../lib/AppContext";
+import { Mood } from "../lib/types";
 
 interface QuickLogOption {
   id: string;

@@ -1,10 +1,10 @@
 import { Text, type TextProps } from "react-native";
 
-import { useTheme } from "@/hooks/useTheme";
-import { useLanguage } from "@/hooks/useLanguage";
-import { useApp } from "@/lib/AppContext";
-import { Typography } from "@/constants/theme";
-import { FontScale } from "@/lib/types";
+import { useTheme } from "../hooks/useTheme";
+import { useLanguage } from "../hooks/useLanguage";
+import { useApp } from "../lib/AppContext";
+import { Typography } from "../constants/theme";
+import { FontScale } from "../lib/types";
 
 const fontScaleMultipliers: Record<FontScale, number> = {
   small: 0.85,

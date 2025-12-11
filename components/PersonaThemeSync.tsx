@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
-import { useApp } from "@/lib/AppContext";
-import { useThemePersona } from "@/lib/ThemePersonaContext";
+import { useApp } from "../lib/AppContext";
+import { useThemePersona } from "../lib/ThemePersonaContext";
 
 export function PersonaThemeSync() {
   const { data, updateSettings } = useApp();

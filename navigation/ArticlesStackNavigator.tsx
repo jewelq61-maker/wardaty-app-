@@ -1,10 +1,10 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import ArticlesScreen from "@/screens/ArticlesScreen";
-import ArticleDetailScreen from "@/screens/ArticleDetailScreen";
-import FatwaScreen from "@/screens/FatwaScreen";
-import { useScreenOptions } from "@/hooks/useScreenOptions";
-import { useLanguage } from "@/hooks/useLanguage";
+import ArticlesScreen from "../screens/ArticlesScreen";
+import ArticleDetailScreen from "../screens/ArticleDetailScreen";
+import FatwaScreen from "../screens/FatwaScreen";
+import { useScreenOptions } from "../hooks/useScreenOptions";
+import { useLanguage } from "../hooks/useLanguage";
 
 export type ArticlesStackParamList = {
   Articles: undefined;

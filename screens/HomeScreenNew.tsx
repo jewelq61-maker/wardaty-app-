@@ -8,16 +8,16 @@ import { Feather } from "@expo/vector-icons";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 
-import { ThemedText } from "@/components/ThemedText";
-import { useTheme } from "@/hooks/useTheme";
-import { useLanguage } from "@/hooks/useLanguage";
-import { useApp } from "@/lib/AppContext";
-import { useLayout } from "@/lib/ThemePersonaContext";
+import { ThemedText } from "../components/ThemedText";
+import { useTheme } from "../hooks/useTheme";
+import { useLanguage } from "../hooks/useLanguage";
+import { useApp } from "../lib/AppContext";
+import { useLayout } from "../lib/ThemePersonaContext";
 import {
   getCurrentCycleDay,
   getDaysUntilNextPeriod,
   getDetailedCyclePhase,
-} from "@/lib/cycle-utils";
+} from "../lib/cycle-utils";
 
 const { width } = Dimensions.get("window");
 

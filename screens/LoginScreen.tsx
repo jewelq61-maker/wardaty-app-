@@ -3,15 +3,15 @@ import { View, StyleSheet, Pressable, ActivityIndicator, Alert, TextInput } from
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
-import { KeyboardAwareScrollViewCompat } from "@/components/KeyboardAwareScrollViewCompat";
-import { ThemedText } from "@/components/ThemedText";
-import { Card } from "@/components/Card";
-import { Button } from "@/components/Button";
-import { useTheme } from "@/hooks/useTheme";
-import { useLanguage } from "@/hooks/useLanguage";
-import { useLayout } from "@/lib/ThemePersonaContext";
-import { useAuth } from "@/lib/AuthContext";
-import { Spacing, BorderRadius } from "@/constants/theme";
+import { KeyboardAwareScrollViewCompat } from "../components/KeyboardAwareScrollViewCompat";
+import { ThemedText } from "../components/ThemedText";
+import { Card } from "../components/Card";
+import { Button } from "../components/Button";
+import { useTheme } from "../hooks/useTheme";
+import { useLanguage } from "../hooks/useLanguage";
+import { useLayout } from "../lib/ThemePersonaContext";
+import { useAuth } from "../lib/AuthContext";
+import { Spacing, BorderRadius } from "../constants/theme";
 
 type AuthMode = "login" | "register";
 

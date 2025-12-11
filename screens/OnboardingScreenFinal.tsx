@@ -6,12 +6,12 @@ import { LinearGradient } from "expo-linear-gradient";
 import Animated, { FadeInDown, FadeOutUp } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 
-import { ThemedText } from "@/components/ThemedText";
-import { PersonaSelector } from "@/components/PersonaSelector";
-import { useLanguage } from "@/hooks/useLanguage";
-import { useApp } from "@/lib/AppContext";
-import { Persona } from "@/lib/types";
-import { BrandColors } from "@/constants/colors";
+import { ThemedText } from "../components/ThemedText";
+import { PersonaSelector } from "../components/PersonaSelector";
+import { useLanguage } from "../hooks/useLanguage";
+import { useApp } from "../lib/AppContext";
+import { Persona } from "../lib/types";
+import { BrandColors } from "../constants/colors";
 
 type OnboardingStep = "language" | "welcome" | "persona" | "name" | "cycle";
 

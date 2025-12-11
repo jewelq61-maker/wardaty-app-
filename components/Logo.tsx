@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet, ViewStyle } from "react-native";
 import Svg, { Defs, LinearGradient, Stop, Path, Circle, G } from "react-native-svg";
-import { useLogoColors } from "@/lib/ThemePersonaContext";
+import { useLogoColors } from "../lib/ThemePersonaContext";
 
 interface LogoProps {
   size?: number;

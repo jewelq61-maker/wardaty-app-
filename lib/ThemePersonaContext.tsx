@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode, useCa
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useColorScheme, I18nManager, Platform } from "react-native";
 import { Persona } from "./types";
-import { Theme, ThemeMode, getTheme, getDefaultTheme, getLogoGradient } from "@/constants/personaThemes";
+import { Theme, ThemeMode, getTheme, getDefaultTheme, getLogoGradient } from "../constants/personaThemes";
 
 const STORAGE_KEYS = {
   PERSONA: "WARDATY_PERSONA",

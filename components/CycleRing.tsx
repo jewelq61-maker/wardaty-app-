@@ -14,11 +14,11 @@ import Animated, {
   Easing,
   FadeIn,
 } from "react-native-reanimated";
-import { ThemedText } from "@/components/ThemedText";
-import { useTheme } from "@/hooks/useTheme";
-import { useLanguage } from "@/hooks/useLanguage";
-import { useThemePersona } from "@/lib/ThemePersonaContext";
-import { Spacing, Animations, Colors, LightModePhaseColors } from "@/constants/theme";
+import { ThemedText } from "./ThemedText";
+import { useTheme } from "../hooks/useTheme";
+import { useLanguage } from "../hooks/useLanguage";
+import { useThemePersona } from "../lib/ThemePersonaContext";
+import { Spacing, Animations, Colors, LightModePhaseColors } from "../constants/theme";
 import { GestureDetector, Gesture } from "react-native-gesture-handler";
 import { BlurView } from "expo-blur";
 import * as Haptics from "expo-haptics";
@@ -28,7 +28,7 @@ import {
   formatDateForRing,
   getTodayString,
   DetailedCyclePhase,
-} from "@/lib/cycle-utils";
+} from "../lib/cycle-utils";
 
 const AnimatedView = Animated.View;
 const { width: SCREEN_WIDTH } = Dimensions.get("window");

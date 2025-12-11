@@ -4,13 +4,13 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { HeaderButton } from "@react-navigation/elements";
 import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import HomeScreen from "@/screens/HomeScreen";
-import NotificationsScreen from "@/screens/NotificationsScreen";
-import ArticleDetailScreen from "@/screens/ArticleDetailScreen";
-import { HeaderTitle } from "@/components/HeaderTitle";
-import { useScreenOptions } from "@/hooks/useScreenOptions";
-import { useTheme } from "@/hooks/useTheme";
-import { useLanguage } from "@/hooks/useLanguage";
+import HomeScreen from "../screens/HomeScreen";
+import NotificationsScreen from "../screens/NotificationsScreen";
+import ArticleDetailScreen from "../screens/ArticleDetailScreen";
+import { HeaderTitle } from "../components/HeaderTitle";
+import { useScreenOptions } from "../hooks/useScreenOptions";
+import { useTheme } from "../hooks/useTheme";
+import { useLanguage } from "../hooks/useLanguage";
 
 export type HomeStackParamList = {
   Home: undefined;

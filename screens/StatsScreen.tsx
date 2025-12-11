@@ -5,16 +5,16 @@ import { useHeaderHeight } from "@react-navigation/elements";
 import { Feather } from "@expo/vector-icons";
 import Animated, { FadeInDown } from "react-native-reanimated";
 
-import { ThemedText } from "@/components/ThemedText";
-import { AppIcon } from "@/components/AppIcon";
-import { useTheme } from "@/hooks/useTheme";
-import { useLanguage } from "@/hooks/useLanguage";
-import { useLayout } from "@/lib/ThemePersonaContext";
-import { usePaywall } from "@/hooks/usePaywall";
-import { Spacing, BorderRadius } from "@/constants/theme";
-import { useApp } from "@/lib/AppContext";
-import { getCurrentCycleDay } from "@/lib/cycle-utils";
-import type { AppIconName } from "@/components/AppIcon";
+import { ThemedText } from "../components/ThemedText";
+import { AppIcon } from "../components/AppIcon";
+import { useTheme } from "../hooks/useTheme";
+import { useLanguage } from "../hooks/useLanguage";
+import { useLayout } from "../lib/ThemePersonaContext";
+import { usePaywall } from "../hooks/usePaywall";
+import { Spacing, BorderRadius } from "../constants/theme";
+import { useApp } from "../lib/AppContext";
+import { getCurrentCycleDay } from "../lib/cycle-utils";
+import type { AppIconName } from "../components/AppIcon";
 
 function GlassCard({
   children,
