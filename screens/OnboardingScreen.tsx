@@ -17,16 +17,14 @@ import { Spacing, BorderRadius } from "@/constants/theme";
 
 const { width } = Dimensions.get("window");
 
-// NEW: Strict order of steps
-type OnboardingStep = "language" | "role" | "persona" | "personalData";
-type UserRole = "user" | "partner";
+// Simplified order: Language → Persona → Personal Data
+type OnboardingStep = "language" | "persona" | "personalData";
 
 const ONBOARDING_PROGRESS_KEY = "@wardaty_onboarding_progress";
 
 interface OnboardingProgress {
   step: OnboardingStep;
   language?: "ar" | "en";
-  role?: UserRole;
   persona?: Persona;
   name?: string;
   age?: string;
@@ -46,7 +44,6 @@ export default function OnboardingScreen() {
   // State
   const [step, setStep] = useState<OnboardingStep>("language");
   const [selectedLanguage, setSelectedLanguage] = useState<"ar" | "en" | null>(null);
-  const [role, setRole] = useState<UserRole | null>(null);
   const [persona, setPersona] = useState<Persona>("single");
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
@@ -67,7 +64,7 @@ export default function OnboardingScreen() {
   // Save progress whenever state changes
   useEffect(() => {
     saveProgress();
-  }, [step, selectedLanguage, role, persona, name, age, cycleLength, periodLength, lastPeriodDate, waterGoal, sleepGoal]);
+  }, [step, selectedLanguage, persona, name, age, cycleLength, periodLength, lastPeriodDate, waterGoal, sleepGoal]);
 
   const loadProgress = async () => {
     try {
@@ -79,7 +76,6 @@ export default function OnboardingScreen() {
           setSelectedLanguage(progress.language);
           setLanguage(progress.language);
         }
-        if (progress.role) setRole(progress.role);
         if (progress.persona) setPersona(progress.persona);
         if (progress.name) setName(progress.name);
         if (progress.age) setAge(progress.age);
@@ -99,7 +95,6 @@ export default function OnboardingScreen() {
       const progress: OnboardingProgress = {
         step,
         language: selectedLanguage || undefined,
-        role: role || undefined,
         persona,
         name,
         age,
@@ -133,7 +128,6 @@ export default function OnboardingScreen() {
       await clearProgress();
       setStep("language");
       setSelectedLanguage(null);
-      setRole(null);
       setPersona("single");
       setName("");
       setAge("");
@@ -156,20 +150,17 @@ export default function OnboardingScreen() {
   // Validation
   const canProceed = () => {
     if (step === "language") return selectedLanguage !== null;
-    if (step === "role") return role !== null;
     if (step === "persona") return true; // persona has default
     if (step === "personalData") {
       // Name and age are required
       if (!name.trim() || !age.trim()) return false;
-      // For female users, cycle data is required
-      if (role === "user") {
-        if (!cycleLength.trim() || !periodLength.trim()) return false;
-        const cycleNum = parseInt(cycleLength);
-        const periodNum = parseInt(periodLength);
-        if (isNaN(cycleNum) || isNaN(periodNum)) return false;
-        if (cycleNum < 21 || cycleNum > 35) return false;
-        if (periodNum < 3 || periodNum > 7) return false;
-      }
+      // Cycle data is required
+      if (!cycleLength.trim() || !periodLength.trim()) return false;
+      const cycleNum = parseInt(cycleLength);
+      const periodNum = parseInt(periodLength);
+      if (isNaN(cycleNum) || isNaN(periodNum)) return false;
+      if (cycleNum < 21 || cycleNum > 35) return false;
+      if (periodNum < 3 || periodNum > 7) return false;
       return true;
     }
     return false;
@@ -184,15 +175,7 @@ export default function OnboardingScreen() {
       if (selectedLanguage) {
         await setLanguage(selectedLanguage);
       }
-      setStep("role");
-    } else if (step === "role") {
-      // If partner, skip persona selection (set to "partner")
-      if (role === "partner") {
-        setPersona("partner");
-        setStep("personalData");
-      } else {
-        setStep("persona");
-      }
+      setStep("persona");
     } else if (step === "persona") {
       setStep("personalData");
     } else if (step === "personalData") {
@@ -204,7 +187,7 @@ export default function OnboardingScreen() {
       const sleepGoalNum = parseInt(sleepGoal) || 8;
 
       await updateSettings({
-        persona: role === "partner" ? "partner" : persona,
+        persona,
         name,
         age: ageNum,
         cycleSettings: {
@@ -231,17 +214,10 @@ export default function OnboardingScreen() {
   const handleBack = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     
-    if (step === "role") {
+    if (step === "persona") {
       setStep("language");
-    } else if (step === "persona") {
-      setStep("role");
     } else if (step === "personalData") {
-      // Go back to persona if user, or role if partner
-      if (role === "partner") {
-        setStep("role");
-      } else {
-        setStep("persona");
-      }
+      setStep("persona");
     }
   };
 
@@ -309,87 +285,7 @@ export default function OnboardingScreen() {
     </Animated.View>
   );
 
-  // Step 2: Role Selection (User/Partner)
-  const renderRoleStep = () => (
-    <Animated.View
-      entering={FadeInDown.duration(600)}
-      exiting={FadeOutUp.duration(400)}
-      style={styles.stepContainer}
-    >
-      <Pressable onPress={handleLogoTap}>
-        <Feather name="users" size={48} color={DarkTheme.text.primary} style={{ marginBottom: Spacing.xl }} />
-      </Pressable>
-      
-      <ThemedText style={styles.title}>
-        {t("onboarding", "selectRole")}
-      </ThemedText>
-      <ThemedText style={styles.subtitle}>
-        {t("onboarding", "roleDescription")}
-      </ThemedText>
-      
-      <View style={styles.optionsContainer}>
-        <Pressable
-          style={[
-            styles.optionButton,
-            role === "user" && styles.optionButtonActive,
-          ]}
-          onPress={() => {
-            setRole("user");
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-          }}
-        >
-          <View style={styles.optionContent}>
-            <Feather name="user" size={24} color={role === "user" ? PersonaColors.single.primary : DarkTheme.text.secondary} />
-            <View style={styles.optionTextContainer}>
-              <ThemedText style={[
-                styles.optionButtonText,
-                role === "user" && styles.optionButtonTextActive,
-              ]}>
-                {t("onboarding", "userFemale")}
-              </ThemedText>
-              <ThemedText style={styles.optionDescription}>
-                {t("onboarding", "userDescription")}
-              </ThemedText>
-            </View>
-          </View>
-          {role === "user" && (
-            <Feather name="check-circle" size={20} color={PersonaColors.single.primary} />
-          )}
-        </Pressable>
-
-        <Pressable
-          style={[
-            styles.optionButton,
-            role === "partner" && styles.optionButtonActive,
-          ]}
-          onPress={() => {
-            setRole("partner");
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-          }}
-        >
-          <View style={styles.optionContent}>
-            <Feather name="heart" size={24} color={role === "partner" ? PersonaColors.single.primary : DarkTheme.text.secondary} />
-            <View style={styles.optionTextContainer}>
-              <ThemedText style={[
-                styles.optionButtonText,
-                role === "partner" && styles.optionButtonTextActive,
-              ]}>
-                {t("onboarding", "partnerMale")}
-              </ThemedText>
-              <ThemedText style={styles.optionDescription}>
-                {t("onboarding", "partnerDescription")}
-              </ThemedText>
-            </View>
-          </View>
-          {role === "partner" && (
-            <Feather name="check-circle" size={20} color={PersonaColors.single.primary} />
-          )}
-        </Pressable>
-      </View>
-    </Animated.View>
-  );
-
-  // Step 3: Persona Selection (Female users only)
+  // Step 2: Persona Selection
   const renderPersonaStep = () => (
     <Animated.View
       entering={FadeInDown.duration(600)}
@@ -557,12 +453,10 @@ export default function OnboardingScreen() {
 
   // Progress indicator
   const getProgress = () => {
-    const steps = ["language", "role", "persona", "personalData"];
+    const steps = ["language", "persona", "personalData"];
     const currentIndex = steps.indexOf(step);
-    // If partner, skip persona step in progress
-    const totalSteps = role === "partner" ? 3 : 4;
-    const adjustedIndex = role === "partner" && step === "personalData" ? 2 : currentIndex;
-    return ((adjustedIndex + 1) / totalSteps) * 100;
+    const totalSteps = 3;
+    return ((currentIndex + 1) / totalSteps) * 100;
   };
 
   return (
@@ -578,7 +472,6 @@ export default function OnboardingScreen() {
         keyboardShouldPersistTaps="handled"
       >
         {step === "language" && renderLanguageStep()}
-        {step === "role" && renderRoleStep()}
         {step === "persona" && renderPersonaStep()}
         {step === "personalData" && renderPersonalDataStep()}
       </ScrollView>
