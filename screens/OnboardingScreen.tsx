@@ -12,7 +12,7 @@ import { PersonaSelector } from "../components/PersonaSelector";
 import { useLanguage } from "../hooks/useLanguage";
 import { useApp } from "../lib/AppContext";
 import { Persona } from "../lib/types";
-import { Theme } from "../constants/theme";
+import { DarkTheme, PersonaColors, Spacing, Typography } from "../constants/theme";
 import { useLayout } from "../lib/ThemePersonaContext";
 
 const { width } = Dimensions.get("window");
@@ -246,7 +246,7 @@ export default function OnboardingScreen() {
       style={styles.stepContainer}
     >
       <Pressable onPress={handleLogoTap}>
-        <Feather name="globe" size={48} color={Theme.dark.text.primary} style={{ marginBottom: Theme.spacing.xl }} />
+        <Feather name="globe" size={48} color={DarkTheme.text.primary} style={{ marginBottom: Spacing.xl }} />
       </Pressable>
       
       <ThemedText style={styles.title}>
@@ -274,7 +274,7 @@ export default function OnboardingScreen() {
             العربية
           </ThemedText>
           {selectedLanguage === "ar" && (
-            <Feather name="check-circle" size={20} color={Theme.persona.single.primary} />
+            <Feather name="check-circle" size={20} color={PersonaColors.single.primary} />
           )}
         </Pressable>
 
@@ -295,7 +295,7 @@ export default function OnboardingScreen() {
             English
           </ThemedText>
           {selectedLanguage === "en" && (
-            <Feather name="check-circle" size={20} color={Theme.persona.single.primary} />
+            <Feather name="check-circle" size={20} color={PersonaColors.single.primary} />
           )}
         </Pressable>
       </View>
@@ -309,7 +309,7 @@ export default function OnboardingScreen() {
       exiting={FadeOutUp.duration(400)}
       style={styles.stepContainer}
     >
-      <Feather name="star" size={48} color={Theme.dark.text.primary} style={{ marginBottom: Theme.spacing.xl }} />
+      <Feather name="star" size={48} color={DarkTheme.text.primary} style={{ marginBottom: Spacing.xl }} />
       
       <ThemedText style={styles.title}>
         {t("onboarding", "selectPersona")}
@@ -340,7 +340,7 @@ export default function OnboardingScreen() {
         contentContainerStyle={styles.formContent}
         showsVerticalScrollIndicator={false}
       >
-        <Feather name="edit" size={48} color={Theme.dark.text.primary} style={{ marginBottom: Theme.spacing.xl, alignSelf: "center" }} />
+        <Feather name="edit" size={48} color={DarkTheme.text.primary} style={{ marginBottom: Spacing.xl, alignSelf: "center" }} />
         
         <ThemedText style={styles.title}>
           {t("onboarding", "personalInfo")}
@@ -359,7 +359,7 @@ export default function OnboardingScreen() {
             value={name}
             onChangeText={setName}
             placeholder={t("onboarding", "enterName")}
-            placeholderTextColor={Theme.dark.text.tertiary}
+            placeholderTextColor={DarkTheme.text.tertiary}
             autoCapitalize="words"
           />
         </View>
@@ -374,13 +374,13 @@ export default function OnboardingScreen() {
             value={age}
             onChangeText={setAge}
             placeholder="25"
-            placeholderTextColor={Theme.dark.text.tertiary}
+            placeholderTextColor={DarkTheme.text.tertiary}
             keyboardType="number-pad"
           />
         </View>
 
         {/* Cycle Data */}
-        <ThemedText style={[styles.sectionTitle, { marginTop: Theme.spacing.xl }]}>
+        <ThemedText style={[styles.sectionTitle, { marginTop: Spacing.xl }]}>
           {t("onboarding", "cycleInformation")}
         </ThemedText>
 
@@ -394,7 +394,7 @@ export default function OnboardingScreen() {
                 onChangeText={setCycleLength}
                 keyboardType="number-pad"
                 placeholder="28"
-                placeholderTextColor={Theme.dark.text.tertiary}
+                placeholderTextColor={DarkTheme.text.tertiary}
               />
             </View>
 
@@ -408,7 +408,7 @@ export default function OnboardingScreen() {
                 onChangeText={setPeriodLength}
                 keyboardType="number-pad"
                 placeholder="5"
-                placeholderTextColor={Theme.dark.text.tertiary}
+                placeholderTextColor={DarkTheme.text.tertiary}
               />
             </View>
 
@@ -421,13 +421,13 @@ export default function OnboardingScreen() {
                 value={lastPeriodDate}
                 onChangeText={setLastPeriodDate}
                 placeholder="YYYY-MM-DD"
-                placeholderTextColor={Theme.dark.text.tertiary}
+                placeholderTextColor={DarkTheme.text.tertiary}
                 keyboardType={Platform.OS === "ios" ? "numbers-and-punctuation" : "default"}
               />
             </View>
 
         {/* Wellness Goals (Optional) */}
-        <ThemedText style={[styles.sectionTitle, { marginTop: Theme.spacing.xl }]}>
+        <ThemedText style={[styles.sectionTitle, { marginTop: Spacing.xl }]}>
           {t("onboarding", "wellnessGoals")} ({t("common", "optional")})
         </ThemedText>
 
@@ -441,7 +441,7 @@ export default function OnboardingScreen() {
             onChangeText={setWaterGoal}
             keyboardType="number-pad"
             placeholder="8"
-            placeholderTextColor={Theme.dark.text.tertiary}
+            placeholderTextColor={DarkTheme.text.tertiary}
           />
         </View>
 
@@ -455,11 +455,11 @@ export default function OnboardingScreen() {
             onChangeText={setSleepGoal}
             keyboardType="number-pad"
             placeholder="8"
-            placeholderTextColor={Theme.dark.text.tertiary}
+            placeholderTextColor={DarkTheme.text.tertiary}
           />
         </View>
 
-        <View style={{ height: Theme.spacing.xxxl }} />
+        <View style={{ height: Spacing.xxxl }} />
       </ScrollView>
     </Animated.View>
   );
@@ -499,7 +499,7 @@ export default function OnboardingScreen() {
             <Feather 
               name={isRTL ? "chevron-right" : "chevron-left"} 
               size={20} 
-              color={Theme.dark.text.primary} 
+              color={DarkTheme.text.primary} 
             />
             <ThemedText style={styles.secondaryButtonText}>
               {t("common", "back")}
@@ -533,21 +533,21 @@ export default function OnboardingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Theme.dark.background.root,
+    backgroundColor: DarkTheme.background.root,
   },
   progressBarContainer: {
     height: 4,
-    backgroundColor: Theme.dark.background.elevated,
+    backgroundColor: DarkTheme.background.elevated,
     width: "100%",
   },
   progressBar: {
     height: "100%",
-    backgroundColor: Theme.persona.single.primary,
+    backgroundColor: PersonaColors.single.primary,
   },
   scrollContent: {
     flexGrow: 1,
-    paddingHorizontal: Theme.spacing.md,
-    paddingVertical: Theme.spacing.xxxl,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.xxxl,
   },
   stepContainer: {
     flex: 1,
@@ -559,141 +559,141 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   formContent: {
-    paddingBottom: Theme.spacing.xxxl,
+    paddingBottom: Spacing.xxxl,
   },
   
   // Typography
   title: {
-    ...Theme.typography.title1,
-    color: Theme.dark.text.primary,
+    ...Typography.title1,
+    color: DarkTheme.text.primary,
     textAlign: "center",
-    marginBottom: Theme.spacing.md,
+    marginBottom: Spacing.md,
   },
   subtitle: {
-    ...Theme.typography.callout,
-    color: Theme.dark.text.secondary,
+    ...Typography.callout,
+    color: DarkTheme.text.secondary,
     textAlign: "center",
-    marginBottom: Theme.spacing.xxl,
-    paddingHorizontal: Theme.spacing.md,
+    marginBottom: Spacing.xxl,
+    paddingHorizontal: Spacing.md,
   },
   sectionTitle: {
-    ...Theme.typography.headline,
-    color: Theme.dark.text.primary,
-    marginBottom: Theme.spacing.md,
+    ...Typography.headline,
+    color: DarkTheme.text.primary,
+    marginBottom: Spacing.md,
   },
   label: {
-    ...Theme.typography.subheadline,
-    color: Theme.dark.text.secondary,
-    marginBottom: Theme.spacing.sm,
+    ...Typography.subheadline,
+    color: DarkTheme.text.secondary,
+    marginBottom: Spacing.sm,
   },
   
   // Options
   optionsContainer: {
     width: "100%",
-    gap: Theme.spacing.md,
+    gap: Spacing.md,
   },
   optionButton: {
     width: "100%",
-    minHeight: Theme.spacing.listItemHeight,
-    paddingVertical: Theme.spacing.md,
-    paddingHorizontal: Theme.spacing.md,
-    backgroundColor: Theme.dark.background.elevated,
+    minHeight: Spacing.listItemHeight,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.md,
+    backgroundColor: DarkTheme.background.elevated,
     borderRadius: Theme.borderRadius.large,
     borderWidth: 2,
-    borderColor: Theme.dark.border.subtle,
+    borderColor: DarkTheme.border.subtle,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
   },
   optionButtonActive: {
-    borderColor: Theme.persona.single.primary,
-    backgroundColor: `${Theme.persona.single.primary}15`,
+    borderColor: PersonaColors.single.primary,
+    backgroundColor: `${PersonaColors.single.primary}15`,
   },
   optionContent: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Theme.spacing.md,
+    gap: Spacing.md,
     flex: 1,
   },
   optionTextContainer: {
     flex: 1,
   },
   optionButtonText: {
-    ...Theme.typography.callout,
+    ...Typography.callout,
     fontWeight: "600",
-    color: Theme.dark.text.primary,
+    color: DarkTheme.text.primary,
   },
   optionButtonTextActive: {
-    color: Theme.persona.single.primary,
+    color: PersonaColors.single.primary,
   },
   optionDescription: {
-    ...Theme.typography.footnote,
-    color: Theme.dark.text.tertiary,
+    ...Typography.footnote,
+    color: DarkTheme.text.tertiary,
     marginTop: 2,
   },
   
   // Input
   inputWrapper: {
     width: "100%",
-    marginBottom: Theme.spacing.md,
+    marginBottom: Spacing.md,
   },
   input: {
     width: "100%",
-    minHeight: Theme.spacing.listItemHeight,
-    paddingVertical: Theme.spacing.sm,
-    paddingHorizontal: Theme.spacing.md,
-    backgroundColor: Theme.dark.background.elevated,
+    minHeight: Spacing.listItemHeight,
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    backgroundColor: DarkTheme.background.elevated,
     borderRadius: Theme.borderRadius.medium,
     borderWidth: 1,
-    borderColor: Theme.dark.border.default,
-    ...Theme.typography.callout,
-    color: Theme.dark.text.primary,
+    borderColor: DarkTheme.border.default,
+    ...Typography.callout,
+    color: DarkTheme.text.primary,
   },
   
   // Bottom Buttons
   bottomContainer: {
     flexDirection: "row",
-    gap: Theme.spacing.md,
-    paddingHorizontal: Theme.spacing.md,
-    paddingBottom: Theme.spacing.md,
+    gap: Spacing.md,
+    paddingHorizontal: Spacing.md,
+    paddingBottom: Spacing.md,
   },
   primaryButton: {
     flex: 1,
-    minHeight: Theme.spacing.buttonHeight,
+    minHeight: Spacing.buttonHeight,
     borderRadius: Theme.borderRadius.large,
-    backgroundColor: Theme.persona.single.primary,
-    paddingVertical: Theme.spacing.md,
-    paddingHorizontal: Theme.spacing.lg,
+    backgroundColor: PersonaColors.single.primary,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.lg,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: Theme.spacing.sm,
+    gap: Spacing.sm,
     ...Theme.shadows.small,
   },
   primaryButtonDisabled: {
     opacity: 0.5,
   },
   primaryButtonText: {
-    ...Theme.typography.callout,
+    ...Typography.callout,
     fontWeight: "600",
     color: "#FFFFFF",
   },
   secondaryButton: {
-    minHeight: Theme.spacing.buttonHeight,
-    paddingVertical: Theme.spacing.md,
-    paddingHorizontal: Theme.spacing.md,
-    backgroundColor: Theme.dark.background.elevated,
+    minHeight: Spacing.buttonHeight,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.md,
+    backgroundColor: DarkTheme.background.elevated,
     borderRadius: Theme.borderRadius.large,
     borderWidth: 1,
-    borderColor: Theme.dark.border.default,
+    borderColor: DarkTheme.border.default,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: Theme.spacing.sm,
+    gap: Spacing.sm,
   },
   secondaryButtonText: {
-    ...Theme.typography.callout,
+    ...Typography.callout,
     fontWeight: "600",
-    color: Theme.dark.text.primary,
+    color: DarkTheme.text.primary,
   },
 });
