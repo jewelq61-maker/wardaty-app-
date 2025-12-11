@@ -378,12 +378,10 @@ export default function OnboardingScreen() {
           />
         </View>
 
-        {/* Cycle Data (Female users only) */}
-        {role === "user" && (
-          <>
-            <ThemedText style={[styles.sectionTitle, { marginTop: Spacing.xl }]}>
-              {t("onboarding", "cycleInformation")}
-            </ThemedText>
+        {/* Cycle Data */}
+        <ThemedText style={[styles.sectionTitle, { marginTop: Spacing.xl }]}>
+          {t("onboarding", "cycleInformation")}
+        </ThemedText>
 
             <View style={styles.inputWrapper}>
               <ThemedText style={styles.label}>
@@ -426,8 +424,6 @@ export default function OnboardingScreen() {
                 keyboardType={Platform.OS === "ios" ? "numbers-and-punctuation" : "default"}
               />
             </View>
-          </>
-        )}
 
         {/* Wellness Goals (Optional) */}
         <ThemedText style={[styles.sectionTitle, { marginTop: Spacing.xl }]}>
