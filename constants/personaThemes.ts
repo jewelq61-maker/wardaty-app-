@@ -1,5 +1,5 @@
 import { Persona } from "../lib/types";
-import { DarkTheme, PersonaColors, CycleColors } from "./theme";
+import { DarkTheme, PersonaColors } from "./theme";
 
 export type ThemeMode = "light" | "dark";
 
@@ -155,13 +155,13 @@ function createDarkColors(persona: Persona): ThemeColors {
     glowPrimary: personaAccent.main,
     glowAccent: personaAccent.light,
     overlay: DarkTheme.overlay.medium,
-    period: CycleColors.period,
-    periodLight: `${CycleColors.period}40`,
-    fertile: CycleColors.fertile,
-    fertileLight: `${CycleColors.fertile}40`,
+    period: "#FF5FA8",
+    periodLight: "#FF5FA840",
+    fertile: "#06D6A0",
+    fertileLight: "#06D6A040",
     normal: DarkTheme.border.default,
     normalLight: DarkTheme.border.subtle,
-    ovulation: CycleColors.ovulation,
+    ovulation: "#FFB703",
     follicular: "#9A63E8",
     luteal: "#FF7C7C",
     qadha: "#FFB800",
@@ -216,13 +216,13 @@ function createLightColors(persona: Persona): ThemeColors {
     glowPrimary: personaAccent.main,
     glowAccent: personaAccent.light,
     overlay: "rgba(0, 0, 0, 0.3)",
-    period: CycleColors.period,
-    periodLight: `${CycleColors.period}40`,
-    fertile: CycleColors.fertile,
-    fertileLight: `${CycleColors.fertile}40`,
+    period: "#FF5FA8",
+    periodLight: "#FF5FA840",
+    fertile: "#06D6A0",
+    fertileLight: "#06D6A040",
     normal: "#E5E7EB",
     normalLight: "#F3F4F6",
-    ovulation: CycleColors.ovulation,
+    ovulation: "#FFB703",
     follicular: "#9A63E8",
     luteal: "#FF7C7C",
     qadha: "#FFB800",
