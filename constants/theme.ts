@@ -154,6 +154,7 @@ export const Typography = {
   h2: iOSTypography.title1,
   h3: iOSTypography.title2,
   h4: iOSTypography.title3,
+  caption: iOSTypography.footnote,
   small: iOSTypography.caption1,
   link: iOSTypography.body,
   

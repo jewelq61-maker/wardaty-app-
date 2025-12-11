@@ -148,6 +148,16 @@ export function ThemedText({
       default:
         baseStyle = typography.body;
     }
+    // Safety check
+    if (!baseStyle || !baseStyle.fontSize) {
+      console.warn(`Typography style not found for type: ${type}`);
+      return {
+        fontSize: 17,
+        lineHeight: 22,
+        fontFamily: "Tajawal-Regular",
+      };
+    }
+    
     return {
       ...baseStyle,
       fontSize: Math.round(baseStyle.fontSize * scaleMultiplier),
