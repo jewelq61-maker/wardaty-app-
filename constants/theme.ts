@@ -48,85 +48,73 @@ export const DarkTheme = {
 
 export const PersonaColors = {
   single: {
-    primary: "#FF5FA8",
-    light: "#FF8FC4",
-    dark: "#E54D96",
-    glow: "rgba(255, 95, 168, 0.4)",
-    gradient: ["#FF5FA8", "#FF8FC4"],
+    primary: "#8C64F0",
+    light: "#A78BF5",
+    dark: "#6B4BC4",
+    soft: "rgba(140, 100, 240, 0.15)",
+    glow: "rgba(140, 100, 240, 0.3)",
+    gradient: ["#8C64F0", "#FF5FA8"] as const,
   },
   married: {
-    primary: "#9D4EDD",
-    light: "#C77DFF",
-    dark: "#7B2CBF",
-    glow: "rgba(157, 78, 221, 0.4)",
-    gradient: ["#9D4EDD", "#C77DFF"],
+    primary: "#FF5FA8",
+    light: "#FF8BC0",
+    dark: "#E04A8F",
+    soft: "rgba(255, 95, 168, 0.15)",
+    glow: "rgba(255, 95, 168, 0.3)",
+    gradient: ["#FF5FA8", "#FFB8D9"] as const,
   },
   mother: {
-    primary: "#4CC9F0",
-    light: "#72D7F7",
-    dark: "#3AA5D1",
-    glow: "rgba(76, 201, 240, 0.4)",
-    gradient: ["#4CC9F0", "#72D7F7"],
+    primary: "#06D6A0",
+    light: "#4DE3BA",
+    dark: "#05B589",
+    soft: "rgba(6, 214, 160, 0.15)",
+    glow: "rgba(6, 214, 160, 0.3)",
+    gradient: ["#06D6A0", "#4DE3BA"] as const,
   },
   partner: {
-    primary: "#06D6A0",
-    light: "#38E4B7",
-    dark: "#05B385",
-    glow: "rgba(6, 214, 160, 0.4)",
-    gradient: ["#06D6A0", "#38E4B7"],
+    primary: "#7EC8E3",
+    light: "#A0D9ED",
+    dark: "#5BA8C3",
+    soft: "rgba(126, 200, 227, 0.15)",
+    glow: "rgba(126, 200, 227, 0.3)",
+    gradient: ["#7EC8E3", "#A0D9ED"] as const,
   },
 } as const;
 
 // ===================================
-// 3) SEMANTIC COLORS (Status)
-// ===================================
-
-export const SemanticColors = {
-  success: "#06D6A0",
-  warning: "#FFB703",
-  error: "#EF476F",
-  info: "#4CC9F0",
-  
-  // With backgrounds
-  successBg: "rgba(6, 214, 160, 0.15)",
-  warningBg: "rgba(255, 183, 3, 0.15)",
-  errorBg: "rgba(239, 71, 111, 0.15)",
-  infoBg: "rgba(76, 201, 240, 0.15)",
-} as const;
-
-// ===================================
-// 3.5) CYCLE COLORS (Period tracking)
-// ===================================
-
-export const CycleColors = {
-  period: "#FF5FA8",        // Pink for period days
-  fertile: "#06D6A0",       // Green for fertile window
-  ovulation: "#FFB703",     // Yellow for ovulation
-  follicular: "#9A63E8",    // Purple for follicular phase
-  luteal: "#FF8C42",        // Orange for luteal phase
-  normal: "#E5E7EB",        // Gray for normal days
-} as const;
-
-// ===================================
-// 4) GLASSMORPHISM EFFECTS
+// 3) GLASS EFFECTS
 // ===================================
 
 export const GlassEffects = {
-  light: {
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
-    borderColor: "rgba(255, 255, 255, 0.1)",
-    borderWidth: 1,
-  },
-  medium: {
-    backgroundColor: "rgba(255, 255, 255, 0.08)",
-    borderColor: "rgba(255, 255, 255, 0.15)",
-    borderWidth: 1,
-  },
-  strong: {
-    backgroundColor: "rgba(255, 255, 255, 0.12)",
-    borderColor: "rgba(255, 255, 255, 0.2)",
-    borderWidth: 1,
-  },
+  background: "rgba(37, 27, 64, 0.6)",
+  border: "rgba(255, 255, 255, 0.1)",
+  blur: 20,
+} as const;
+
+// ===================================
+// 4) STATUS COLORS
+// ===================================
+
+export const StatusColors = {
+  success: "#06D6A0",
+  warning: "#FFB020",
+  error: "#FF5252",
+  info: "#5B9FED",
+} as const;
+
+// ===================================
+// 5) CYCLE COLORS
+// ===================================
+
+export const CycleColors = {
+  period: "#FF5FA8",
+  periodLight: "rgba(255, 95, 168, 0.15)",
+  fertile: "#06D6A0",
+  fertileLight: "rgba(6, 214, 160, 0.15)",
+  ovulation: "#FFB020",
+  ovulationLight: "rgba(255, 176, 32, 0.15)",
+  normal: "#8C64F0",
+  normalLight: "rgba(140, 100, 240, 0.15)",
 } as const;
 
 // ===================================
@@ -142,21 +130,139 @@ export const Spacing = iOSSpacing;
 export const BorderRadius = iOSBorderRadius;
 
 // ===================================
-// 7) TYPOGRAPHY (iOS-compliant)
+// 7) TYPOGRAPHY (iOS-compliant with aliases)
 // ===================================
 
 export const Typography = {
-  // iOS standard text styles
-  ...iOSTypography,
+  // iOS standard text styles - explicit definitions
+  largeTitle: {
+    fontSize: 34,
+    fontWeight: "700" as const,
+    lineHeight: 41,
+    letterSpacing: 0.37,
+    fontFamily: "Tajawal-Bold",
+  },
+  title1: {
+    fontSize: 28,
+    fontWeight: "400" as const,
+    lineHeight: 34,
+    letterSpacing: 0.36,
+    fontFamily: "Tajawal-Regular",
+  },
+  title2: {
+    fontSize: 22,
+    fontWeight: "400" as const,
+    lineHeight: 28,
+    letterSpacing: 0.35,
+    fontFamily: "Tajawal-Regular",
+  },
+  title3: {
+    fontSize: 20,
+    fontWeight: "400" as const,
+    lineHeight: 25,
+    letterSpacing: 0.38,
+    fontFamily: "Tajawal-Regular",
+  },
+  headline: {
+    fontSize: 17,
+    fontWeight: "600" as const,
+    lineHeight: 22,
+    letterSpacing: -0.41,
+    fontFamily: "Tajawal-Bold",
+  },
+  body: {
+    fontSize: 17,
+    fontWeight: "400" as const,
+    lineHeight: 22,
+    letterSpacing: -0.41,
+    fontFamily: "Tajawal-Regular",
+  },
+  callout: {
+    fontSize: 16,
+    fontWeight: "400" as const,
+    lineHeight: 21,
+    letterSpacing: -0.32,
+    fontFamily: "Tajawal-Regular",
+  },
+  subheadline: {
+    fontSize: 15,
+    fontWeight: "400" as const,
+    lineHeight: 20,
+    letterSpacing: -0.24,
+    fontFamily: "Tajawal-Regular",
+  },
+  footnote: {
+    fontSize: 13,
+    fontWeight: "400" as const,
+    lineHeight: 18,
+    letterSpacing: -0.08,
+    fontFamily: "Tajawal-Regular",
+  },
+  caption1: {
+    fontSize: 12,
+    fontWeight: "400" as const,
+    lineHeight: 16,
+    letterSpacing: 0,
+    fontFamily: "Tajawal-Regular",
+  },
+  caption2: {
+    fontSize: 11,
+    fontWeight: "400" as const,
+    lineHeight: 13,
+    letterSpacing: 0.07,
+    fontFamily: "Tajawal-Regular",
+  },
   
   // Aliases for ThemedText compatibility
-  h1: iOSTypography.largeTitle,
-  h2: iOSTypography.title1,
-  h3: iOSTypography.title2,
-  h4: iOSTypography.title3,
-  caption: iOSTypography.footnote,
-  small: iOSTypography.caption1,
-  link: iOSTypography.body,
+  h1: {
+    fontSize: 34,
+    fontWeight: "700" as const,
+    lineHeight: 41,
+    letterSpacing: 0.37,
+    fontFamily: "Tajawal-Bold",
+  },
+  h2: {
+    fontSize: 28,
+    fontWeight: "400" as const,
+    lineHeight: 34,
+    letterSpacing: 0.36,
+    fontFamily: "Tajawal-Regular",
+  },
+  h3: {
+    fontSize: 22,
+    fontWeight: "400" as const,
+    lineHeight: 28,
+    letterSpacing: 0.35,
+    fontFamily: "Tajawal-Regular",
+  },
+  h4: {
+    fontSize: 20,
+    fontWeight: "400" as const,
+    lineHeight: 25,
+    letterSpacing: 0.38,
+    fontFamily: "Tajawal-Regular",
+  },
+  caption: {
+    fontSize: 13,
+    fontWeight: "400" as const,
+    lineHeight: 18,
+    letterSpacing: -0.08,
+    fontFamily: "Tajawal-Regular",
+  },
+  small: {
+    fontSize: 12,
+    fontWeight: "400" as const,
+    lineHeight: 16,
+    letterSpacing: 0,
+    fontFamily: "Tajawal-Regular",
+  },
+  link: {
+    fontSize: 17,
+    fontWeight: "400" as const,
+    lineHeight: 22,
+    letterSpacing: -0.41,
+    fontFamily: "Tajawal-Regular",
+  },
   
   // Wardaty-specific styles (for special cases)
   hero: {
@@ -208,86 +314,14 @@ export const Haptics = iOSTokens.haptics;
 // 12) HELPER FUNCTIONS
 // ===================================
 
-/**
- * Get persona color by type
- */
-export function getPersonaColor(persona: Persona) {
-  return PersonaColors[persona];
+export function getPersonaColor(persona: Persona): string {
+  return PersonaColors[persona].primary;
 }
 
-/**
- * Get text style by iOS type
- */
-export function getTextStyle(style: keyof typeof Typography) {
-  return Typography[style];
+export function getPersonaGradient(persona: Persona): readonly [string, string] {
+  return PersonaColors[persona].gradient;
 }
 
-/**
- * Get spacing by size
- */
-export function getSpacing(size: keyof typeof Spacing) {
-  return Spacing[size];
+export function getCyclePhaseColor(phase: "period" | "fertile" | "ovulation" | "normal"): string {
+  return CycleColors[phase];
 }
-
-/**
- * Get border radius by size
- */
-export function getBorderRadius(size: keyof typeof BorderRadius) {
-  return BorderRadius[size];
-}
-
-/**
- * Get shadow by size
- */
-export function getShadow(size: keyof typeof Shadows) {
-  return Shadows[size];
-}
-
-/**
- * Create glassmorphism style with persona glow
- */
-export function createGlassStyle(
-  persona: Persona,
-  intensity: "light" | "medium" | "strong" = "medium"
-) {
-  const personaColor = getPersonaColor(persona);
-  const baseGlass = GlassEffects[intensity];
-  
-  return {
-    ...baseGlass,
-    borderColor: personaColor.glow,
-    shadowColor: personaColor.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 4,
-  };
-}
-
-// ===================================
-// 13) EXPORT ALL
-// ===================================
-
-export const Theme = {
-  dark: DarkTheme,
-  persona: PersonaColors,
-  semantic: SemanticColors,
-  glass: GlassEffects,
-  spacing: Spacing,
-  borderRadius: BorderRadius,
-  typography: Typography,
-  shadows: Shadows,
-  animations: Animations,
-  iconSizes: IconSizes,
-  haptics: Haptics,
-  
-  // Helper functions
-  getPersonaColor,
-  getTextStyle,
-  getSpacing,
-  getBorderRadius,
-  getShadow,
-  createGlassStyle,
-} as const;
-
-export default Theme;
