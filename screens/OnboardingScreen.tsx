@@ -179,35 +179,51 @@ export default function OnboardingScreen() {
     } else if (step === "persona") {
       setStep("personalData");
     } else if (step === "personalData") {
-      // Save all settings and complete onboarding
-      const ageNum = parseInt(age);
-      const cycleLengthNum = parseInt(cycleLength);
-      const periodLengthNum = parseInt(periodLength);
-      const waterGoalNum = parseInt(waterGoal) || 8;
-      const sleepGoalNum = parseInt(sleepGoal) || 8;
+      try {
+        console.log("[Onboarding] Starting to save settings...");
+        
+        // Save all settings and complete onboarding
+        const ageNum = parseInt(age);
+        const cycleLengthNum = parseInt(cycleLength);
+        const periodLengthNum = parseInt(periodLength);
+        const waterGoalNum = parseInt(waterGoal) || 8;
+        const sleepGoalNum = parseInt(sleepGoal) || 8;
 
-      await updateSettings({
-        persona,
-        name,
-        age: ageNum,
-        cycleSettings: {
-          ...settings.cycleSettings,
-          cycleLength: cycleLengthNum,
-          periodLength: periodLengthNum,
-          lastPeriodStart: lastPeriodDate || new Date().toISOString().split("T")[0],
-        },
-        wellnessGoals: {
-          waterCups: waterGoalNum,
-          sleepHours: sleepGoalNum,
-        },
-        onboardingCompleted: true,
-      });
+        console.log("[Onboarding] Parsed values:", { ageNum, cycleLengthNum, periodLengthNum });
 
-      // Clear progress
-      await clearProgress();
+        await updateSettings({
+          persona,
+          name,
+          age: ageNum,
+          cycleSettings: {
+            ...settings.cycleSettings,
+            cycleLength: cycleLengthNum,
+            periodLength: periodLengthNum,
+            lastPeriodStart: lastPeriodDate || new Date().toISOString().split("T")[0],
+          },
+          wellnessGoals: {
+            waterCups: waterGoalNum,
+            sleepHours: sleepGoalNum,
+          },
+          onboardingCompleted: true,
+        });
 
-      // Navigate to main app
-      navigation.navigate("Main" as never);
+        console.log("[Onboarding] Settings saved successfully!");
+
+        // Clear progress
+        await clearProgress();
+        console.log("[Onboarding] Progress cleared!");
+
+        // Navigate to main app
+        console.log("[Onboarding] Navigating to Main...");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "Main" as never }],
+        });
+      } catch (error) {
+        console.error("[Onboarding] Error completing onboarding:", error);
+        alert(`Error: ${error}`);
+      }
     }
   };
 
