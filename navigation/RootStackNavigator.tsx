@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import MainTabNavigator from "./MainTabNavigator";
-import { OnboardingScreenNew } from "../screens/OnboardingScreenNew";
+import OnboardingScreenNew from "../screens/OnboardingScreenNew";
 import RoleSelectionScreen from "../screens/RoleSelectionScreen";
 import PartnerCodeEntryScreen from "../screens/PartnerCodeEntryScreen";
 import PartnerHomeScreen from "../screens/PartnerHomeScreen";
