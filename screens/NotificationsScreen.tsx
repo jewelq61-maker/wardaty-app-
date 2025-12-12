@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";

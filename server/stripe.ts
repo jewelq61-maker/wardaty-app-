@@ -14,7 +14,7 @@ export function getStripeClient(): Stripe {
       throw new Error("Stripe is not configured. Please add STRIPE_SECRET_KEY to your environment.");
     }
     stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: "2025-04-30.basil",
+      apiVersion: "2025-11-17.clover",
     });
   }
   return stripeClient;

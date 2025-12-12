@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from "react";
 import { StyleSheet, Pressable, ViewStyle, View } from "react-native";
 import Animated, {

@@ -4,7 +4,8 @@
     "strict": true,
     "esModuleInterop": true,
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@shared/*": ["./shared/*"]
     },
     "types": ["node"]
   },

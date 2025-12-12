@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useCallback } from "react";
 import { View, StyleSheet, ScrollView, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";

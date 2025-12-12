@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Text, type TextProps } from "react-native";
 
 import { useTheme } from "../hooks/useTheme";

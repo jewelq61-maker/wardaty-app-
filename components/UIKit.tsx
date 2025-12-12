@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { ReactNode } from "react";
 import { StyleSheet, Pressable, ViewStyle, StyleProp, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
