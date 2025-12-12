@@ -50,10 +50,8 @@ export default function RootStackNavigator() {
   }, []);
 
   const needsOnboarding = !data.settings.onboardingComplete;
-  const showRoleSelection = needsOnboarding && !isPartnerMode && selectedRole === null;
-  const showPartnerCodeEntry = selectedRole === "partner" && !isPartnerMode;
-  const showOnboarding = (selectedRole === "main" || data.settings.onboardingComplete === false) && !isPartnerMode && !showRoleSelection && !showPartnerCodeEntry;
 
+  // Partner mode
   if (isPartnerMode) {
     return (
       <>
@@ -69,35 +67,12 @@ export default function RootStackNavigator() {
     );
   }
 
-  if (showRoleSelection) {
-    return (
-      <>
-        <PersonaThemeSync />
-        <RoleSelectionScreen
-          onSelectMainUser={handleSelectMainUser}
-          onSelectPartner={handleSelectPartner}
-        />
-      </>
-    );
-  }
-
-  if (showPartnerCodeEntry) {
-    return (
-      <>
-        <PersonaThemeSync />
-        <PartnerCodeEntryScreen
-          onBack={handleBackToRoleSelection}
-          onSuccess={handlePartnerConnected}
-        />
-      </>
-    );
-  }
-
+  // Main app navigation
   return (
     <>
       <PersonaThemeSync />
       <Stack.Navigator screenOptions={screenOptions}>
-        {needsOnboarding && selectedRole === "main" ? (
+        {needsOnboarding ? (
           <Stack.Screen
             name="Onboarding"
             component={OnboardingScreenNew}
