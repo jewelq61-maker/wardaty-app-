@@ -25,55 +25,53 @@ import { Persona } from "../lib/types";
 
 const { width } = Dimensions.get("window");
 
-// ═══════════════════════════════════════════════════════════════════════════
-// OFFICIAL WARDATY BRAND COLORS
-// ═══════════════════════════════════════════════════════════════════════════
+// ===================================
+// THEME CONSTANTS
+// ===================================
 
-const WARDATY_DARK = {
-  base: "#0F0820",
-  elevated: "#1A1330",
-  card: "#251B40",
-  glass: "rgba(37, 27, 64, 0.6)",
-  glassBorder: "rgba(255, 255, 255, 0.1)",
-  textPrimary: "#FFFFFF",
-  textSecondary: "rgba(255, 255, 255, 0.7)",
-  textTertiary: "rgba(255, 255, 255, 0.5)",
-} as const;
+const BG_ROOT = "#0F0820";
+const BG_ELEVATED = "#1A1330";
+const BG_CARD = "#251B40";
+const GLASS_BG = "rgba(37, 27, 64, 0.6)";
+const GLASS_BORDER = "rgba(255, 255, 255, 0.1)";
+const TEXT_PRIMARY = "#FFFFFF";
+const TEXT_SECONDARY = "rgba(255, 255, 255, 0.7)";
+const TEXT_TERTIARY = "rgba(255, 255, 255, 0.5)";
 
-// PERSONA FLOWERS - Official Wardaty Identity
-const PERSONA_FLOWERS = {
-  single: {
-    color: "#FF6B9D",      // Pink Flower
-    gradient: ["#FF6B9D", "#FF8BC0"],
-    emoji: "🌸",
-    name: { ar: "عزباء", en: "Single" },
-  },
-  married: {
-    color: "#FF8D8D",      // Coral/Soft Red Flower
-    gradient: ["#FF8D8D", "#FFB8A8"],
-    emoji: "💕",
-    name: { ar: "متزوجة", en: "Married" },
-  },
-  mother: {
-    color: "#A684F5",      // Purple Flower
-    gradient: ["#A684F5", "#C4A8FF"],
-    emoji: "👶",
-    name: { ar: "أم", en: "Mother" },
-  },
-  partner: {
-    color: "#7EC8E3",      // Blue Flower
-    gradient: ["#7EC8E3", "#A0D9ED"],
-    emoji: "🤝",
-    name: { ar: "شريك", en: "Partner" },
-  },
-} as const;
+const PERSONA_COLORS = {
+  single: "#FF6B9D",
+  married: "#FF8D8D",
+  mother: "#A684F5",
+  partner: "#7EC8E3",
+};
 
-const SPACING = { xs: 8, sm: 12, md: 16, lg: 20, xl: 24, xxl: 32 };
-const RADIUS = { sm: 8, md: 12, lg: 16, xl: 24 };
+const PERSONA_GRADIENTS = {
+  single: ["#FF6B9D", "#FF8BC0"],
+  married: ["#FF8D8D", "#FFB8A8"],
+  mother: ["#A684F5", "#C4A8FF"],
+  partner: ["#7EC8E3", "#A0D9ED"],
+};
 
-// ═══════════════════════════════════════════════════════════════════════════
+const SPACING = {
+  xs: 8,
+  sm: 12,
+  md: 16,
+  lg: 20,
+  xl: 24,
+  xxl: 32,
+  xxxl: 44,
+};
+
+const BORDER_RADIUS = {
+  small: 8,
+  medium: 12,
+  large: 16,
+  xlarge: 24,
+};
+
+// ===================================
 // TYPES
-// ═══════════════════════════════════════════════════════════════════════════
+// ===================================
 
 interface OnboardingData {
   language: "ar" | "en";
@@ -89,9 +87,9 @@ interface OnboardingData {
   notificationsEnabled: boolean;
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
+// ===================================
 // MAIN COMPONENT
-// ═══════════════════════════════════════════════════════════════════════════
+// ===================================
 
 export default function OnboardingScreenNew() {
   const insets = useSafeAreaInsets();
@@ -119,53 +117,58 @@ export default function OnboardingScreenNew() {
   const [showDatePicker, setShowDatePicker] = useState(false);
 
   const isRTL = data.language === "ar";
-  const flower = data.persona ? PERSONA_FLOWERS[data.persona] : PERSONA_FLOWERS.single;
+  const personaColor = data.persona ? PERSONA_COLORS[data.persona] : "#8C64F0";
 
-  // ═══════════════════════════════════════════════════════════════════════════
+  // ===================================
   // TRANSLATIONS
-  // ═══════════════════════════════════════════════════════════════════════════
+  // ===================================
 
   const t = (key: string): string => {
     const translations: Record<string, { ar: string; en: string }> = {
       // Step 1
       selectLanguage: { ar: "اختر اللغة", en: "Select Language" },
-      choosePreferred: { ar: "اختر لغتك المفضلة للمتابعة", en: "Choose your preferred language" },
+      choosePreferred: { ar: "اختر لغتك المفضلة", en: "Choose your preferred language" },
       
       // Step 2
       selectPersona: { ar: "اختر شخصيتك", en: "Select Your Persona" },
-      whoAreYou: { ar: "من أنت؟ اختر ما يناسبك", en: "Who are you? Choose what suits you" },
+      whoAreYou: { ar: "من أنت؟", en: "Who are you?" },
+      single: { ar: "عزباء", en: "Single" },
+      married: { ar: "متزوجة", en: "Married" },
+      mother: { ar: "أم", en: "Mother" },
+      partner: { ar: "شريك", en: "Partner" },
       
       // Step 3
       createAccount: { ar: "إنشاء حساب", en: "Create Account" },
-      enterDetails: { ar: "أدخل بياناتك للبدء", en: "Enter your details to get started" },
+      enterDetails: { ar: "أدخل بياناتك", en: "Enter your details" },
       email: { ar: "البريد الإلكتروني", en: "Email" },
       password: { ar: "كلمة المرور", en: "Password" },
       confirmPassword: { ar: "تأكيد كلمة المرور", en: "Confirm Password" },
       
       // Step 4
-      beautyPreferences: { ar: "اهتماماتك الجمالية", en: "Beauty Preferences" },
-      selectInterests: { ar: "اختر ما يهمك", en: "Select your interests" },
+      beautyPreferences: { ar: "اهتماماتك", en: "Beauty Preferences" },
+      selectInterests: { ar: "اختر اهتماماتك", en: "Select your interests" },
       skincare: { ar: "العناية بالبشرة", en: "Skincare" },
       hairCare: { ar: "العناية بالشعر", en: "Hair Care" },
       nailCare: { ar: "العناية بالأظافر", en: "Nail Care" },
-      bodyCare: { ar: "العناية بالجسم", en: "Body Care" },
+      makeup: { ar: "المكياج", en: "Makeup" },
       fragrance: { ar: "العطور", en: "Fragrance" },
+      wellness: { ar: "العافية", en: "Wellness" },
       
       // Step 5
-      cycleDetails: { ar: "تفاصيل الدورة الشهرية", en: "Cycle Details" },
-      trackCycle: { ar: "تتبع دورتك الشهرية بدقة", en: "Track your menstrual cycle accurately" },
-      lastPeriod: { ar: "تاريخ آخر دورة", en: "Last Period Date" },
+      cycleDetails: { ar: "تفاصيل الدورة", en: "Cycle Details" },
+      trackCycle: { ar: "تتبع دورتك الشهرية", en: "Track your menstrual cycle" },
+      lastPeriod: { ar: "آخر دورة شهرية", en: "Last Period Date" },
       cycleLength: { ar: "طول الدورة (أيام)", en: "Cycle Length (days)" },
       selectDate: { ar: "اختر التاريخ", en: "Select Date" },
       
       // Step 6
       personalInfo: { ar: "معلوماتك الشخصية", en: "Personal Information" },
-      tellUsAbout: { ar: "أخبرنا المزيد عنك", en: "Tell us more about yourself" },
+      tellUsAbout: { ar: "أخبرنا عنك", en: "Tell us about yourself" },
       name: { ar: "الاسم", en: "Name" },
       ageRange: { ar: "الفئة العمرية", en: "Age Range" },
-      goals: { ar: "أهدافك الصحية", en: "Health Goals" },
+      goals: { ar: "أهدافك", en: "Your Goals" },
       trackCycleGoal: { ar: "تتبع الدورة", en: "Track Cycle" },
-      conceive: { ar: "التخطيط للحمل", en: "Plan Pregnancy" },
+      conceive: { ar: "الحمل", en: "Conceive" },
       avoidPregnancy: { ar: "تجنب الحمل", en: "Avoid Pregnancy" },
       generalHealth: { ar: "الصحة العامة", en: "General Health" },
       beautyWellness: { ar: "الجمال والعافية", en: "Beauty & Wellness" },
@@ -180,15 +183,15 @@ export default function OnboardingScreenNew() {
     return translations[key]?.[data.language] || key;
   };
 
-  // ═══════════════════════════════════════════════════════════════════════════
+  // ===================================
   // VALIDATION
-  // ═══════════════════════════════════════════════════════════════════════════
+  // ===================================
 
   const validateStep = (): boolean => {
     const newErrors: Record<string, string> = {};
 
     if (currentStep === 2 && !data.persona) {
-      newErrors.persona = t("selectPersona");
+      newErrors.persona = "Please select a persona";
       setErrors(newErrors);
       return false;
     }
@@ -217,10 +220,10 @@ export default function OnboardingScreenNew() {
 
     if (currentStep === 5 && data.persona !== "partner") {
       if (!data.lastPeriodDate) {
-        newErrors.lastPeriodDate = "Please select date";
+        newErrors.lastPeriodDate = "Please select last period date";
       }
       if (data.cycleLength < 21 || data.cycleLength > 35) {
-        newErrors.cycleLength = "Cycle length must be 21-35 days";
+        newErrors.cycleLength = "Cycle length must be between 21-35 days";
       }
       if (Object.keys(newErrors).length > 0) {
         setErrors(newErrors);
@@ -248,9 +251,9 @@ export default function OnboardingScreenNew() {
     return true;
   };
 
-  // ═══════════════════════════════════════════════════════════════════════════
+  // ===================================
   // CYCLE CALCULATIONS
-  // ═══════════════════════════════════════════════════════════════════════════
+  // ===================================
 
   const calculateCycleDates = () => {
     if (!data.lastPeriodDate) return null;
@@ -278,9 +281,9 @@ export default function OnboardingScreenNew() {
     };
   };
 
-  // ═══════════════════════════════════════════════════════════════════════════
+  // ===================================
   // NAVIGATION
-  // ═══════════════════════════════════════════════════════════════════════════
+  // ===================================
 
   const handleNext = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -290,18 +293,25 @@ export default function OnboardingScreenNew() {
       return;
     }
 
+    // Step 1: Language selection
     if (currentStep === 1) {
       await setLanguage(data.language);
-      I18nManager.forceRTL(data.language === "ar");
+      if (data.language === "ar") {
+        I18nManager.forceRTL(true);
+      } else {
+        I18nManager.forceRTL(false);
+      }
       setCurrentStep(2);
       return;
     }
 
+    // Skip step 5 for partner
     if (currentStep === 4 && data.persona === "partner") {
       setCurrentStep(6);
       return;
     }
 
+    // Last step: Save and navigate
     if (currentStep === 6) {
       await handleFinish();
       return;
@@ -313,6 +323,7 @@ export default function OnboardingScreenNew() {
   const handleBack = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     
+    // Skip step 5 for partner when going back
     if (currentStep === 6 && data.persona === "partner") {
       setCurrentStep(4);
       return;
@@ -330,7 +341,6 @@ export default function OnboardingScreenNew() {
           language: data.language,
           persona: data.persona,
           notificationsEnabled: data.notificationsEnabled,
-          onboardingComplete: true,
         },
         user: {
           email: data.email,
@@ -363,24 +373,24 @@ export default function OnboardingScreenNew() {
     }
   };
 
-  // ═══════════════════════════════════════════════════════════════════════════
+  // ===================================
   // RENDER STEPS
-  // ═══════════════════════════════════════════════════════════════════════════
+  // ===================================
 
   const renderStep = () => {
     switch (currentStep) {
       case 1:
-        return <Step1Language data={data} setData={setData} t={t} flower={flower} />;
+        return <Step1Language data={data} setData={setData} t={t} personaColor={personaColor} />;
       case 2:
         return <Step2Persona data={data} setData={setData} t={t} errors={errors} />;
       case 3:
-        return <Step3Email data={data} setData={setData} confirmPassword={confirmPassword} setConfirmPassword={setConfirmPassword} t={t} errors={errors} isRTL={isRTL} flower={flower} />;
+        return <Step3Email data={data} setData={setData} confirmPassword={confirmPassword} setConfirmPassword={setConfirmPassword} t={t} errors={errors} isRTL={isRTL} />;
       case 4:
-        return <Step4Beauty data={data} setData={setData} t={t} errors={errors} isRTL={isRTL} flower={flower} />;
+        return <Step4Beauty data={data} setData={setData} t={t} errors={errors} isRTL={isRTL} />;
       case 5:
-        return <Step5Cycle data={data} setData={setData} t={t} errors={errors} showDatePicker={showDatePicker} setShowDatePicker={setShowDatePicker} isRTL={isRTL} flower={flower} />;
+        return <Step5Cycle data={data} setData={setData} t={t} errors={errors} showDatePicker={showDatePicker} setShowDatePicker={setShowDatePicker} isRTL={isRTL} />;
       case 6:
-        return <Step6Personal data={data} setData={setData} t={t} errors={errors} isRTL={isRTL} flower={flower} />;
+        return <Step6Personal data={data} setData={setData} t={t} errors={errors} isRTL={isRTL} />;
       default:
         return null;
     }
@@ -392,13 +402,13 @@ export default function OnboardingScreenNew() {
   return (
     <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
       {/* Progress Dots */}
-      <View style={[styles.progressContainer, { flexDirection: isRTL ? "row-reverse" : "row" }]}>
+      <View style={styles.progressContainer}>
         {Array.from({ length: totalSteps }).map((_, index) => (
           <View
             key={index}
             style={[
               styles.progressDot,
-              index + 1 === displayStep && { backgroundColor: flower.color },
+              index + 1 === displayStep && { backgroundColor: personaColor },
             ]}
           />
         ))}
@@ -424,9 +434,9 @@ export default function OnboardingScreenNew() {
         {currentStep > 1 && (
           <Pressable
             onPress={handleBack}
-            style={[styles.backButton, { borderColor: WARDATY_DARK.glassBorder }]}
+            style={[styles.backButton, { borderColor: GLASS_BORDER }]}
           >
-            <Feather name={isRTL ? "arrow-right" : "arrow-left"} size={20} color={WARDATY_DARK.textPrimary} />
+            <Feather name={isRTL ? "arrow-right" : "arrow-left"} size={20} color={TEXT_PRIMARY} />
             <Text style={styles.backButtonText}>{t("back")}</Text>
           </Pressable>
         )}
@@ -435,7 +445,7 @@ export default function OnboardingScreenNew() {
           onPress={handleNext}
           style={[
             styles.nextButton,
-            { backgroundColor: flower.color },
+            { backgroundColor: personaColor },
             currentStep === 1 && styles.nextButtonFull,
           ]}
         >
@@ -449,14 +459,14 @@ export default function OnboardingScreenNew() {
   );
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
+// ===================================
 // STEP 1: LANGUAGE
-// ═══════════════════════════════════════════════════════════════════════════
+// ===================================
 
-function Step1Language({ data, setData, t, flower }: any) {
+function Step1Language({ data, setData, t, personaColor }: any) {
   return (
     <View style={styles.stepContainer}>
-      {/* Official Wardaty Logo */}
+      {/* Logo */}
       <View style={styles.logoContainer}>
         <LinearGradient
           colors={["#8C64F0", "#FF5FA8"]}
@@ -465,7 +475,6 @@ function Step1Language({ data, setData, t, flower }: any) {
           style={styles.logoGradient}
         >
           <Text style={styles.logoText}>ورديتي</Text>
-          <Text style={styles.logoSubtext}>Wardaty</Text>
         </LinearGradient>
       </View>
 
@@ -480,11 +489,11 @@ function Step1Language({ data, setData, t, flower }: any) {
           }}
           style={[
             styles.languageOption,
-            data.language === "ar" && { borderColor: flower.color, borderWidth: 2 },
+            data.language === "ar" && { borderColor: personaColor, borderWidth: 2 },
           ]}
         >
           <Text style={styles.languageText}>العربية</Text>
-          {data.language === "ar" && <Feather name="check" size={24} color={flower.color} />}
+          {data.language === "ar" && <Feather name="check" size={24} color={personaColor} />}
         </Pressable>
 
         <Pressable
@@ -494,20 +503,20 @@ function Step1Language({ data, setData, t, flower }: any) {
           }}
           style={[
             styles.languageOption,
-            data.language === "en" && { borderColor: flower.color, borderWidth: 2 },
+            data.language === "en" && { borderColor: personaColor, borderWidth: 2 },
           ]}
         >
           <Text style={styles.languageText}>English</Text>
-          {data.language === "en" && <Feather name="check" size={24} color={flower.color} />}
+          {data.language === "en" && <Feather name="check" size={24} color={personaColor} />}
         </Pressable>
       </View>
     </View>
   );
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
+// ===================================
 // STEP 2: PERSONA
-// ═══════════════════════════════════════════════════════════════════════════
+// ===================================
 
 function Step2Persona({ data, setData, t, errors }: any) {
   const personas: Persona[] = ["single", "married", "mother", "partner"];
@@ -517,7 +526,7 @@ function Step2Persona({ data, setData, t, errors }: any) {
       {/* Logo with persona gradient */}
       <View style={styles.logoContainer}>
         <LinearGradient
-          colors={data.persona ? PERSONA_FLOWERS[data.persona].gradient : ["#8C64F0", "#FF5FA8"]}
+          colors={data.persona ? PERSONA_GRADIENTS[data.persona] : ["#8C64F0", "#FF5FA8"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.logoGradient}
@@ -530,34 +539,33 @@ function Step2Persona({ data, setData, t, errors }: any) {
       <Text style={styles.subtitle}>{t("whoAreYou")}</Text>
 
       <View style={styles.optionsContainer}>
-        {personas.map((persona) => {
-          const flower = PERSONA_FLOWERS[persona];
-          return (
-            <Pressable
-              key={persona}
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                setData({ ...data, persona });
-              }}
-              style={[
-                styles.personaOption,
-                data.persona === persona && {
-                  borderColor: flower.color,
-                  borderWidth: 2,
-                  backgroundColor: `${flower.color}15`,
-                },
-              ]}
-            >
-              <View style={[styles.personaIcon, { backgroundColor: flower.color }]}>
-                <Text style={styles.personaEmoji}>{flower.emoji}</Text>
-              </View>
-              <Text style={styles.personaText}>{flower.name[data.language]}</Text>
-              {data.persona === persona && (
-                <Feather name="check" size={20} color={flower.color} style={styles.personaCheck} />
-              )}
-            </Pressable>
-          );
-        })}
+        {personas.map((persona) => (
+          <Pressable
+            key={persona}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              setData({ ...data, persona });
+            }}
+            style={[
+              styles.personaOption,
+              data.persona === persona && {
+                borderColor: PERSONA_COLORS[persona],
+                borderWidth: 2,
+                backgroundColor: `${PERSONA_COLORS[persona]}15`,
+              },
+            ]}
+          >
+            <View style={[styles.personaIcon, { backgroundColor: PERSONA_COLORS[persona] }]}>
+              <Text style={styles.personaEmoji}>
+                {persona === "single" ? "🌸" : persona === "married" ? "💕" : persona === "mother" ? "👶" : "🤝"}
+              </Text>
+            </View>
+            <Text style={styles.personaText}>{t(persona)}</Text>
+            {data.persona === persona && (
+              <Feather name="check" size={20} color={PERSONA_COLORS[persona]} style={styles.personaCheck} />
+            )}
+          </Pressable>
+        ))}
       </View>
 
       {errors.persona && <Text style={styles.errorText}>{errors.persona}</Text>}
@@ -565,11 +573,11 @@ function Step2Persona({ data, setData, t, errors }: any) {
   );
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
+// ===================================
 // STEP 3: EMAIL
-// ═══════════════════════════════════════════════════════════════════════════
+// ===================================
 
-function Step3Email({ data, setData, confirmPassword, setConfirmPassword, t, errors, isRTL, flower }: any) {
+function Step3Email({ data, setData, confirmPassword, setConfirmPassword, t, errors, isRTL }: any) {
   return (
     <View style={styles.stepContainer}>
       <Text style={styles.title}>{t("createAccount")}</Text>
@@ -583,7 +591,7 @@ function Step3Email({ data, setData, confirmPassword, setConfirmPassword, t, err
             value={data.email}
             onChangeText={(text) => setData({ ...data, email: text })}
             placeholder="example@wardaty.com"
-            placeholderTextColor={WARDATY_DARK.textTertiary}
+            placeholderTextColor={TEXT_TERTIARY}
             keyboardType="email-address"
             autoCapitalize="none"
           />
@@ -597,7 +605,7 @@ function Step3Email({ data, setData, confirmPassword, setConfirmPassword, t, err
             value={data.password}
             onChangeText={(text) => setData({ ...data, password: text })}
             placeholder="••••••"
-            placeholderTextColor={WARDATY_DARK.textTertiary}
+            placeholderTextColor={TEXT_TERTIARY}
             secureTextEntry
           />
           {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
@@ -610,7 +618,7 @@ function Step3Email({ data, setData, confirmPassword, setConfirmPassword, t, err
             value={confirmPassword}
             onChangeText={setConfirmPassword}
             placeholder="••••••"
-            placeholderTextColor={WARDATY_DARK.textTertiary}
+            placeholderTextColor={TEXT_TERTIARY}
             secureTextEntry
           />
           {errors.confirmPassword && <Text style={styles.errorText}>{errors.confirmPassword}</Text>}
@@ -620,17 +628,18 @@ function Step3Email({ data, setData, confirmPassword, setConfirmPassword, t, err
   );
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
+// ===================================
 // STEP 4: BEAUTY PREFERENCES
-// ═══════════════════════════════════════════════════════════════════════════
+// ===================================
 
-function Step4Beauty({ data, setData, t, errors, isRTL, flower }: any) {
+function Step4Beauty({ data, setData, t, errors, isRTL }: any) {
   const preferences = [
     { id: "skincare", label: t("skincare") },
     { id: "hairCare", label: t("hairCare") },
     { id: "nailCare", label: t("nailCare") },
-    { id: "bodyCare", label: t("bodyCare") },
+    { id: "makeup", label: t("makeup") },
     { id: "fragrance", label: t("fragrance") },
+    { id: "wellness", label: t("wellness") },
   ];
 
   const togglePreference = (id: string) => {
@@ -642,6 +651,8 @@ function Step4Beauty({ data, setData, t, errors, isRTL, flower }: any) {
       setData({ ...data, beautyPreferences: [...current, id] });
     }
   };
+
+  const personaColor = data.persona ? PERSONA_COLORS[data.persona] : "#8C64F0";
 
   return (
     <View style={styles.stepContainer}>
@@ -657,7 +668,7 @@ function Step4Beauty({ data, setData, t, errors, isRTL, flower }: any) {
               onPress={() => togglePreference(pref.id)}
               style={[
                 styles.chip,
-                isSelected && { backgroundColor: flower.color, borderColor: flower.color },
+                isSelected && { backgroundColor: personaColor, borderColor: personaColor },
               ]}
             >
               <Text style={[styles.chipText, isSelected && styles.chipTextSelected]}>
@@ -673,11 +684,11 @@ function Step4Beauty({ data, setData, t, errors, isRTL, flower }: any) {
   );
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
+// ===================================
 // STEP 5: CYCLE DETAILS
-// ═══════════════════════════════════════════════════════════════════════════
+// ===================================
 
-function Step5Cycle({ data, setData, t, errors, showDatePicker, setShowDatePicker, isRTL, flower }: any) {
+function Step5Cycle({ data, setData, t, errors, showDatePicker, setShowDatePicker, isRTL }: any) {
   const formatDate = (date: Date | null) => {
     if (!date) return t("selectDate");
     return date.toLocaleDateString(data.language === "ar" ? "ar-SA" : "en-US");
@@ -698,10 +709,10 @@ function Step5Cycle({ data, setData, t, errors, showDatePicker, setShowDatePicke
             }}
             style={[styles.input, styles.dateButton, errors.lastPeriodDate && styles.inputError]}
           >
-            <Text style={[styles.dateText, !data.lastPeriodDate && { color: WARDATY_DARK.textTertiary }]}>
+            <Text style={[styles.dateText, !data.lastPeriodDate && { color: TEXT_TERTIARY }]}>
               {formatDate(data.lastPeriodDate)}
             </Text>
-            <Feather name="calendar" size={20} color={WARDATY_DARK.textSecondary} />
+            <Feather name="calendar" size={20} color={TEXT_SECONDARY} />
           </Pressable>
           {errors.lastPeriodDate && <Text style={styles.errorText}>{errors.lastPeriodDate}</Text>}
         </View>
@@ -713,7 +724,7 @@ function Step5Cycle({ data, setData, t, errors, showDatePicker, setShowDatePicke
             value={String(data.cycleLength)}
             onChangeText={(text) => setData({ ...data, cycleLength: parseInt(text) || 28 })}
             placeholder="28"
-            placeholderTextColor={WARDATY_DARK.textTertiary}
+            placeholderTextColor={TEXT_TERTIARY}
             keyboardType="number-pad"
           />
           {errors.cycleLength && <Text style={styles.errorText}>{errors.cycleLength}</Text>}
@@ -738,11 +749,11 @@ function Step5Cycle({ data, setData, t, errors, showDatePicker, setShowDatePicke
   );
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
+// ===================================
 // STEP 6: PERSONAL INFO
-// ═══════════════════════════════════════════════════════════════════════════
+// ===================================
 
-function Step6Personal({ data, setData, t, errors, isRTL, flower }: any) {
+function Step6Personal({ data, setData, t, errors, isRTL }: any) {
   const ageRanges = ["18-24", "25-34", "35-44", "45+"];
   const goalsList = [
     { id: "trackCycle", label: t("trackCycleGoal") },
@@ -762,6 +773,8 @@ function Step6Personal({ data, setData, t, errors, isRTL, flower }: any) {
     }
   };
 
+  const personaColor = data.persona ? PERSONA_COLORS[data.persona] : "#8C64F0";
+
   return (
     <View style={styles.stepContainer}>
       <Text style={styles.title}>{t("personalInfo")}</Text>
@@ -775,7 +788,7 @@ function Step6Personal({ data, setData, t, errors, isRTL, flower }: any) {
             value={data.name}
             onChangeText={(text) => setData({ ...data, name: text })}
             placeholder={data.language === "ar" ? "اسمك" : "Your name"}
-            placeholderTextColor={WARDATY_DARK.textTertiary}
+            placeholderTextColor={TEXT_TERTIARY}
           />
           {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
         </View>
@@ -794,7 +807,7 @@ function Step6Personal({ data, setData, t, errors, isRTL, flower }: any) {
                   }}
                   style={[
                     styles.chip,
-                    isSelected && { backgroundColor: flower.color, borderColor: flower.color },
+                    isSelected && { backgroundColor: personaColor, borderColor: personaColor },
                   ]}
                 >
                   <Text style={[styles.chipText, isSelected && styles.chipTextSelected]}>
@@ -818,7 +831,7 @@ function Step6Personal({ data, setData, t, errors, isRTL, flower }: any) {
                   onPress={() => toggleGoal(goal.id)}
                   style={[
                     styles.chip,
-                    isSelected && { backgroundColor: flower.color, borderColor: flower.color },
+                    isSelected && { backgroundColor: personaColor, borderColor: personaColor },
                   ]}
                 >
                   <Text style={[styles.chipText, isSelected && styles.chipTextSelected]}>
@@ -838,7 +851,7 @@ function Step6Personal({ data, setData, t, errors, isRTL, flower }: any) {
           }}
           style={[styles.notificationToggle, { flexDirection: isRTL ? "row-reverse" : "row" }]}
         >
-          <View style={[styles.checkbox, data.notificationsEnabled && { backgroundColor: flower.color, borderColor: flower.color }]}>
+          <View style={[styles.checkbox, data.notificationsEnabled && { backgroundColor: personaColor, borderColor: personaColor }]}>
             {data.notificationsEnabled && <Feather name="check" size={16} color="#FFFFFF" />}
           </View>
           <Text style={styles.notificationText}>{t("notifications")}</Text>
@@ -848,14 +861,14 @@ function Step6Personal({ data, setData, t, errors, isRTL, flower }: any) {
   );
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
+// ===================================
 // STYLES
-// ═══════════════════════════════════════════════════════════════════════════
+// ===================================
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: WARDATY_DARK.base,
+    backgroundColor: BG_ROOT,
   },
   scrollView: {
     flex: 1,
@@ -875,7 +888,7 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: WARDATY_DARK.glassBorder,
+    backgroundColor: GLASS_BORDER,
   },
   stepContainer: {
     alignItems: "center",
@@ -897,23 +910,17 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontFamily: "Tajawal-Bold",
   },
-  logoSubtext: {
-    fontSize: 12,
-    fontWeight: "500",
-    color: "rgba(255, 255, 255, 0.8)",
-    marginTop: 2,
-  },
   title: {
     fontSize: 28,
     fontWeight: "700",
-    color: WARDATY_DARK.textPrimary,
+    color: TEXT_PRIMARY,
     marginBottom: SPACING.xs,
     textAlign: "center",
     fontFamily: "Tajawal-Bold",
   },
   subtitle: {
     fontSize: 16,
-    color: WARDATY_DARK.textSecondary,
+    color: TEXT_SECONDARY,
     marginBottom: SPACING.xl,
     textAlign: "center",
     fontFamily: "Tajawal-Regular",
@@ -927,26 +934,26 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     padding: SPACING.lg,
-    backgroundColor: WARDATY_DARK.card,
-    borderRadius: RADIUS.lg,
+    backgroundColor: BG_CARD,
+    borderRadius: BORDER_RADIUS.large,
     borderWidth: 1,
-    borderColor: WARDATY_DARK.glassBorder,
+    borderColor: GLASS_BORDER,
     minHeight: 60,
   },
   languageText: {
     fontSize: 17,
     fontWeight: "600",
-    color: WARDATY_DARK.textPrimary,
+    color: TEXT_PRIMARY,
     fontFamily: "Tajawal-Bold",
   },
   personaOption: {
     flexDirection: "row",
     alignItems: "center",
     padding: SPACING.lg,
-    backgroundColor: WARDATY_DARK.card,
-    borderRadius: RADIUS.lg,
+    backgroundColor: BG_CARD,
+    borderRadius: BORDER_RADIUS.large,
     borderWidth: 1,
-    borderColor: WARDATY_DARK.glassBorder,
+    borderColor: GLASS_BORDER,
     gap: SPACING.md,
     minHeight: 80,
   },
@@ -964,7 +971,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 17,
     fontWeight: "600",
-    color: WARDATY_DARK.textPrimary,
+    color: TEXT_PRIMARY,
     fontFamily: "Tajawal-Bold",
   },
   personaCheck: {
@@ -981,19 +988,19 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 15,
-    color: WARDATY_DARK.textSecondary,
+    color: TEXT_SECONDARY,
     marginBottom: SPACING.xs,
     fontFamily: "Tajawal-Regular",
   },
   input: {
-    backgroundColor: WARDATY_DARK.card,
-    borderRadius: RADIUS.md,
+    backgroundColor: BG_CARD,
+    borderRadius: BORDER_RADIUS.medium,
     borderWidth: 1,
-    borderColor: WARDATY_DARK.glassBorder,
+    borderColor: GLASS_BORDER,
     padding: SPACING.md,
     minHeight: 50,
     fontSize: 16,
-    color: WARDATY_DARK.textPrimary,
+    color: TEXT_PRIMARY,
     fontFamily: "Tajawal-Regular",
   },
   inputError: {
@@ -1006,7 +1013,7 @@ const styles = StyleSheet.create({
   },
   dateText: {
     fontSize: 16,
-    color: WARDATY_DARK.textPrimary,
+    color: TEXT_PRIMARY,
     fontFamily: "Tajawal-Regular",
   },
   errorText: {
@@ -1023,14 +1030,14 @@ const styles = StyleSheet.create({
   chip: {
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.sm,
-    backgroundColor: WARDATY_DARK.card,
-    borderRadius: RADIUS.lg,
+    backgroundColor: BG_CARD,
+    borderRadius: BORDER_RADIUS.large,
     borderWidth: 1,
-    borderColor: WARDATY_DARK.glassBorder,
+    borderColor: GLASS_BORDER,
   },
   chipText: {
     fontSize: 15,
-    color: WARDATY_DARK.textPrimary,
+    color: TEXT_PRIMARY,
     fontFamily: "Tajawal-Regular",
   },
   chipTextSelected: {
@@ -1048,13 +1055,13 @@ const styles = StyleSheet.create({
     height: 24,
     borderRadius: 6,
     borderWidth: 2,
-    borderColor: WARDATY_DARK.glassBorder,
+    borderColor: GLASS_BORDER,
     alignItems: "center",
     justifyContent: "center",
   },
   notificationText: {
     fontSize: 16,
-    color: WARDATY_DARK.textPrimary,
+    color: TEXT_PRIMARY,
     fontFamily: "Tajawal-Regular",
   },
   navigationContainer: {
@@ -1070,15 +1077,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: SPACING.xs,
     padding: SPACING.md,
-    backgroundColor: WARDATY_DARK.card,
-    borderRadius: RADIUS.lg,
+    backgroundColor: BG_CARD,
+    borderRadius: BORDER_RADIUS.large,
     borderWidth: 1,
     minHeight: 56,
   },
   backButtonText: {
     fontSize: 17,
     fontWeight: "600",
-    color: WARDATY_DARK.textPrimary,
+    color: TEXT_PRIMARY,
     fontFamily: "Tajawal-Bold",
   },
   nextButton: {
@@ -1088,7 +1095,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: SPACING.xs,
     padding: SPACING.md,
-    borderRadius: RADIUS.lg,
+    borderRadius: BORDER_RADIUS.large,
     minHeight: 56,
   },
   nextButtonFull: {
