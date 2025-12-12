@@ -27,8 +27,9 @@ function NotificationsBellButton() {
       onPress={() => navigation.navigate("Notifications")}
       accessibilityLabel="Notifications"
       pressColor={theme.primary}
+      style={styles.headerButton} // Apple HIG: 44x44 hit target
     >
-      <Feather name="bell" size={22} color={theme.text} />
+      <Feather name="bell" size={20} color={theme.text} /> {/* Apple HIG: 20-22pt icons */}
     </HeaderButton>
   );
 }
@@ -71,6 +72,13 @@ export default function HomeStackNavigator() {
 }
 
 const styles = StyleSheet.create({
+  // Apple HIG: 44x44 minimum hit target
+  headerButton: {
+    width: 44,
+    height: 44,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   spacer: {
     width: 44,
     height: 44,

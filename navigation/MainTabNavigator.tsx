@@ -41,9 +41,12 @@ function CustomTabBar({ state, descriptors, navigation }: CustomTabBarProps) {
   const personaColor = getPersonaColor(persona);
   const inactiveColor = DarkTheme.text.tertiary;
 
-  const FAB_SIZE = Spacing.fabSize;
-  const TAB_BAR_HEIGHT = Spacing.tabBarHeight;
-  const bottomPadding = Platform.OS === "ios" ? insets.bottom : Spacing.sm;
+  // Apple HIG: Tab bar = 49pt + safe area
+  const TAB_BAR_HEIGHT = 49;
+  const ICON_SIZE = 25; // Apple HIG: 25x25 for tab bar icons
+  const HIT_TARGET = 44; // Apple HIG: minimum 44x44
+  const FAB_SIZE = 56;
+  const bottomPadding = Platform.OS === "ios" ? insets.bottom : 0;
 
   const handleFABPress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -117,7 +120,7 @@ function CustomTabBar({ state, descriptors, navigation }: CustomTabBarProps) {
         <View style={styles.iconContainer}>
           <Feather
             name={iconName}
-            size={IconSizes.medium}
+            size={ICON_SIZE}
             color={iconColor}
           />
         </View>
@@ -185,10 +188,10 @@ function CustomTabBar({ state, descriptors, navigation }: CustomTabBarProps) {
         },
       ]}
     >
-      {/* Background with blur */}
+      {/* Background with blur - Apple HIG: translucent material */}
       {Platform.OS === "ios" ? (
         <BlurView
-          intensity={80}
+          intensity={95}
           tint="dark"
           style={StyleSheet.absoluteFill}
         />
@@ -196,16 +199,16 @@ function CustomTabBar({ state, descriptors, navigation }: CustomTabBarProps) {
         <View
           style={[
             StyleSheet.absoluteFill,
-            { backgroundColor: DarkTheme.background.elevated },
+            { backgroundColor: "rgba(26, 19, 48, 0.95)" }, // Wardaty dark with translucency
           ]}
         />
       )}
       
-      {/* Top border */}
+      {/* Top border - Apple HIG: hairline separator */}
       <View
         style={[
           styles.topBorder,
-          { backgroundColor: DarkTheme.border.subtle },
+          { backgroundColor: "rgba(255, 255, 255, 0.12)" }, // Apple HIG: subtle separator
         ]}
       />
 
@@ -287,22 +290,26 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-around",
-    paddingHorizontal: Spacing.xs,
+    paddingHorizontal: 0, // Apple HIG: no horizontal padding for tab bar
   },
   tabItem: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: Spacing.xs,
-    gap: Spacing.xxxs,
-    minHeight: Spacing.listItemHeight,
+    paddingVertical: 4, // Apple HIG: tight vertical spacing
+    gap: 2, // Apple HIG: 2pt between icon and label
+    minHeight: 44, // Apple HIG: 44pt minimum hit target
   },
   iconContainer: {
     alignItems: "center",
     justifyContent: "center",
   },
   tabLabel: {
-    ...Typography.caption1,
+    fontSize: 10, // Apple HIG: 10pt for tab bar labels
+    fontWeight: "400",
+    lineHeight: 12,
+    letterSpacing: 0.12,
+    fontFamily: "Tajawal-Regular",
     textAlign: "center",
   },
   fabContainer: {

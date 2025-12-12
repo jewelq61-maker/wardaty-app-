@@ -15,19 +15,40 @@ export function useScreenOptions({
   const { theme, isDark } = useTheme();
 
   return {
-    // iOS-compliant navigation
-    headerTitleAlign: "center",
+    // Apple HIG: Navigation Bar
+    headerTitleAlign: "center", // Apple HIG: centered titles
     headerTransparent: transparent,
     headerBlurEffect: isDark ? "dark" : "light",
+    
+    // Apple HIG: Tint color for back button and actions
     headerTintColor: theme.text,
+    
+    // Apple HIG: Title typography (17pt headline)
     headerTitleStyle: {
-      ...Typography.headline,
+      fontSize: 17,
+      fontWeight: "600",
+      lineHeight: 22,
+      letterSpacing: -0.41,
+      fontFamily: "Tajawal-Bold",
       color: theme.text,
     },
+    
+    // Apple HIG: Large title support
+    headerLargeTitle: false,
+    headerLargeTitleStyle: {
+      fontSize: 34,
+      fontWeight: "700",
+      lineHeight: 41,
+      letterSpacing: 0.37,
+      fontFamily: "Tajawal-Bold",
+      color: theme.text,
+    },
+    
+    // Background
     headerStyle: {
       backgroundColor: Platform.select({
         ios: undefined, // Use blur on iOS
-        android: theme.backgroundRoot,
+        android: "rgba(26, 19, 48, 0.95)", // Wardaty dark with translucency
         web: theme.backgroundRoot,
       }),
     },
