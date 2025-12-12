@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import {
   View,
+  Text,
   StyleSheet,
   Pressable,
   TextInput,
@@ -16,24 +17,27 @@ import * as Haptics from "expo-haptics";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Feather } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { LinearGradient } from "expo-linear-gradient";
 
-import { ThemedText } from "../components/ThemedText";
-import { PersonaSelector } from "../components/PersonaSelector";
 import { useLanguage } from "../hooks/useLanguage";
 import { useApp } from "../lib/AppContext";
 import { Persona } from "../lib/types";
-import {
-  DarkTheme,
-  PersonaColors,
-  Spacing,
-  Typography,
-  BorderRadius,
-  Shadows,
-} from "../constants/theme";
 
 const { width } = Dimensions.get("window");
 
-// Persona colors
+// ===================================
+// THEME CONSTANTS
+// ===================================
+
+const BG_ROOT = "#0F0820";
+const BG_ELEVATED = "#1A1330";
+const BG_CARD = "#251B40";
+const GLASS_BG = "rgba(37, 27, 64, 0.6)";
+const GLASS_BORDER = "rgba(255, 255, 255, 0.1)";
+const TEXT_PRIMARY = "#FFFFFF";
+const TEXT_SECONDARY = "rgba(255, 255, 255, 0.7)";
+const TEXT_TERTIARY = "rgba(255, 255, 255, 0.5)";
+
 const PERSONA_COLORS = {
   single: "#FF6B9D",
   married: "#FF8D8D",
@@ -41,190 +45,301 @@ const PERSONA_COLORS = {
   partner: "#7EC8E3",
 };
 
-// Dark glass theme colors
-const GLASS_BG = "rgba(37, 27, 64, 0.6)";
-const GLASS_BORDER = "rgba(255, 255, 255, 0.1)";
-const BG_ROOT = "#0F0820";
-const BG_ELEVATED = "#1A1330";
-const BG_CARD = "#251B40";
+const PERSONA_GRADIENTS = {
+  single: ["#FF6B9D", "#FF8BC0"],
+  married: ["#FF8D8D", "#FFB8A8"],
+  mother: ["#A684F5", "#C4A8FF"],
+  partner: ["#7EC8E3", "#A0D9ED"],
+};
+
+const SPACING = {
+  xs: 8,
+  sm: 12,
+  md: 16,
+  lg: 20,
+  xl: 24,
+  xxl: 32,
+  xxxl: 44,
+};
+
+const BORDER_RADIUS = {
+  small: 8,
+  medium: 12,
+  large: 16,
+  xlarge: 24,
+};
+
+// ===================================
+// TYPES
+// ===================================
 
 interface OnboardingData {
   language: "ar" | "en";
   persona: Persona | null;
   email: string;
   password: string;
-  confirmPassword: string;
   beautyPreferences: string[];
   lastPeriodDate: Date | null;
-  cycleLength: string;
+  cycleLength: number;
   name: string;
   ageRange: string;
   goals: string[];
   notificationsEnabled: boolean;
 }
 
-const BEAUTY_OPTIONS = [
-  { id: "skincare", labelAr: "العناية بالبشرة", labelEn: "Skincare" },
-  { id: "hair", labelAr: "العناية بالشعر", labelEn: "Hair Care" },
-  { id: "nails", labelAr: "العناية بالأظافر", labelEn: "Nail Care" },
-  { id: "makeup", labelAr: "المكياج", labelEn: "Makeup" },
-  { id: "fragrance", labelAr: "العطور", labelEn: "Fragrance" },
-  { id: "wellness", labelAr: "العافية", labelEn: "Wellness" },
-];
+// ===================================
+// MAIN COMPONENT
+// ===================================
 
-const AGE_RANGES = [
-  { id: "18-24", label: "18-24" },
-  { id: "25-34", label: "25-34" },
-  { id: "35-44", label: "35-44" },
-  { id: "45+", label: "45+" },
-];
-
-const GOAL_OPTIONS = [
-  { id: "track_cycle", labelAr: "تتبع الدورة", labelEn: "Track Cycle" },
-  { id: "conceive", labelAr: "الحمل", labelEn: "Conceive" },
-  { id: "avoid_pregnancy", labelAr: "تجنب الحمل", labelEn: "Avoid Pregnancy" },
-  { id: "health", labelAr: "الصحة العامة", labelEn: "General Health" },
-  { id: "beauty", labelAr: "الجمال", labelEn: "Beauty & Wellness" },
-];
-
-export function OnboardingScreenNew() {
+export default function OnboardingScreenNew() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
-  const { t, language, setLanguage } = useLanguage();
+  const { setLanguage } = useLanguage();
   const { updateData } = useApp();
 
-  const [step, setStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(1);
   const [data, setData] = useState<OnboardingData>({
-    language: "ar",
+    language: "en",
     persona: null,
     email: "",
     password: "",
-    confirmPassword: "",
     beautyPreferences: [],
     lastPeriodDate: null,
-    cycleLength: "28",
+    cycleLength: 28,
     name: "",
     ageRange: "",
     goals: [],
     notificationsEnabled: true,
   });
 
-  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const isRTL = data.language === "ar";
-  const personaColor = data.persona ? PERSONA_COLORS[data.persona] : PERSONA_COLORS.single;
+  const personaColor = data.persona ? PERSONA_COLORS[data.persona] : "#8C64F0";
 
-  // Calculate cycle predictions
-  const calculateCyclePredictions = () => {
-    if (!data.lastPeriodDate || !data.cycleLength) return null;
+  // ===================================
+  // TRANSLATIONS
+  // ===================================
 
-    const cycleLen = parseInt(data.cycleLength);
-    const lastPeriod = new Date(data.lastPeriodDate);
-    
-    const nextPeriod = new Date(lastPeriod);
-    nextPeriod.setDate(nextPeriod.getDate() + cycleLen);
-    
-    const ovulation = new Date(nextPeriod);
-    ovulation.setDate(ovulation.getDate() - 14);
-    
-    const fertileStart = new Date(ovulation);
-    fertileStart.setDate(fertileStart.getDate() - 5);
-    
-    const fertileEnd = new Date(ovulation);
-    fertileEnd.setDate(fertileEnd.getDate() + 1);
+  const t = (key: string): string => {
+    const translations: Record<string, { ar: string; en: string }> = {
+      // Step 1
+      selectLanguage: { ar: "اختر اللغة", en: "Select Language" },
+      choosePreferred: { ar: "اختر لغتك المفضلة", en: "Choose your preferred language" },
+      
+      // Step 2
+      selectPersona: { ar: "اختر شخصيتك", en: "Select Your Persona" },
+      whoAreYou: { ar: "من أنت؟", en: "Who are you?" },
+      single: { ar: "عزباء", en: "Single" },
+      married: { ar: "متزوجة", en: "Married" },
+      mother: { ar: "أم", en: "Mother" },
+      partner: { ar: "شريك", en: "Partner" },
+      
+      // Step 3
+      createAccount: { ar: "إنشاء حساب", en: "Create Account" },
+      enterDetails: { ar: "أدخل بياناتك", en: "Enter your details" },
+      email: { ar: "البريد الإلكتروني", en: "Email" },
+      password: { ar: "كلمة المرور", en: "Password" },
+      confirmPassword: { ar: "تأكيد كلمة المرور", en: "Confirm Password" },
+      
+      // Step 4
+      beautyPreferences: { ar: "اهتماماتك", en: "Beauty Preferences" },
+      selectInterests: { ar: "اختر اهتماماتك", en: "Select your interests" },
+      skincare: { ar: "العناية بالبشرة", en: "Skincare" },
+      hairCare: { ar: "العناية بالشعر", en: "Hair Care" },
+      nailCare: { ar: "العناية بالأظافر", en: "Nail Care" },
+      makeup: { ar: "المكياج", en: "Makeup" },
+      fragrance: { ar: "العطور", en: "Fragrance" },
+      wellness: { ar: "العافية", en: "Wellness" },
+      
+      // Step 5
+      cycleDetails: { ar: "تفاصيل الدورة", en: "Cycle Details" },
+      trackCycle: { ar: "تتبع دورتك الشهرية", en: "Track your menstrual cycle" },
+      lastPeriod: { ar: "آخر دورة شهرية", en: "Last Period Date" },
+      cycleLength: { ar: "طول الدورة (أيام)", en: "Cycle Length (days)" },
+      selectDate: { ar: "اختر التاريخ", en: "Select Date" },
+      
+      // Step 6
+      personalInfo: { ar: "معلوماتك الشخصية", en: "Personal Information" },
+      tellUsAbout: { ar: "أخبرنا عنك", en: "Tell us about yourself" },
+      name: { ar: "الاسم", en: "Name" },
+      ageRange: { ar: "الفئة العمرية", en: "Age Range" },
+      goals: { ar: "أهدافك", en: "Your Goals" },
+      trackCycleGoal: { ar: "تتبع الدورة", en: "Track Cycle" },
+      conceive: { ar: "الحمل", en: "Conceive" },
+      avoidPregnancy: { ar: "تجنب الحمل", en: "Avoid Pregnancy" },
+      generalHealth: { ar: "الصحة العامة", en: "General Health" },
+      beautyWellness: { ar: "الجمال والعافية", en: "Beauty & Wellness" },
+      notifications: { ar: "تفعيل الإشعارات", en: "Enable Notifications" },
+      
+      // Navigation
+      next: { ar: "التالي", en: "Next" },
+      back: { ar: "رجوع", en: "Back" },
+      finish: { ar: "إنهاء", en: "Finish" },
+    };
 
-    return { nextPeriod, ovulation, fertileStart, fertileEnd };
+    return translations[key]?.[data.language] || key;
   };
 
-  // Validation
+  // ===================================
+  // VALIDATION
+  // ===================================
+
   const validateStep = (): boolean => {
     const newErrors: Record<string, string> = {};
 
-    if (step === 2 && !data.persona) {
-      newErrors.persona = isRTL ? "اختاري الشخصية" : "Select a persona";
+    if (currentStep === 2 && !data.persona) {
+      newErrors.persona = "Please select a persona";
+      setErrors(newErrors);
+      return false;
     }
 
-    if (step === 3) {
+    if (currentStep === 3) {
       if (!data.email || !/\S+@\S+\.\S+/.test(data.email)) {
-        newErrors.email = isRTL ? "بريد إلكتروني غير صالح" : "Invalid email";
+        newErrors.email = "Invalid email";
       }
       if (!data.password || data.password.length < 6) {
-        newErrors.password = isRTL ? "كلمة المرور قصيرة جداً" : "Password too short";
+        newErrors.password = "Password must be at least 6 characters";
       }
-      if (data.password !== data.confirmPassword) {
-        newErrors.confirmPassword = isRTL ? "كلمات المرور غير متطابقة" : "Passwords don't match";
+      if (data.password !== confirmPassword) {
+        newErrors.confirmPassword = "Passwords do not match";
+      }
+      if (Object.keys(newErrors).length > 0) {
+        setErrors(newErrors);
+        return false;
       }
     }
 
-    if (step === 5 && data.persona !== "partner") {
+    if (currentStep === 4 && data.beautyPreferences.length === 0) {
+      newErrors.beautyPreferences = "Select at least one preference";
+      setErrors(newErrors);
+      return false;
+    }
+
+    if (currentStep === 5 && data.persona !== "partner") {
       if (!data.lastPeriodDate) {
-        newErrors.lastPeriodDate = isRTL ? "اختاري تاريخ آخر دورة" : "Select last period date";
+        newErrors.lastPeriodDate = "Please select last period date";
       }
-      if (!data.cycleLength || parseInt(data.cycleLength) < 21 || parseInt(data.cycleLength) > 35) {
-        newErrors.cycleLength = isRTL ? "طول الدورة يجب أن يكون بين 21-35 يوماً" : "Cycle length must be 21-35 days";
+      if (data.cycleLength < 21 || data.cycleLength > 35) {
+        newErrors.cycleLength = "Cycle length must be between 21-35 days";
+      }
+      if (Object.keys(newErrors).length > 0) {
+        setErrors(newErrors);
+        return false;
       }
     }
 
-    if (step === 6) {
+    if (currentStep === 6) {
       if (!data.name.trim()) {
-        newErrors.name = isRTL ? "أدخلي اسمك" : "Enter your name";
+        newErrors.name = "Name is required";
       }
       if (!data.ageRange) {
-        newErrors.ageRange = isRTL ? "اختاري الفئة العمرية" : "Select age range";
+        newErrors.ageRange = "Please select age range";
       }
       if (data.goals.length === 0) {
-        newErrors.goals = isRTL ? "اختاري هدفاً واحداً على الأقل" : "Select at least one goal";
+        newErrors.goals = "Select at least one goal";
+      }
+      if (Object.keys(newErrors).length > 0) {
+        setErrors(newErrors);
+        return false;
       }
     }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    setErrors({});
+    return true;
   };
 
+  // ===================================
+  // CYCLE CALCULATIONS
+  // ===================================
+
+  const calculateCycleDates = () => {
+    if (!data.lastPeriodDate) return null;
+
+    const lastPeriod = new Date(data.lastPeriodDate);
+    const cycleLength = data.cycleLength;
+
+    const nextPeriod = new Date(lastPeriod);
+    nextPeriod.setDate(nextPeriod.getDate() + cycleLength);
+
+    const ovulation = new Date(nextPeriod);
+    ovulation.setDate(ovulation.getDate() - 14);
+
+    const fertileStart = new Date(ovulation);
+    fertileStart.setDate(fertileStart.getDate() - 5);
+
+    const fertileEnd = new Date(ovulation);
+    fertileEnd.setDate(fertileEnd.getDate() + 1);
+
+    return {
+      nextPeriodDate: nextPeriod.toISOString(),
+      ovulationDate: ovulation.toISOString(),
+      fertileWindowStart: fertileStart.toISOString(),
+      fertileWindowEnd: fertileEnd.toISOString(),
+    };
+  };
+
+  // ===================================
+  // NAVIGATION
+  // ===================================
+
   const handleNext = async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
     if (!validateStep()) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       return;
     }
 
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-
-    // Skip cycle details for Partner persona
-    if (step === 4 && data.persona === "partner") {
-      setStep(6);
+    // Step 1: Language selection
+    if (currentStep === 1) {
+      await setLanguage(data.language);
+      if (data.language === "ar") {
+        I18nManager.forceRTL(true);
+      } else {
+        I18nManager.forceRTL(false);
+      }
+      setCurrentStep(2);
       return;
     }
 
-    if (step < 6) {
-      setStep(step + 1);
-    } else {
-      await completeOnboarding();
+    // Skip step 5 for partner
+    if (currentStep === 4 && data.persona === "partner") {
+      setCurrentStep(6);
+      return;
     }
+
+    // Last step: Save and navigate
+    if (currentStep === 6) {
+      await handleFinish();
+      return;
+    }
+
+    setCurrentStep(currentStep + 1);
   };
 
   const handleBack = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     
-    // Skip cycle details when going back from step 6 if Partner
-    if (step === 6 && data.persona === "partner") {
-      setStep(4);
+    // Skip step 5 for partner when going back
+    if (currentStep === 6 && data.persona === "partner") {
+      setCurrentStep(4);
       return;
     }
 
-    if (step > 1) {
-      setStep(step - 1);
-    }
+    setCurrentStep(currentStep - 1);
   };
 
-  const completeOnboarding = async () => {
+  const handleFinish = async () => {
     try {
-      const predictions = data.persona !== "partner" ? calculateCyclePredictions() : null;
+      const cycleDates = data.persona !== "partner" ? calculateCycleDates() : null;
 
       const appData = {
         settings: {
           language: data.language,
-          persona: data.persona!,
+          persona: data.persona,
           notificationsEnabled: data.notificationsEnabled,
         },
         user: {
@@ -234,571 +349,109 @@ export function OnboardingScreenNew() {
           goals: data.goals,
           beautyPreferences: data.beautyPreferences,
         },
-        cycle: data.persona !== "partner" && predictions ? {
-          lastPeriodDate: data.lastPeriodDate!.toISOString(),
-          cycleLength: parseInt(data.cycleLength),
-          nextPeriodDate: predictions.nextPeriod.toISOString(),
-          ovulationDate: predictions.ovulation.toISOString(),
-          fertileWindowStart: predictions.fertileStart.toISOString(),
-          fertileWindowEnd: predictions.fertileEnd.toISOString(),
+        cycle: cycleDates ? {
+          lastPeriodDate: data.lastPeriodDate?.toISOString(),
+          cycleLength: data.cycleLength,
+          ...cycleDates,
         } : null,
       };
 
-      await AsyncStorage.setItem("onboardingComplete", "true");
-      await AsyncStorage.setItem("appData", JSON.stringify(appData));
+      await AsyncStorage.setItem("@wardaty_onboarding_complete", "true");
+      await AsyncStorage.setItem("@wardaty_app_data", JSON.stringify(appData));
       
-      await setLanguage(data.language);
       await updateData(appData);
 
-      // Apply RTL if Arabic
-      if (data.language === "ar" && !I18nManager.isRTL) {
-        I18nManager.forceRTL(true);
-        // Note: App restart required for RTL to take full effect
-      }
-
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      
-      // Navigate to main app
-      (navigation as any).reset({
+
+      navigation.reset({
         index: 0,
-        routes: [{ name: "Main" }],
+        routes: [{ name: "Main" as never }],
       });
     } catch (error) {
-      console.error("Onboarding completion error:", error);
+      console.error("Error saving onboarding data:", error);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
     }
   };
 
-  const toggleBeautyPreference = (id: string) => {
-    setData(prev => ({
-      ...prev,
-      beautyPreferences: prev.beautyPreferences.includes(id)
-        ? prev.beautyPreferences.filter(p => p !== id)
-        : [...prev.beautyPreferences, id],
-    }));
-  };
-
-  const toggleGoal = (id: string) => {
-    setData(prev => ({
-      ...prev,
-      goals: prev.goals.includes(id)
-        ? prev.goals.filter(g => g !== id)
-        : [...prev.goals, id],
-    }));
-  };
-
-  // Step 1: Language Selection
-  const renderLanguageStep = () => (
-    <Animated.View
-      entering={FadeInDown.duration(400)}
-      exiting={FadeOutUp.duration(300)}
-      style={styles.stepContainer}
-    >
-      <Feather name="globe" size={64} color={personaColor} style={{ marginBottom: Spacing.xl }} />
-      
-      <ThemedText style={[styles.title, { textAlign: "center" }]}>
-        {isRTL ? "اختاري اللغة" : "Choose Language"}
-      </ThemedText>
-      
-      <ThemedText style={[styles.subtitle, { textAlign: "center" }]}>
-        {isRTL ? "اختاري لغتك المفضلة" : "Select your preferred language"}
-      </ThemedText>
-
-      <View style={styles.optionsContainer}>
-        <Pressable
-          style={[
-            styles.languageOption,
-            data.language === "ar" && { borderColor: personaColor, backgroundColor: `${personaColor}15` },
-          ]}
-          onPress={() => {
-            setData(prev => ({ ...prev, language: "ar" }));
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-          }}
-        >
-          <ThemedText style={[styles.languageText, data.language === "ar" && { color: personaColor }]}>
-            العربية
-          </ThemedText>
-          {data.language === "ar" && <Feather name="check-circle" size={24} color={personaColor} />}
-        </Pressable>
-
-        <Pressable
-          style={[
-            styles.languageOption,
-            data.language === "en" && { borderColor: personaColor, backgroundColor: `${personaColor}15` },
-          ]}
-          onPress={() => {
-            setData(prev => ({ ...prev, language: "en" }));
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-          }}
-        >
-          <ThemedText style={[styles.languageText, data.language === "en" && { color: personaColor }]}>
-            English
-          </ThemedText>
-          {data.language === "en" && <Feather name="check-circle" size={24} color={personaColor} />}
-        </Pressable>
-      </View>
-    </Animated.View>
-  );
-
-  // Step 2: Persona Selection
-  const renderPersonaStep = () => (
-    <Animated.View
-      entering={FadeInDown.duration(400)}
-      exiting={FadeOutUp.duration(300)}
-      style={styles.stepContainer}
-    >
-      <Feather name="star" size={64} color={personaColor} style={{ marginBottom: Spacing.xl }} />
-      
-      <ThemedText style={[styles.title, { textAlign: isRTL ? "right" : "left" }]}>
-        {isRTL ? "اختاري شخصيتك" : "Select Your Persona"}
-      </ThemedText>
-      
-      <ThemedText style={[styles.subtitle, { textAlign: isRTL ? "right" : "left" }]}>
-        {isRTL ? "اختاري الشخصية التي تناسبك" : "Choose the persona that fits you"}
-      </ThemedText>
-
-      {errors.persona && (
-        <ThemedText style={styles.errorText}>{errors.persona}</ThemedText>
-      )}
-
-      <PersonaSelector
-        selectedPersona={data.persona}
-        onSelect={(persona) => {
-          setData(prev => ({ ...prev, persona }));
-          setErrors(prev => ({ ...prev, persona: "" }));
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-        }}
-      />
-    </Animated.View>
-  );
-
-  // Step 3: Email Signup
-  const renderEmailStep = () => (
-    <Animated.View
-      entering={FadeInDown.duration(400)}
-      exiting={FadeOutUp.duration(300)}
-      style={styles.stepContainer}
-    >
-      <Feather name="mail" size={64} color={personaColor} style={{ marginBottom: Spacing.xl }} />
-      
-      <ThemedText style={[styles.title, { textAlign: isRTL ? "right" : "left" }]}>
-        {isRTL ? "إنشاء حساب" : "Create Account"}
-      </ThemedText>
-      
-      <ThemedText style={[styles.subtitle, { textAlign: isRTL ? "right" : "left" }]}>
-        {isRTL ? "أدخلي بريدك الإلكتروني وكلمة المرور" : "Enter your email and password"}
-      </ThemedText>
-
-      <View style={styles.inputsContainer}>
-        <View style={styles.inputWrapper}>
-          <TextInput
-            style={[styles.input, { textAlign: isRTL ? "right" : "left" }, errors.email && styles.inputError]}
-            placeholder={isRTL ? "البريد الإلكتروني" : "Email"}
-            placeholderTextColor={DarkTheme.text.tertiary}
-            value={data.email}
-            onChangeText={(text) => {
-              setData(prev => ({ ...prev, email: text }));
-              setErrors(prev => ({ ...prev, email: "" }));
-            }}
-            keyboardType="email-address"
-            autoCapitalize="none"
-            autoCorrect={false}
-          />
-          {errors.email && <ThemedText style={styles.errorText}>{errors.email}</ThemedText>}
-        </View>
-
-        <View style={styles.inputWrapper}>
-          <TextInput
-            style={[styles.input, { textAlign: isRTL ? "right" : "left" }, errors.password && styles.inputError]}
-            placeholder={isRTL ? "كلمة المرور" : "Password"}
-            placeholderTextColor={DarkTheme.text.tertiary}
-            value={data.password}
-            onChangeText={(text) => {
-              setData(prev => ({ ...prev, password: text }));
-              setErrors(prev => ({ ...prev, password: "" }));
-            }}
-            secureTextEntry
-            autoCapitalize="none"
-          />
-          {errors.password && <ThemedText style={styles.errorText}>{errors.password}</ThemedText>}
-        </View>
-
-        <View style={styles.inputWrapper}>
-          <TextInput
-            style={[styles.input, { textAlign: isRTL ? "right" : "left" }, errors.confirmPassword && styles.inputError]}
-            placeholder={isRTL ? "تأكيد كلمة المرور" : "Confirm Password"}
-            placeholderTextColor={DarkTheme.text.tertiary}
-            value={data.confirmPassword}
-            onChangeText={(text) => {
-              setData(prev => ({ ...prev, confirmPassword: text }));
-              setErrors(prev => ({ ...prev, confirmPassword: "" }));
-            }}
-            secureTextEntry
-            autoCapitalize="none"
-          />
-          {errors.confirmPassword && <ThemedText style={styles.errorText}>{errors.confirmPassword}</ThemedText>}
-        </View>
-      </View>
-    </Animated.View>
-  );
-
-  // Step 4: Beauty Preferences
-  const renderBeautyStep = () => (
-    <Animated.View
-      entering={FadeInDown.duration(400)}
-      exiting={FadeOutUp.duration(300)}
-      style={styles.stepContainer}
-    >
-      <Feather name="heart" size={64} color={personaColor} style={{ marginBottom: Spacing.xl }} />
-      
-      <ThemedText style={[styles.title, { textAlign: isRTL ? "right" : "left" }]}>
-        {isRTL ? "اهتماماتك الجمالية" : "Beauty Interests"}
-      </ThemedText>
-      
-      <ThemedText style={[styles.subtitle, { textAlign: isRTL ? "right" : "left" }]}>
-        {isRTL ? "اختاري ما يهمك" : "Select what interests you"}
-      </ThemedText>
-
-      <View style={styles.chipsContainer}>
-        {BEAUTY_OPTIONS.map((option) => {
-          const isSelected = data.beautyPreferences.includes(option.id);
-          return (
-            <Pressable
-              key={option.id}
-              style={[
-                styles.chip,
-                isSelected && { borderColor: personaColor, backgroundColor: `${personaColor}15` },
-              ]}
-              onPress={() => {
-                toggleBeautyPreference(option.id);
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              }}
-            >
-              <ThemedText style={[styles.chipText, isSelected && { color: personaColor }]}>
-                {isRTL ? option.labelAr : option.labelEn}
-              </ThemedText>
-              {isSelected && <Feather name="check" size={16} color={personaColor} style={{ marginStart: 4 }} />}
-            </Pressable>
-          );
-        })}
-      </View>
-    </Animated.View>
-  );
-
-  // Step 5: Cycle Details (skip for Partner)
-  const renderCycleStep = () => {
-    const predictions = calculateCyclePredictions();
-
-    return (
-      <Animated.View
-        entering={FadeInDown.duration(400)}
-        exiting={FadeOutUp.duration(300)}
-        style={styles.stepContainer}
-      >
-        <Feather name="calendar" size={64} color={personaColor} style={{ marginBottom: Spacing.xl }} />
-        
-        <ThemedText style={[styles.title, { textAlign: isRTL ? "right" : "left" }]}>
-          {isRTL ? "تفاصيل الدورة" : "Cycle Details"}
-        </ThemedText>
-        
-        <ThemedText style={[styles.subtitle, { textAlign: isRTL ? "right" : "left" }]}>
-          {isRTL ? "أدخلي معلومات دورتك الشهرية" : "Enter your menstrual cycle information"}
-        </ThemedText>
-
-        <View style={styles.inputsContainer}>
-          <View style={styles.inputWrapper}>
-            <ThemedText style={[styles.label, { textAlign: isRTL ? "right" : "left" }]}>
-              {isRTL ? "تاريخ آخر دورة" : "Last Period Date"}
-            </ThemedText>
-            <Pressable
-              style={[styles.dateButton, errors.lastPeriodDate && styles.inputError]}
-              onPress={() => {
-                setShowDatePicker(true);
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              }}
-            >
-              <ThemedText style={styles.dateButtonText}>
-                {data.lastPeriodDate
-                  ? data.lastPeriodDate.toLocaleDateString(isRTL ? "ar-SA" : "en-US")
-                  : (isRTL ? "اختاري التاريخ" : "Select Date")}
-              </ThemedText>
-              <Feather name="calendar" size={20} color={DarkTheme.text.secondary} />
-            </Pressable>
-            {errors.lastPeriodDate && <ThemedText style={styles.errorText}>{errors.lastPeriodDate}</ThemedText>}
-          </View>
-
-          {showDatePicker && (
-            <DateTimePicker
-              value={data.lastPeriodDate || new Date()}
-              mode="date"
-              display="default"
-              onChange={(event, selectedDate) => {
-                setShowDatePicker(false);
-                if (selectedDate) {
-                  setData(prev => ({ ...prev, lastPeriodDate: selectedDate }));
-                  setErrors(prev => ({ ...prev, lastPeriodDate: "" }));
-                }
-              }}
-              maximumDate={new Date()}
-            />
-          )}
-
-          <View style={styles.inputWrapper}>
-            <ThemedText style={[styles.label, { textAlign: isRTL ? "right" : "left" }]}>
-              {isRTL ? "طول الدورة (بالأيام)" : "Cycle Length (days)"}
-            </ThemedText>
-            <TextInput
-              style={[styles.input, { textAlign: isRTL ? "right" : "left" }, errors.cycleLength && styles.inputError]}
-              placeholder="28"
-              placeholderTextColor={DarkTheme.text.tertiary}
-              value={data.cycleLength}
-              onChangeText={(text) => {
-                setData(prev => ({ ...prev, cycleLength: text }));
-                setErrors(prev => ({ ...prev, cycleLength: "" }));
-              }}
-              keyboardType="number-pad"
-              maxLength={2}
-            />
-            {errors.cycleLength && <ThemedText style={styles.errorText}>{errors.cycleLength}</ThemedText>}
-          </View>
-
-          {predictions && (
-            <View style={styles.predictionsCard}>
-              <ThemedText style={[styles.predictionsTitle, { textAlign: isRTL ? "right" : "left" }]}>
-                {isRTL ? "التوقعات" : "Predictions"}
-              </ThemedText>
-              
-              <View style={styles.predictionRow}>
-                <Feather name="circle" size={12} color={personaColor} />
-                <ThemedText style={styles.predictionLabel}>
-                  {isRTL ? "الدورة القادمة:" : "Next Period:"}
-                </ThemedText>
-                <ThemedText style={styles.predictionValue}>
-                  {predictions.nextPeriod.toLocaleDateString(isRTL ? "ar-SA" : "en-US")}
-                </ThemedText>
-              </View>
-
-              <View style={styles.predictionRow}>
-                <Feather name="circle" size={12} color={personaColor} />
-                <ThemedText style={styles.predictionLabel}>
-                  {isRTL ? "الإباضة:" : "Ovulation:"}
-                </ThemedText>
-                <ThemedText style={styles.predictionValue}>
-                  {predictions.ovulation.toLocaleDateString(isRTL ? "ar-SA" : "en-US")}
-                </ThemedText>
-              </View>
-
-              <View style={styles.predictionRow}>
-                <Feather name="circle" size={12} color={personaColor} />
-                <ThemedText style={styles.predictionLabel}>
-                  {isRTL ? "فترة الخصوبة:" : "Fertile Window:"}
-                </ThemedText>
-                <ThemedText style={styles.predictionValue}>
-                  {predictions.fertileStart.toLocaleDateString(isRTL ? "ar-SA" : "en-US")} - {predictions.fertileEnd.toLocaleDateString(isRTL ? "ar-SA" : "en-US")}
-                </ThemedText>
-              </View>
-            </View>
-          )}
-        </View>
-      </Animated.View>
-    );
-  };
-
-  // Step 6: Personal Info
-  const renderPersonalInfoStep = () => (
-    <Animated.View
-      entering={FadeInDown.duration(400)}
-      exiting={FadeOutUp.duration(300)}
-      style={styles.stepContainer}
-    >
-      <Feather name="user" size={64} color={personaColor} style={{ marginBottom: Spacing.xl }} />
-      
-      <ThemedText style={[styles.title, { textAlign: isRTL ? "right" : "left" }]}>
-        {isRTL ? "معلوماتك الشخصية" : "Personal Information"}
-      </ThemedText>
-      
-      <ThemedText style={[styles.subtitle, { textAlign: isRTL ? "right" : "left" }]}>
-        {isRTL ? "أخبرينا المزيد عنك" : "Tell us more about you"}
-      </ThemedText>
-
-      <View style={styles.inputsContainer}>
-        <View style={styles.inputWrapper}>
-          <ThemedText style={[styles.label, { textAlign: isRTL ? "right" : "left" }]}>
-            {isRTL ? "الاسم" : "Name"}
-          </ThemedText>
-          <TextInput
-            style={[styles.input, { textAlign: isRTL ? "right" : "left" }, errors.name && styles.inputError]}
-            placeholder={isRTL ? "أدخلي اسمك" : "Enter your name"}
-            placeholderTextColor={DarkTheme.text.tertiary}
-            value={data.name}
-            onChangeText={(text) => {
-              setData(prev => ({ ...prev, name: text }));
-              setErrors(prev => ({ ...prev, name: "" }));
-            }}
-          />
-          {errors.name && <ThemedText style={styles.errorText}>{errors.name}</ThemedText>}
-        </View>
-
-        <View style={styles.inputWrapper}>
-          <ThemedText style={[styles.label, { textAlign: isRTL ? "right" : "left" }]}>
-            {isRTL ? "الفئة العمرية" : "Age Range"}
-          </ThemedText>
-          <View style={styles.chipsContainer}>
-            {AGE_RANGES.map((range) => {
-              const isSelected = data.ageRange === range.id;
-              return (
-                <Pressable
-                  key={range.id}
-                  style={[
-                    styles.chip,
-                    isSelected && { borderColor: personaColor, backgroundColor: `${personaColor}15` },
-                  ]}
-                  onPress={() => {
-                    setData(prev => ({ ...prev, ageRange: range.id }));
-                    setErrors(prev => ({ ...prev, ageRange: "" }));
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                  }}
-                >
-                  <ThemedText style={[styles.chipText, isSelected && { color: personaColor }]}>
-                    {range.label}
-                  </ThemedText>
-                </Pressable>
-              );
-            })}
-          </View>
-          {errors.ageRange && <ThemedText style={styles.errorText}>{errors.ageRange}</ThemedText>}
-        </View>
-
-        <View style={styles.inputWrapper}>
-          <ThemedText style={[styles.label, { textAlign: isRTL ? "right" : "left" }]}>
-            {isRTL ? "أهدافك" : "Your Goals"}
-          </ThemedText>
-          <View style={styles.chipsContainer}>
-            {GOAL_OPTIONS.map((goal) => {
-              const isSelected = data.goals.includes(goal.id);
-              return (
-                <Pressable
-                  key={goal.id}
-                  style={[
-                    styles.chip,
-                    isSelected && { borderColor: personaColor, backgroundColor: `${personaColor}15` },
-                  ]}
-                  onPress={() => {
-                    toggleGoal(goal.id);
-                    setErrors(prev => ({ ...prev, goals: "" }));
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                  }}
-                >
-                  <ThemedText style={[styles.chipText, isSelected && { color: personaColor }]}>
-                    {isRTL ? goal.labelAr : goal.labelEn}
-                  </ThemedText>
-                  {isSelected && <Feather name="check" size={16} color={personaColor} style={{ marginStart: 4 }} />}
-                </Pressable>
-              );
-            })}
-          </View>
-          {errors.goals && <ThemedText style={styles.errorText}>{errors.goals}</ThemedText>}
-        </View>
-
-        <Pressable
-          style={styles.notificationToggle}
-          onPress={() => {
-            setData(prev => ({ ...prev, notificationsEnabled: !prev.notificationsEnabled }));
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-          }}
-        >
-          <View style={[styles.checkbox, data.notificationsEnabled && { backgroundColor: personaColor, borderColor: personaColor }]}>
-            {data.notificationsEnabled && <Feather name="check" size={16} color="#FFFFFF" />}
-          </View>
-          <ThemedText style={styles.notificationText}>
-            {isRTL ? "تفعيل الإشعارات" : "Enable Notifications"}
-          </ThemedText>
-        </Pressable>
-      </View>
-    </Animated.View>
-  );
+  // ===================================
+  // RENDER STEPS
+  // ===================================
 
   const renderStep = () => {
-    switch (step) {
+    switch (currentStep) {
       case 1:
-        return renderLanguageStep();
+        return <Step1Language data={data} setData={setData} t={t} personaColor={personaColor} />;
       case 2:
-        return renderPersonaStep();
+        return <Step2Persona data={data} setData={setData} t={t} errors={errors} />;
       case 3:
-        return renderEmailStep();
+        return <Step3Email data={data} setData={setData} confirmPassword={confirmPassword} setConfirmPassword={setConfirmPassword} t={t} errors={errors} isRTL={isRTL} />;
       case 4:
-        return renderBeautyStep();
+        return <Step4Beauty data={data} setData={setData} t={t} errors={errors} isRTL={isRTL} />;
       case 5:
-        return renderCycleStep();
+        return <Step5Cycle data={data} setData={setData} t={t} errors={errors} showDatePicker={showDatePicker} setShowDatePicker={setShowDatePicker} isRTL={isRTL} />;
       case 6:
-        return renderPersonalInfoStep();
+        return <Step6Personal data={data} setData={setData} t={t} errors={errors} isRTL={isRTL} />;
       default:
         return null;
     }
   };
 
+  const totalSteps = data.persona === "partner" ? 5 : 6;
+  const displayStep = currentStep === 6 && data.persona === "partner" ? 5 : currentStep;
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
+      {/* Progress Dots */}
+      <View style={styles.progressContainer}>
+        {Array.from({ length: totalSteps }).map((_, index) => (
+          <View
+            key={index}
+            style={[
+              styles.progressDot,
+              index + 1 === displayStep && { backgroundColor: personaColor },
+            ]}
+          />
+        ))}
+      </View>
+
+      {/* Content */}
       <ScrollView
-        contentContainerStyle={[
-          styles.scrollContent,
-          {
-            paddingTop: insets.top + Spacing.xl,
-            paddingBottom: insets.bottom + Spacing.xxl + 80,
-          },
-        ]}
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Progress Bar */}
-        <View style={styles.progressContainer}>
-          {[1, 2, 3, 4, 5, 6].map((s) => (
-            <View
-              key={s}
-              style={[
-                styles.progressDot,
-                s <= step && { backgroundColor: personaColor },
-                s === step && { transform: [{ scale: 1.2 }] },
-              ]}
-            />
-          ))}
-        </View>
-
-        {renderStep()}
+        <Animated.View
+          key={currentStep}
+          entering={FadeInDown.duration(300)}
+          exiting={FadeOutUp.duration(200)}
+        >
+          {renderStep()}
+        </Animated.View>
       </ScrollView>
 
-      {/* Bottom Buttons */}
-      <View
-        style={[
-          styles.bottomButtons,
-          {
-            paddingBottom: insets.bottom + Spacing.md,
-            flexDirection: isRTL ? "row-reverse" : "row",
-          },
-        ]}
-      >
-        {step > 1 && (
+      {/* Navigation Buttons */}
+      <View style={[styles.navigationContainer, { flexDirection: isRTL ? "row-reverse" : "row" }]}>
+        {currentStep > 1 && (
           <Pressable
-            style={[styles.secondaryButton, { flex: 1, marginEnd: Spacing.sm }]}
             onPress={handleBack}
+            style={[styles.backButton, { borderColor: GLASS_BORDER }]}
           >
-            <Feather name={isRTL ? "arrow-right" : "arrow-left"} size={20} color={DarkTheme.text.primary} />
-            <ThemedText style={styles.secondaryButtonText}>
-              {isRTL ? "السابق" : "Back"}
-            </ThemedText>
+            <Feather name={isRTL ? "arrow-right" : "arrow-left"} size={20} color={TEXT_PRIMARY} />
+            <Text style={styles.backButtonText}>{t("back")}</Text>
           </Pressable>
         )}
 
         <Pressable
-          style={[
-            styles.primaryButton,
-            { flex: 1, backgroundColor: personaColor },
-            step === 1 && { flex: 1 },
-          ]}
           onPress={handleNext}
+          style={[
+            styles.nextButton,
+            { backgroundColor: personaColor },
+            currentStep === 1 && styles.nextButtonFull,
+          ]}
         >
-          <ThemedText style={styles.primaryButtonText}>
-            {step === 6 ? (isRTL ? "إنهاء" : "Finish") : (isRTL ? "التالي" : "Next")}
-          </ThemedText>
+          <Text style={styles.nextButtonText}>
+            {currentStep === 6 ? t("finish") : t("next")}
+          </Text>
           <Feather name={isRTL ? "arrow-left" : "arrow-right"} size={20} color="#FFFFFF" />
         </Pressable>
       </View>
@@ -806,157 +459,596 @@ export function OnboardingScreenNew() {
   );
 }
 
+// ===================================
+// STEP 1: LANGUAGE
+// ===================================
+
+function Step1Language({ data, setData, t, personaColor }: any) {
+  return (
+    <View style={styles.stepContainer}>
+      {/* Logo */}
+      <View style={styles.logoContainer}>
+        <LinearGradient
+          colors={["#8C64F0", "#FF5FA8"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.logoGradient}
+        >
+          <Text style={styles.logoText}>ورديتي</Text>
+        </LinearGradient>
+      </View>
+
+      <Text style={styles.title}>{t("selectLanguage")}</Text>
+      <Text style={styles.subtitle}>{t("choosePreferred")}</Text>
+
+      <View style={styles.optionsContainer}>
+        <Pressable
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            setData({ ...data, language: "ar" });
+          }}
+          style={[
+            styles.languageOption,
+            data.language === "ar" && { borderColor: personaColor, borderWidth: 2 },
+          ]}
+        >
+          <Text style={styles.languageText}>العربية</Text>
+          {data.language === "ar" && <Feather name="check" size={24} color={personaColor} />}
+        </Pressable>
+
+        <Pressable
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            setData({ ...data, language: "en" });
+          }}
+          style={[
+            styles.languageOption,
+            data.language === "en" && { borderColor: personaColor, borderWidth: 2 },
+          ]}
+        >
+          <Text style={styles.languageText}>English</Text>
+          {data.language === "en" && <Feather name="check" size={24} color={personaColor} />}
+        </Pressable>
+      </View>
+    </View>
+  );
+}
+
+// ===================================
+// STEP 2: PERSONA
+// ===================================
+
+function Step2Persona({ data, setData, t, errors }: any) {
+  const personas: Persona[] = ["single", "married", "mother", "partner"];
+
+  return (
+    <View style={styles.stepContainer}>
+      {/* Logo with persona gradient */}
+      <View style={styles.logoContainer}>
+        <LinearGradient
+          colors={data.persona ? PERSONA_GRADIENTS[data.persona] : ["#8C64F0", "#FF5FA8"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.logoGradient}
+        >
+          <Text style={styles.logoText}>ورديتي</Text>
+        </LinearGradient>
+      </View>
+
+      <Text style={styles.title}>{t("selectPersona")}</Text>
+      <Text style={styles.subtitle}>{t("whoAreYou")}</Text>
+
+      <View style={styles.optionsContainer}>
+        {personas.map((persona) => (
+          <Pressable
+            key={persona}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              setData({ ...data, persona });
+            }}
+            style={[
+              styles.personaOption,
+              data.persona === persona && {
+                borderColor: PERSONA_COLORS[persona],
+                borderWidth: 2,
+                backgroundColor: `${PERSONA_COLORS[persona]}15`,
+              },
+            ]}
+          >
+            <View style={[styles.personaIcon, { backgroundColor: PERSONA_COLORS[persona] }]}>
+              <Text style={styles.personaEmoji}>
+                {persona === "single" ? "🌸" : persona === "married" ? "💕" : persona === "mother" ? "👶" : "🤝"}
+              </Text>
+            </View>
+            <Text style={styles.personaText}>{t(persona)}</Text>
+            {data.persona === persona && (
+              <Feather name="check" size={20} color={PERSONA_COLORS[persona]} style={styles.personaCheck} />
+            )}
+          </Pressable>
+        ))}
+      </View>
+
+      {errors.persona && <Text style={styles.errorText}>{errors.persona}</Text>}
+    </View>
+  );
+}
+
+// ===================================
+// STEP 3: EMAIL
+// ===================================
+
+function Step3Email({ data, setData, confirmPassword, setConfirmPassword, t, errors, isRTL }: any) {
+  return (
+    <View style={styles.stepContainer}>
+      <Text style={styles.title}>{t("createAccount")}</Text>
+      <Text style={styles.subtitle}>{t("enterDetails")}</Text>
+
+      <View style={styles.inputsContainer}>
+        <View style={styles.inputWrapper}>
+          <Text style={styles.label}>{t("email")}</Text>
+          <TextInput
+            style={[styles.input, errors.email && styles.inputError, { textAlign: isRTL ? "right" : "left" }]}
+            value={data.email}
+            onChangeText={(text) => setData({ ...data, email: text })}
+            placeholder="example@wardaty.com"
+            placeholderTextColor={TEXT_TERTIARY}
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
+          {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
+        </View>
+
+        <View style={styles.inputWrapper}>
+          <Text style={styles.label}>{t("password")}</Text>
+          <TextInput
+            style={[styles.input, errors.password && styles.inputError, { textAlign: isRTL ? "right" : "left" }]}
+            value={data.password}
+            onChangeText={(text) => setData({ ...data, password: text })}
+            placeholder="••••••"
+            placeholderTextColor={TEXT_TERTIARY}
+            secureTextEntry
+          />
+          {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
+        </View>
+
+        <View style={styles.inputWrapper}>
+          <Text style={styles.label}>{t("confirmPassword")}</Text>
+          <TextInput
+            style={[styles.input, errors.confirmPassword && styles.inputError, { textAlign: isRTL ? "right" : "left" }]}
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            placeholder="••••••"
+            placeholderTextColor={TEXT_TERTIARY}
+            secureTextEntry
+          />
+          {errors.confirmPassword && <Text style={styles.errorText}>{errors.confirmPassword}</Text>}
+        </View>
+      </View>
+    </View>
+  );
+}
+
+// ===================================
+// STEP 4: BEAUTY PREFERENCES
+// ===================================
+
+function Step4Beauty({ data, setData, t, errors, isRTL }: any) {
+  const preferences = [
+    { id: "skincare", label: t("skincare") },
+    { id: "hairCare", label: t("hairCare") },
+    { id: "nailCare", label: t("nailCare") },
+    { id: "makeup", label: t("makeup") },
+    { id: "fragrance", label: t("fragrance") },
+    { id: "wellness", label: t("wellness") },
+  ];
+
+  const togglePreference = (id: string) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    const current = data.beautyPreferences;
+    if (current.includes(id)) {
+      setData({ ...data, beautyPreferences: current.filter((p: string) => p !== id) });
+    } else {
+      setData({ ...data, beautyPreferences: [...current, id] });
+    }
+  };
+
+  const personaColor = data.persona ? PERSONA_COLORS[data.persona] : "#8C64F0";
+
+  return (
+    <View style={styles.stepContainer}>
+      <Text style={styles.title}>{t("beautyPreferences")}</Text>
+      <Text style={styles.subtitle}>{t("selectInterests")}</Text>
+
+      <View style={styles.chipsContainer}>
+        {preferences.map((pref) => {
+          const isSelected = data.beautyPreferences.includes(pref.id);
+          return (
+            <Pressable
+              key={pref.id}
+              onPress={() => togglePreference(pref.id)}
+              style={[
+                styles.chip,
+                isSelected && { backgroundColor: personaColor, borderColor: personaColor },
+              ]}
+            >
+              <Text style={[styles.chipText, isSelected && styles.chipTextSelected]}>
+                {pref.label}
+              </Text>
+            </Pressable>
+          );
+        })}
+      </View>
+
+      {errors.beautyPreferences && <Text style={styles.errorText}>{errors.beautyPreferences}</Text>}
+    </View>
+  );
+}
+
+// ===================================
+// STEP 5: CYCLE DETAILS
+// ===================================
+
+function Step5Cycle({ data, setData, t, errors, showDatePicker, setShowDatePicker, isRTL }: any) {
+  const formatDate = (date: Date | null) => {
+    if (!date) return t("selectDate");
+    return date.toLocaleDateString(data.language === "ar" ? "ar-SA" : "en-US");
+  };
+
+  return (
+    <View style={styles.stepContainer}>
+      <Text style={styles.title}>{t("cycleDetails")}</Text>
+      <Text style={styles.subtitle}>{t("trackCycle")}</Text>
+
+      <View style={styles.inputsContainer}>
+        <View style={styles.inputWrapper}>
+          <Text style={styles.label}>{t("lastPeriod")}</Text>
+          <Pressable
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              setShowDatePicker(true);
+            }}
+            style={[styles.input, styles.dateButton, errors.lastPeriodDate && styles.inputError]}
+          >
+            <Text style={[styles.dateText, !data.lastPeriodDate && { color: TEXT_TERTIARY }]}>
+              {formatDate(data.lastPeriodDate)}
+            </Text>
+            <Feather name="calendar" size={20} color={TEXT_SECONDARY} />
+          </Pressable>
+          {errors.lastPeriodDate && <Text style={styles.errorText}>{errors.lastPeriodDate}</Text>}
+        </View>
+
+        <View style={styles.inputWrapper}>
+          <Text style={styles.label}>{t("cycleLength")}</Text>
+          <TextInput
+            style={[styles.input, errors.cycleLength && styles.inputError, { textAlign: isRTL ? "right" : "left" }]}
+            value={String(data.cycleLength)}
+            onChangeText={(text) => setData({ ...data, cycleLength: parseInt(text) || 28 })}
+            placeholder="28"
+            placeholderTextColor={TEXT_TERTIARY}
+            keyboardType="number-pad"
+          />
+          {errors.cycleLength && <Text style={styles.errorText}>{errors.cycleLength}</Text>}
+        </View>
+      </View>
+
+      {showDatePicker && (
+        <DateTimePicker
+          value={data.lastPeriodDate || new Date()}
+          mode="date"
+          display={Platform.OS === "ios" ? "spinner" : "default"}
+          onChange={(event, selectedDate) => {
+            setShowDatePicker(Platform.OS === "ios");
+            if (selectedDate) {
+              setData({ ...data, lastPeriodDate: selectedDate });
+            }
+          }}
+          maximumDate={new Date()}
+        />
+      )}
+    </View>
+  );
+}
+
+// ===================================
+// STEP 6: PERSONAL INFO
+// ===================================
+
+function Step6Personal({ data, setData, t, errors, isRTL }: any) {
+  const ageRanges = ["18-24", "25-34", "35-44", "45+"];
+  const goalsList = [
+    { id: "trackCycle", label: t("trackCycleGoal") },
+    { id: "conceive", label: t("conceive") },
+    { id: "avoidPregnancy", label: t("avoidPregnancy") },
+    { id: "generalHealth", label: t("generalHealth") },
+    { id: "beautyWellness", label: t("beautyWellness") },
+  ];
+
+  const toggleGoal = (id: string) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    const current = data.goals;
+    if (current.includes(id)) {
+      setData({ ...data, goals: current.filter((g: string) => g !== id) });
+    } else {
+      setData({ ...data, goals: [...current, id] });
+    }
+  };
+
+  const personaColor = data.persona ? PERSONA_COLORS[data.persona] : "#8C64F0";
+
+  return (
+    <View style={styles.stepContainer}>
+      <Text style={styles.title}>{t("personalInfo")}</Text>
+      <Text style={styles.subtitle}>{t("tellUsAbout")}</Text>
+
+      <View style={styles.inputsContainer}>
+        <View style={styles.inputWrapper}>
+          <Text style={styles.label}>{t("name")}</Text>
+          <TextInput
+            style={[styles.input, errors.name && styles.inputError, { textAlign: isRTL ? "right" : "left" }]}
+            value={data.name}
+            onChangeText={(text) => setData({ ...data, name: text })}
+            placeholder={data.language === "ar" ? "اسمك" : "Your name"}
+            placeholderTextColor={TEXT_TERTIARY}
+          />
+          {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
+        </View>
+
+        <View style={styles.inputWrapper}>
+          <Text style={styles.label}>{t("ageRange")}</Text>
+          <View style={styles.chipsContainer}>
+            {ageRanges.map((range) => {
+              const isSelected = data.ageRange === range;
+              return (
+                <Pressable
+                  key={range}
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    setData({ ...data, ageRange: range });
+                  }}
+                  style={[
+                    styles.chip,
+                    isSelected && { backgroundColor: personaColor, borderColor: personaColor },
+                  ]}
+                >
+                  <Text style={[styles.chipText, isSelected && styles.chipTextSelected]}>
+                    {range}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+          {errors.ageRange && <Text style={styles.errorText}>{errors.ageRange}</Text>}
+        </View>
+
+        <View style={styles.inputWrapper}>
+          <Text style={styles.label}>{t("goals")}</Text>
+          <View style={styles.chipsContainer}>
+            {goalsList.map((goal) => {
+              const isSelected = data.goals.includes(goal.id);
+              return (
+                <Pressable
+                  key={goal.id}
+                  onPress={() => toggleGoal(goal.id)}
+                  style={[
+                    styles.chip,
+                    isSelected && { backgroundColor: personaColor, borderColor: personaColor },
+                  ]}
+                >
+                  <Text style={[styles.chipText, isSelected && styles.chipTextSelected]}>
+                    {goal.label}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+          {errors.goals && <Text style={styles.errorText}>{errors.goals}</Text>}
+        </View>
+
+        <Pressable
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            setData({ ...data, notificationsEnabled: !data.notificationsEnabled });
+          }}
+          style={[styles.notificationToggle, { flexDirection: isRTL ? "row-reverse" : "row" }]}
+        >
+          <View style={[styles.checkbox, data.notificationsEnabled && { backgroundColor: personaColor, borderColor: personaColor }]}>
+            {data.notificationsEnabled && <Feather name="check" size={16} color="#FFFFFF" />}
+          </View>
+          <Text style={styles.notificationText}>{t("notifications")}</Text>
+        </Pressable>
+      </View>
+    </View>
+  );
+}
+
+// ===================================
+// STYLES
+// ===================================
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: BG_ROOT,
   },
+  scrollView: {
+    flex: 1,
+  },
   scrollContent: {
-    paddingHorizontal: Spacing.screenPadding,
+    paddingHorizontal: SPACING.lg,
+    paddingBottom: SPACING.xxl,
   },
   progressContainer: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    gap: Spacing.sm,
-    marginBottom: Spacing.xxl,
+    gap: SPACING.sm,
+    paddingVertical: SPACING.lg,
   },
   progressDot: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: DarkTheme.border.subtle,
+    backgroundColor: GLASS_BORDER,
   },
   stepContainer: {
     alignItems: "center",
     width: "100%",
   },
+  logoContainer: {
+    marginBottom: SPACING.xl,
+  },
+  logoGradient: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  logoText: {
+    fontSize: 28,
+    fontWeight: "700",
+    color: "#FFFFFF",
+    fontFamily: "Tajawal-Bold",
+  },
   title: {
-    ...Typography.title1,
-    color: DarkTheme.text.primary,
-    marginBottom: Spacing.xs,
-    width: "100%",
+    fontSize: 28,
+    fontWeight: "700",
+    color: TEXT_PRIMARY,
+    marginBottom: SPACING.xs,
+    textAlign: "center",
+    fontFamily: "Tajawal-Bold",
   },
   subtitle: {
-    ...Typography.callout,
-    color: DarkTheme.text.secondary,
-    marginBottom: Spacing.xl,
-    width: "100%",
+    fontSize: 16,
+    color: TEXT_SECONDARY,
+    marginBottom: SPACING.xl,
+    textAlign: "center",
+    fontFamily: "Tajawal-Regular",
   },
   optionsContainer: {
     width: "100%",
-    gap: Spacing.md,
+    gap: SPACING.md,
   },
   languageOption: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: Spacing.lg,
+    padding: SPACING.lg,
     backgroundColor: BG_CARD,
-    borderRadius: BorderRadius.large,
-    borderWidth: 2,
+    borderRadius: BORDER_RADIUS.large,
+    borderWidth: 1,
     borderColor: GLASS_BORDER,
-    minHeight: Spacing.listItemHeight,
+    minHeight: 60,
   },
   languageText: {
-    ...Typography.headline,
-    color: DarkTheme.text.primary,
+    fontSize: 17,
+    fontWeight: "600",
+    color: TEXT_PRIMARY,
+    fontFamily: "Tajawal-Bold",
+  },
+  personaOption: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: SPACING.lg,
+    backgroundColor: BG_CARD,
+    borderRadius: BORDER_RADIUS.large,
+    borderWidth: 1,
+    borderColor: GLASS_BORDER,
+    gap: SPACING.md,
+    minHeight: 80,
+  },
+  personaIcon: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  personaEmoji: {
+    fontSize: 28,
+  },
+  personaText: {
+    flex: 1,
+    fontSize: 17,
+    fontWeight: "600",
+    color: TEXT_PRIMARY,
+    fontFamily: "Tajawal-Bold",
+  },
+  personaCheck: {
+    position: "absolute",
+    top: SPACING.sm,
+    right: SPACING.sm,
   },
   inputsContainer: {
     width: "100%",
-    gap: Spacing.lg,
+    gap: SPACING.lg,
   },
   inputWrapper: {
     width: "100%",
   },
   label: {
-    ...Typography.callout,
-    color: DarkTheme.text.secondary,
-    marginBottom: Spacing.xs,
+    fontSize: 15,
+    color: TEXT_SECONDARY,
+    marginBottom: SPACING.xs,
+    fontFamily: "Tajawal-Regular",
   },
   input: {
     backgroundColor: BG_CARD,
-    borderRadius: BorderRadius.medium,
+    borderRadius: BORDER_RADIUS.medium,
     borderWidth: 1,
     borderColor: GLASS_BORDER,
-    padding: Spacing.md,
-    minHeight: Spacing.listItemHeight,
-    ...Typography.callout,
-    color: DarkTheme.text.primary,
+    padding: SPACING.md,
+    minHeight: 50,
+    fontSize: 16,
+    color: TEXT_PRIMARY,
+    fontFamily: "Tajawal-Regular",
   },
   inputError: {
     borderColor: "#FF5252",
-  },
-  errorText: {
-    ...Typography.caption1,
-    color: "#FF5252",
-    marginTop: Spacing.xxxs,
-  },
-  chipsContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: Spacing.sm,
-  },
-  chip: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
-    backgroundColor: BG_CARD,
-    borderRadius: BorderRadius.full,
-    borderWidth: 1,
-    borderColor: GLASS_BORDER,
-  },
-  chipText: {
-    ...Typography.callout,
-    color: DarkTheme.text.primary,
   },
   dateButton: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+  },
+  dateText: {
+    fontSize: 16,
+    color: TEXT_PRIMARY,
+    fontFamily: "Tajawal-Regular",
+  },
+  errorText: {
+    fontSize: 13,
+    color: "#FF5252",
+    marginTop: SPACING.xs,
+    fontFamily: "Tajawal-Regular",
+  },
+  chipsContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: SPACING.sm,
+  },
+  chip: {
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.sm,
     backgroundColor: BG_CARD,
-    borderRadius: BorderRadius.medium,
+    borderRadius: BORDER_RADIUS.large,
     borderWidth: 1,
     borderColor: GLASS_BORDER,
-    padding: Spacing.md,
-    minHeight: Spacing.listItemHeight,
   },
-  dateButtonText: {
-    ...Typography.callout,
-    color: DarkTheme.text.primary,
+  chipText: {
+    fontSize: 15,
+    color: TEXT_PRIMARY,
+    fontFamily: "Tajawal-Regular",
   },
-  predictionsCard: {
-    backgroundColor: BG_ELEVATED,
-    borderRadius: BorderRadius.large,
-    padding: Spacing.lg,
-    gap: Spacing.sm,
-    marginTop: Spacing.md,
-  },
-  predictionsTitle: {
-    ...Typography.headline,
-    color: DarkTheme.text.primary,
-    marginBottom: Spacing.xs,
-  },
-  predictionRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.sm,
-  },
-  predictionLabel: {
-    ...Typography.callout,
-    color: DarkTheme.text.secondary,
-    flex: 1,
-  },
-  predictionValue: {
-    ...Typography.callout,
-    color: DarkTheme.text.primary,
+  chipTextSelected: {
+    color: "#FFFFFF",
+    fontWeight: "600",
   },
   notificationToggle: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.sm,
-    marginTop: Spacing.md,
+    gap: SPACING.sm,
+    marginTop: SPACING.md,
   },
   checkbox: {
     width: 24,
@@ -968,52 +1060,51 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   notificationText: {
-    ...Typography.callout,
-    color: DarkTheme.text.primary,
+    fontSize: 16,
+    color: TEXT_PRIMARY,
+    fontFamily: "Tajawal-Regular",
   },
-  bottomButtons: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    paddingHorizontal: Spacing.screenPadding,
-    paddingTop: Spacing.md,
-    backgroundColor: BG_ROOT,
-    borderTopWidth: 1,
-    borderTopColor: GLASS_BORDER,
+  navigationContainer: {
+    flexDirection: "row",
+    gap: SPACING.md,
+    paddingHorizontal: SPACING.lg,
+    paddingVertical: SPACING.md,
   },
-  primaryButton: {
+  backButton: {
+    flex: 1,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: Spacing.sm,
-    minHeight: Spacing.buttonHeight,
-    borderRadius: BorderRadius.large,
-    paddingVertical: Spacing.md,
-    paddingHorizontal: Spacing.lg,
-    ...Shadows.small,
-  },
-  primaryButtonText: {
-    ...Typography.callout,
-    color: "#FFFFFF",
-    fontWeight: "600",
-  },
-  secondaryButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: Spacing.sm,
-    minHeight: Spacing.buttonHeight,
-    borderRadius: BorderRadius.large,
-    paddingVertical: Spacing.md,
-    paddingHorizontal: Spacing.lg,
+    gap: SPACING.xs,
+    padding: SPACING.md,
     backgroundColor: BG_CARD,
+    borderRadius: BORDER_RADIUS.large,
     borderWidth: 1,
-    borderColor: GLASS_BORDER,
+    minHeight: 56,
   },
-  secondaryButtonText: {
-    ...Typography.callout,
-    color: DarkTheme.text.primary,
+  backButtonText: {
+    fontSize: 17,
     fontWeight: "600",
+    color: TEXT_PRIMARY,
+    fontFamily: "Tajawal-Bold",
+  },
+  nextButton: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: SPACING.xs,
+    padding: SPACING.md,
+    borderRadius: BORDER_RADIUS.large,
+    minHeight: 56,
+  },
+  nextButtonFull: {
+    flex: 2,
+  },
+  nextButtonText: {
+    fontSize: 17,
+    fontWeight: "600",
+    color: "#FFFFFF",
+    fontFamily: "Tajawal-Bold",
   },
 });
