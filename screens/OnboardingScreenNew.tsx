@@ -394,16 +394,15 @@ export default function OnboardingScreenNew() {
       exiting={FadeOutUp.duration(300)}
       style={styles.stepContainer}
     >
-      {/* Wardaty Logo with Gradient */}
-      <LinearGradient
-        colors={["#8C64F0", "#FF5FA8"]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.logoContainer}
-      >
+      {/* Wardaty Logo Flower */}
+      <View style={styles.logoContainer}>
+        <Image
+          source={require("../assets/wardaty-logo.png")}
+          style={styles.logoFlower}
+        />
         <Text style={styles.logoText}>ورديتي</Text>
         <Text style={styles.logoSubtext}>Wardaty</Text>
-      </LinearGradient>
+      </View>
 
       <Text style={[styles.largeTitle, { marginTop: SPACING.huge }]}>
         Choose Your Language
@@ -447,13 +446,13 @@ export default function OnboardingScreenNew() {
       exiting={FadeOutUp.duration(300)}
       style={styles.stepContainer}
     >
-      {/* Logo with Persona Color */}
-      <LinearGradient
-        colors={[personaColor, personaColor]}
-        style={styles.logoContainerSmall}
-      >
-        <Text style={styles.logoTextSmall}>{isRTL ? "ورديتي" : "Wardaty"}</Text>
-      </LinearGradient>
+      {/* Logo Flower with Persona Color Tint */}
+      <View style={styles.logoContainerSmall}>
+        <Image
+          source={personaFlower}
+          style={styles.logoFlowerSmall}
+        />
+      </View>
 
       <Text style={[styles.title1, { textAlign: isRTL ? "right" : "left", width: "100%" }]}>
         {isRTL ? "اختاري شخصيتك" : "Select Your Persona"}
@@ -885,11 +884,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.huge,
     borderRadius: 24,
     alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.3,
-    shadowRadius: 16,
-    elevation: 8,
+  },
+  logoFlower: {
+    width: 120,
+    height: 120,
+    marginBottom: SPACING.lg,
   },
   logoText: {
     fontSize: 36,
@@ -905,21 +904,12 @@ const styles = StyleSheet.create({
     fontFamily: "Tajawal-Regular",
   },
   logoContainerSmall: {
-    paddingVertical: SPACING.md,
-    paddingHorizontal: SPACING.xl,
-    borderRadius: 16,
     marginBottom: SPACING.xl,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 4,
+    alignItems: "center",
   },
-  logoTextSmall: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: "#FFFFFF",
-    fontFamily: "Tajawal-Bold",
+  logoFlowerSmall: {
+    width: 64,
+    height: 64,
   },
   stepIcon: {
     width: 80,
