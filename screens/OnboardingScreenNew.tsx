@@ -20,7 +20,7 @@ import { Feather } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { LinearGradient } from "expo-linear-gradient";
 
-import { useLanguage } from "../lib/LanguageContext";
+import { useLanguage } from "../hooks/useLanguage";
 import { useApp } from "../lib/AppContext";
 import { Persona } from "../lib/types";
 import { DarkTheme, Typography, Spacing, BorderRadius, GlassEffects } from "../constants/theme";
@@ -92,7 +92,7 @@ const GOAL_OPTIONS = [
 export default function OnboardingScreenNew() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
-  const { t, language, setLanguage } = useLanguage();
+  const { language, setLanguage } = useLanguage();
   const { updateData } = useApp();
 
   const [step, setStep] = useState(1);
