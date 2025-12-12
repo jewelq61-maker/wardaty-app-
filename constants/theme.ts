@@ -89,6 +89,16 @@ export const GlassEffects = {
   background: "rgba(37, 27, 64, 0.6)",
   border: "rgba(255, 255, 255, 0.1)",
   blur: 20,
+  light: {
+    backgroundColor: "rgba(37, 27, 64, 0.6)",
+    borderColor: "rgba(255, 255, 255, 0.1)",
+    borderWidth: 1,
+  },
+  dark: {
+    backgroundColor: "rgba(15, 8, 32, 0.8)",
+    borderColor: "rgba(255, 255, 255, 0.15)",
+    borderWidth: 1,
+  },
 } as const;
 
 // ===================================
