@@ -324,8 +324,8 @@ export const Haptics = iOSTokens.haptics;
 // 12) HELPER FUNCTIONS
 // ===================================
 
-export function getPersonaColor(persona: Persona): string {
-  return PersonaColors[persona].primary;
+export function getPersonaColor(persona: Persona) {
+  return PersonaColors[persona];
 }
 
 export function getPersonaGradient(persona: Persona): readonly [string, string] {
