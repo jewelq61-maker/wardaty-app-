@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import { View, StyleSheet, Pressable, Dimensions } from "react-native";
 import Svg, { Circle, G, Defs, RadialGradient, Stop, Path } from "react-native-svg";
@@ -19,7 +18,7 @@ import { ThemedText } from "./ThemedText";
 import { useApp } from "../lib/AppContext";
 import { useLanguage } from "../hooks/useLanguage";
 import { useThemePersona } from "../lib/ThemePersonaContext";
-import { Spacing, Animations, DarkTheme, getPersonaColor, PhaseColors } from "../constants/theme";
+import { Spacing, Animations, DarkTheme, getPersonaColor } from "../constants/theme";
 import { GestureDetector, Gesture } from "react-native-gesture-handler";
 import { BlurView } from "expo-blur";
 import * as Haptics from "expo-haptics";
@@ -57,17 +56,18 @@ const PHASE_LABELS: Record<DetailedCyclePhase, { en: string; ar: string }> = {
 };
 
 function getThemeLightPhaseColor(phase: DetailedCyclePhase, personaMain: string): string {
+  // For now, always use dark theme colors
   switch (phase) {
     case "period":
-      return LightModePhaseColors.period;
+      return "#FF6B9D";
     case "fertile":
-      return LightModePhaseColors.fertile;
+      return "#7EC8E3";
     case "ovulation":
-      return LightModePhaseColors.ovulation;
+      return "#A684F5";
     case "follicular":
-      return LightModePhaseColors.follicular;
+      return "#FFB8D9";
     case "luteal":
-      return LightModePhaseColors.luteal;
+      return personaMain;
     default:
       return personaMain;
   }
@@ -77,16 +77,16 @@ function getThemePhaseColor(phase: DetailedCyclePhase, isDark: boolean, personaM
   if (!isDark) {
     return getThemeLightPhaseColor(phase, personaMain);
   }
-  const colors = Colors.dark;
+  // Dark theme colors
   switch (phase) {
     case "period":
-      return colors.period;
+      return "#FF6B9D";
     case "fertile":
-      return colors.fertile;
+      return "#7EC8E3";
     case "ovulation":
-      return colors.ovulation;
+      return "#A684F5";
     case "follicular":
-      return colors.follicular;
+      return "#FFB8D9";
     case "luteal":
       return personaMain;
     default:
@@ -517,7 +517,7 @@ export function CycleRing({
   const glassBackground = isDark ? "rgba(30, 20, 50, 0.6)" : "rgba(255, 255, 255, 0.65)";
   const glassBorder = isDark ? "rgba(140, 100, 240, 0.3)" : "rgba(140, 100, 240, 0.15)";
   const lightModeCardShadow = !isDark ? {
-    shadowColor: theme.primary,
+    shadowColor: "#A684F5",
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.12,
     shadowRadius: 20,
@@ -608,16 +608,16 @@ export function CycleRing({
                             {displayDay}
                           </ThemedText>
                         </AnimatedView>
-                        <ThemedText style={[styles.dateText, { color: theme.textSecondary }]}>
+                        <ThemedText style={[styles.dateText, { color: DarkTheme.text.secondary }]}>
                           {displayDate}
                         </ThemedText>
                       </>
                     ) : (
                       <>
-                        <ThemedText style={[styles.startTitle, { color: theme.textSecondary }]}>
+                        <ThemedText style={[styles.startTitle, { color: DarkTheme.text.secondary }]}>
                           {isRTL ? "ابدأي التتبع" : "Start Tracking"}
                         </ThemedText>
-                        <ThemedText style={[styles.startSubtitle, { color: theme.textSecondary }]}>
+                        <ThemedText style={[styles.startSubtitle, { color: DarkTheme.text.secondary }]}>
                           {isRTL ? "اضغطي لتسجيل دورتك" : "Tap to log your period"}
                         </ThemedText>
                       </>
