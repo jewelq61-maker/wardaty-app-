@@ -15,9 +15,9 @@ import Animated, {
 import { ThemedText } from "../components/ThemedText";
 import { Button } from "../components/Button";
 import { KeyboardAwareScrollViewCompat } from "../components/KeyboardAwareScrollViewCompat";
+import { useTheme } from "../hooks/useTheme";
 import { useLanguage } from "../hooks/useLanguage";
-import { useRTL } from "../hooks/useRTL";
-import { DarkTheme, GlassEffects, Typography, Spacing, BorderRadius, Shadows, getPersonaColor } from "../constants/theme";
+import { Spacing, BorderRadius, Shadows } from "../constants/theme";
 import { useApp } from "../lib/AppContext";
 import { useLayout } from "../lib/ThemePersonaContext";
 import { useFABHandler } from "../contexts/FABContext";
@@ -268,7 +268,7 @@ export default function CalendarScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
   const tabBarHeight = useBottomTabBarHeight();
-  const rtl = useRTL();
+  const { theme } = useTheme() as { theme: ThemeColors };
   const { t, language, isRTL } = useLanguage();
   const layout = useLayout();
   const { data, addCycleLog, addMissedDay } = useApp();
@@ -287,7 +287,6 @@ export default function CalendarScreen() {
 
   const { settings, cycleLogs, qadhaLogs, pregnancySettings } = data;
   const { cycleSettings, persona, calendarType } = settings;
-  const personaColor = getPersonaColor(persona || "single");
   const showFertile = persona === "married";
   const isPremiumUser = settings.isSubscribed;
   const isPregnancyMode = pregnancySettings?.enabled || false;
