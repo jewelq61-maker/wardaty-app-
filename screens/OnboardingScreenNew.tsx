@@ -404,10 +404,10 @@ export default function OnboardingScreenNew() {
         <Text style={styles.logoSubtext}>Wardaty</Text>
       </View>
 
-      <Text style={[styles.largeTitle, { marginTop: SPACING.huge }]}>
+      <Text style={[styles.largeTitle, { marginBottom: SPACING.sm }]}>
         Choose Your Language
       </Text>
-      <Text style={[styles.largeTitle, { textAlign: "right", marginTop: SPACING.sm }]}>
+      <Text style={[styles.largeTitle, { textAlign: "center" }]}>
         اختاري لغتك
       </Text>
 
@@ -454,10 +454,10 @@ export default function OnboardingScreenNew() {
         />
       </View>
 
-      <Text style={[styles.title1, { textAlign: isRTL ? "right" : "left", width: "100%" }]}>
+      <Text style={[styles.largeTitle, { marginBottom: SPACING.sm }]}>
         {isRTL ? "اختاري شخصيتك" : "Select Your Persona"}
       </Text>
-      <Text style={[styles.subheadline, styles.secondaryText, { textAlign: isRTL ? "right" : "left", width: "100%", marginTop: SPACING.sm }]}>
+      <Text style={[styles.subheadline, styles.secondaryText, { textAlign: "center", marginBottom: SPACING.md }]}>
         {isRTL ? "اختاري ما يناسبك" : "Choose what suits you"}
       </Text>
 
@@ -491,7 +491,7 @@ export default function OnboardingScreenNew() {
               }}
             >
               <Image source={flower} style={styles.personaFlower} />
-              <Text style={[styles.headline, { color: isSelected ? color : COLORS.text.primary, marginTop: SPACING.md }]}>
+              <Text style={[{ fontSize: 18, fontWeight: "600", color: isSelected ? color : COLORS.text.primary, marginTop: SPACING.sm }]}>
                 {isRTL ? labels[persona].ar : labels[persona].en}
               </Text>
             </Pressable>
@@ -816,7 +816,8 @@ export default function OnboardingScreenNew() {
               styles.progressDot,
               index + 1 === step && {
                 backgroundColor: personaColor,
-                width: 24,
+                width: 32,
+                height: 10,
               },
             ]}
           />
@@ -880,28 +881,28 @@ const styles = StyleSheet.create({
   
   // Logo Styles
   logoContainer: {
-    paddingVertical: SPACING.xxxl,
-    paddingHorizontal: SPACING.huge,
-    borderRadius: 24,
     alignItems: "center",
+    marginBottom: SPACING.huge,
   },
   logoFlower: {
-    width: 120,
-    height: 120,
-    marginBottom: SPACING.lg,
+    width: 140,
+    height: 140,
+    marginBottom: SPACING.xl,
   },
   logoText: {
-    fontSize: 36,
+    fontSize: 40,
     fontWeight: "700",
     color: "#FFFFFF",
     fontFamily: "Tajawal-Bold",
+    letterSpacing: -0.5,
   },
   logoSubtext: {
-    fontSize: 18,
-    fontWeight: "400",
-    color: "rgba(255, 255, 255, 0.9)",
+    fontSize: 20,
+    fontWeight: "500",
+    color: "rgba(255, 255, 255, 0.8)",
     marginTop: SPACING.xs,
     fontFamily: "Tajawal-Regular",
+    letterSpacing: 0.5,
   },
   logoContainerSmall: {
     marginBottom: SPACING.xl,
@@ -919,7 +920,10 @@ const styles = StyleSheet.create({
 
   // Typography (Apple iOS Style)
   largeTitle: {
-    ...TYPOGRAPHY.largeTitle,
+    fontSize: 32,
+    fontWeight: "700",
+    lineHeight: 38,
+    letterSpacing: -0.5,
     color: COLORS.text.primary,
     textAlign: "center",
   },
@@ -962,49 +966,59 @@ const styles = StyleSheet.create({
   // Apple Card Style (Frosted Glass Effect)
   appleCard: {
     backgroundColor: COLORS.card,
-    borderRadius: 16,
-    padding: SPACING.lg,
-    borderWidth: 1,
+    borderRadius: 20,
+    padding: SPACING.xxl,
+    borderWidth: 1.5,
     borderColor: COLORS.border,
     shadowColor: COLORS.shadow,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.2,
+    shadowRadius: 16,
+    elevation: 5,
+    minHeight: 140,
+    justifyContent: "center",
+    alignItems: "center",
   },
 
   // Language Grid
   languageGrid: {
     flexDirection: "row",
-    gap: SPACING.md,
+    gap: SPACING.lg,
     width: "100%",
-    marginTop: SPACING.xxxl,
+    marginTop: SPACING.huge,
+    paddingHorizontal: SPACING.md,
   },
   languageFlag: {
-    fontSize: 48,
-    marginBottom: SPACING.md,
+    fontSize: 64,
+    marginBottom: SPACING.lg,
   },
   languageLabel: {
-    ...TYPOGRAPHY.headline,
+    fontSize: 20,
+    fontWeight: "600",
     color: COLORS.text.primary,
+    letterSpacing: -0.3,
   },
 
   // Persona Grid
   personaGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: SPACING.md,
+    gap: SPACING.lg,
     width: "100%",
     marginTop: SPACING.xl,
+    paddingHorizontal: SPACING.md,
   },
   personaCard: {
-    width: (SCREEN_WIDTH - SPACING.lg * 2 - SPACING.md) / 2,
+    width: (SCREEN_WIDTH - SPACING.lg * 2 - SPACING.lg - SPACING.md * 2) / 2,
     alignItems: "center",
-    paddingVertical: SPACING.xl,
+    paddingVertical: SPACING.xxl,
+    minHeight: 160,
+    justifyContent: "center",
   },
   personaFlower: {
-    width: 72,
-    height: 72,
+    width: 80,
+    height: 80,
+    marginBottom: SPACING.md,
   },
 
   // Form Styles (iOS Style)
@@ -1039,14 +1053,17 @@ const styles = StyleSheet.create({
   beautyGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: SPACING.md,
+    gap: SPACING.lg,
     width: "100%",
     marginTop: SPACING.xl,
+    paddingHorizontal: SPACING.md,
   },
   beautyCard: {
-    width: (SCREEN_WIDTH - SPACING.lg * 2 - SPACING.md) / 2,
+    width: (SCREEN_WIDTH - SPACING.lg * 2 - SPACING.lg - SPACING.md * 2) / 2,
     alignItems: "center",
-    paddingVertical: SPACING.lg,
+    paddingVertical: SPACING.xl,
+    minHeight: 120,
+    justifyContent: "center",
   },
 
   // Age Grid
@@ -1103,13 +1120,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     gap: SPACING.sm,
-    paddingVertical: SPACING.md,
+    paddingVertical: SPACING.lg,
   },
   progressDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: COLORS.border,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
     transition: "all 0.3s ease",
   },
 
@@ -1124,20 +1141,21 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: SPACING.sm,
-    minHeight: 50,
-    borderRadius: 14,
-    paddingVertical: SPACING.md,
-    paddingHorizontal: SPACING.xl,
+    minHeight: 56,
+    borderRadius: 16,
+    paddingVertical: SPACING.lg,
+    paddingHorizontal: SPACING.xxl,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.25,
+    shadowRadius: 12,
+    elevation: 6,
   },
   primaryButtonText: {
-    ...TYPOGRAPHY.headline,
+    fontSize: 18,
     color: "#FFFFFF",
-    fontWeight: "600",
+    fontWeight: "700",
+    letterSpacing: -0.3,
   },
   secondaryButton: {
     flexDirection: "row",
