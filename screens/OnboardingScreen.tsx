@@ -181,7 +181,6 @@ export default function OnboardingScreen() {
       setStep("personalData");
     } else if (step === "personalData") {
       try {
-        console.log("[Onboarding] Starting to save settings...");
         
         // Save all settings and complete onboarding
         const ageNum = parseInt(age);
@@ -190,7 +189,6 @@ export default function OnboardingScreen() {
         const waterGoalNum = parseInt(waterGoal) || 8;
         const sleepGoalNum = parseInt(sleepGoal) || 8;
 
-        console.log("[Onboarding] Parsed values:", { ageNum, cycleLengthNum, periodLengthNum });
 
         await updateSettings({
           persona,
@@ -209,14 +207,11 @@ export default function OnboardingScreen() {
           onboardingCompleted: true,
         });
 
-        console.log("[Onboarding] Settings saved successfully!");
 
         // Clear progress
         await clearProgress();
-        console.log("[Onboarding] Progress cleared!");
 
         // Navigate to main app
-        console.log("[Onboarding] Navigating to Main...");
         navigation.reset({
           index: 0,
           routes: [{ name: "Main" as never }],

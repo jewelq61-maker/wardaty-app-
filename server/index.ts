@@ -5,7 +5,12 @@ import * as fs from "fs";
 import * as path from "path";
 
 const app = express();
-const log = console.log;
+// Logger for server
+const log = (...args: any[]) => {
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('[SERVER]', ...args);
+  }
+};
 
 declare module "http" {
   interface IncomingMessage {

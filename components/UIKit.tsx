@@ -9,7 +9,7 @@ import Animated, {
 import * as Haptics from "expo-haptics";
 
 import { ThemedText } from "./ThemedText";
-import { useTheme } from "../hooks/useTheme";
+import { useApp } from "../lib/AppContext";
 import { useLayout } from "../lib/ThemePersonaContext";
 import {
   BorderRadius,
@@ -17,7 +17,8 @@ import {
   Animations,
   GlassEffects,
   Shadows,
-  Gradients,
+  DarkTheme,
+  getPersonaColor,
 } from "../constants/theme";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
@@ -45,7 +46,8 @@ export function GlassCard({
   glowColor = "primary",
   noPadding = false,
 }: GlassCardProps) {
-  const { theme } = useTheme();
+  const { data } = useApp();
+  const personaColor = getPersonaColor(data?.settings?.persona || "single");
   const layout = useLayout();
   const scale = useSharedValue(1);
 
@@ -76,11 +78,11 @@ export function GlassCard({
     if (!glow) return {};
     switch (glowColor) {
       case "accent":
-        return Shadows.glowAccent;
+        return Shadows.medium;
       case "persona":
         return {
-          ...Shadows.glow,
-          shadowColor: theme.personaAccent,
+          ...Shadows.medium,
+          shadowColor: personaColor.primary,
         };
       default:
         return Shadows.glow;
@@ -97,7 +99,7 @@ export function GlassCard({
       {subtitle ? (
         <ThemedText
           type="small"
-          style={[styles.glassCardSubtitle, { color: theme.textSecondary, textAlign: layout.textAlign }]}
+          style={[styles.glassCardSubtitle, { color: DarkTheme.text.secondary, textAlign: layout.textAlign }]}
         >
           {subtitle}
         </ThemedText>
@@ -111,7 +113,7 @@ export function GlassCard({
       style={[
         styles.glassCardInner,
         noPadding ? null : styles.glassCardPadding,
-        { backgroundColor: theme.glassBackground },
+        { backgroundColor: GlassEffects.background },
       ]}
     >
       {cardContent}
@@ -129,7 +131,7 @@ export function GlassCard({
         {
           opacity: disabled ? 0.5 : 1,
           borderWidth: 1,
-          borderColor: theme.glassBorder,
+          borderColor: GlassEffects.border,
         },
         getGlowShadow(),
         animatedStyle,
@@ -162,7 +164,8 @@ export function FrostedButton({
   icon,
   iconPosition = "left",
 }: FrostedButtonProps) {
-  const { theme } = useTheme();
+  const { data } = useApp();
+  const personaColor = getPersonaColor(data?.settings?.persona || "single");
   const layout = useLayout();
   const scale = useSharedValue(1);
 
@@ -214,19 +217,19 @@ export function FrostedButton({
   const getBackgroundColor = () => {
     switch (variant) {
       case "accent":
-        return theme.accent;
+        return personaColor.light;
       case "persona":
-        return theme.personaAccent;
+        return personaColor.primary;
       case "glass":
-        return theme.glassBackground;
+        return GlassEffects.background;
       default:
-        return theme.primary;
+        return personaColor.primary;
     }
   };
 
   const getTextColor = () => {
     if (variant === "glass") {
-      return theme.text;
+      return DarkTheme.text.primary;
     }
     return "#FFFFFF";
   };
@@ -250,7 +253,7 @@ export function FrostedButton({
           {
             height: getHeight(),
             paddingHorizontal: getPadding(),
-            backgroundColor: theme.glassBackground,
+            backgroundColor: GlassEffects.background,
             flexDirection: layout.flexDirection,
           },
         ]}
@@ -274,7 +277,7 @@ export function FrostedButton({
           {
             opacity: disabled ? 0.5 : 1,
             borderWidth: 1,
-            borderColor: theme.glassBorder,
+            borderColor: GlassEffects.border,
           },
           animatedStyle,
           style,
@@ -334,7 +337,8 @@ export function AccentChip({
   icon,
   style,
 }: AccentChipProps) {
-  const { theme } = useTheme();
+  const { data } = useApp();
+  const personaColor = getPersonaColor(data?.settings?.persona || "single");
   const layout = useLayout();
   const scale = useSharedValue(1);
 
@@ -365,36 +369,36 @@ export function AccentChip({
     if (selected) {
       switch (variant) {
         case "persona":
-          return theme.personaAccent;
+          return personaColor.primary;
         case "primary":
-          return theme.primary;
+          return personaColor.primary;
         case "accent":
-          return theme.accent;
+          return personaColor.light;
         case "success":
-          return theme.success;
+          return "#06D6A0";
         case "warning":
-          return theme.warning;
+          return "#FFB800";
         case "error":
-          return theme.error;
+          return "#FF5A5F";
         default:
-          return theme.personaAccent;
+          return personaColor.primary;
       }
     }
     switch (variant) {
       case "persona":
-        return theme.personaAccentSoft;
+        return personaColor.soft;
       case "primary":
-        return theme.primarySoft;
+        return personaColor.soft;
       case "accent":
-        return theme.accentSoft;
+        return personaColor.soft;
       case "success":
-        return `${theme.success}20`;
+        return "rgba(6, 214, 160, 0.15)";
       case "warning":
-        return `${theme.warning}20`;
+        return "rgba(255, 184, 0, 0.15)";
       case "error":
-        return `${theme.error}20`;
+        return "rgba(255, 90, 95, 0.15)";
       default:
-        return theme.chip;
+        return DarkTheme.background.card;
     }
   };
 
@@ -404,19 +408,19 @@ export function AccentChip({
     }
     switch (variant) {
       case "persona":
-        return theme.personaAccent;
+        return personaColor.primary;
       case "primary":
-        return theme.primary;
+        return personaColor.primary;
       case "accent":
-        return theme.accent;
+        return personaColor.light;
       case "success":
-        return theme.success;
+        return "#06D6A0";
       case "warning":
-        return theme.warning;
+        return "#FFB800";
       case "error":
-        return theme.error;
+        return "#FF5A5F";
       default:
-        return theme.personaAccent;
+        return personaColor.primary;
     }
   };
 
@@ -498,20 +502,21 @@ export function ThemedSurface({
   elevation = "default",
   style,
 }: ThemedSurfaceProps) {
-  const { theme } = useTheme();
+  const { data } = useApp();
+  const personaColor = getPersonaColor(data?.settings?.persona || "single");
 
   const getBackgroundColor = () => {
     switch (elevation) {
       case "elevated":
-        return theme.backgroundElevated;
+        return DarkTheme.background.elevated;
       case "secondary":
-        return theme.backgroundSecondary;
+        return DarkTheme.background.card;
       case "tertiary":
-        return theme.backgroundTertiary;
+        return DarkTheme.background.card;
       case "glass":
-        return theme.glassBackground;
+        return GlassEffects.background;
       default:
-        return theme.backgroundDefault;
+        return DarkTheme.background.root;
     }
   };
 

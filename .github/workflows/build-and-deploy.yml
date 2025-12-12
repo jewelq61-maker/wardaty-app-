@@ -47,7 +47,7 @@ jobs:
         run: npm ci
 
       - name: 🔍 Run TypeScript check
-        run: npx tsc --noEmit || echo "TypeScript check completed with warnings"
+        run: npm run check:types
 
       - name: ✨ Run linter
         run: npm run lint || echo "Linting completed"

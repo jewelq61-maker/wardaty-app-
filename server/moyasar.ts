@@ -1,3 +1,4 @@
+import { logger } from "../lib/logger";
 import { activateSubscription, cancelSubscription, getPlanByCode } from "./subscription";
 
 const MOYASAR_API_BASE = "https://api.moyasar.com/v1";
@@ -299,10 +300,10 @@ export function generatePaymentFormHtml(
         validate_merchant_url: 'https://api.moyasar.com/v1/applepay/initiate',
       },
       on_initiating: function() {
-        console.log('Payment initiating...');
+        logger.info('Payment initiating...');
       },
       on_completed: function(payment) {
-        console.log('Payment completed:', payment);
+        logger.info('Payment completed:', payment);
         if (window.ReactNativeWebView) {
           window.ReactNativeWebView.postMessage(JSON.stringify({
             type: 'payment_completed',
@@ -346,7 +347,7 @@ export async function handlePaymentCallback(
           payment.id,
           undefined
         );
-        console.log(`Subscription activated for user ${userId} with plan ${planCode}`);
+        logger.info(`Subscription activated for user ${userId} with plan ${planCode}`);
       }
       
       return { success: true, payment };
@@ -387,13 +388,13 @@ export async function handlePaymentWebhook(
             payment.id,
             undefined
           );
-          console.log(`Webhook: Subscription activated for user ${userId}`);
+          logger.info(`Webhook: Subscription activated for user ${userId}`);
         }
         break;
       }
       
       case "payment_failed": {
-        console.log(`Payment ${paymentId} failed`);
+        logger.info(`Payment ${paymentId} failed`);
         break;
       }
       
@@ -403,13 +404,13 @@ export async function handlePaymentWebhook(
         
         if (userId) {
           await cancelSubscription(userId);
-          console.log(`Webhook: Subscription cancelled for user ${userId}`);
+          logger.info(`Webhook: Subscription cancelled for user ${userId}`);
         }
         break;
       }
       
       default:
-        console.log(`Unhandled webhook event type: ${eventType}`);
+        logger.warn(`Unhandled webhook event type: ${eventType}`);
     }
     
     return { received: true, type: eventType };

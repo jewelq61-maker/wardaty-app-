@@ -127,7 +127,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
       
       // Skip API calls if no baseUrl (development mode)
       if (!baseUrl || baseUrl.includes('localhost')) {
-        console.log('Skipping subscription fetch in development mode');
         return;
       }
       
@@ -147,7 +146,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
       }
     } catch (error) {
       // Silently fail in development
-      console.log('Subscription data unavailable (development mode)');
     }
   }
 

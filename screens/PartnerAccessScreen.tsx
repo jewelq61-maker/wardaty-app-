@@ -48,7 +48,6 @@ export default function PartnerAccessScreen() {
     setIsGenerating(true);
     try {
       // Offline mode: generate dummy code
-      console.log('Offline mode: partner code generation disabled');
       Alert.alert(t("common", "error"), "Offline mode: Feature not available");
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
     } catch (error) {

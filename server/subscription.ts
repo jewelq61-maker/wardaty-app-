@@ -1,3 +1,4 @@
+import { logger } from "../lib/logger";
 import { db } from "./db";
 import { subscriptionPlans, userSubscriptions, insertPlanSchema, updatePlanSchema } from "@shared/schema";
 import { eq } from "drizzle-orm";
@@ -96,7 +97,7 @@ export async function seedDefaultPlans(): Promise<void> {
       for (const plan of DEFAULT_PLANS) {
         await db.insert(subscriptionPlans).values(plan);
       }
-      console.log("Default subscription plans seeded successfully");
+      logger.info("Default subscription plans seeded successfully");
     }
   } catch (error) {
     console.error("Error seeding default plans:", error);

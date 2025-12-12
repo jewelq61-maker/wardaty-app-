@@ -1,3 +1,4 @@
+import { logger } from "../lib/logger";
 import Stripe from "stripe";
 import { updateStripeIds, activateSubscription, cancelSubscription, getPlanByCode } from "./subscription";
 
@@ -132,7 +133,7 @@ export async function handleWebhookEvent(
     }
     
     default:
-      console.log(`Unhandled webhook event type: ${event.type}`);
+      logger.warn(`Unhandled webhook event type: ${event.type}`);
   }
   
   return { received: true, type: event.type };
@@ -158,7 +159,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session): Promis
     subscriptionId
   );
   
-  console.log(`Subscription activated for user ${userId} with plan ${planCode}`);
+  logger.info(`Subscription activated for user ${userId} with plan ${planCode}`);
 }
 
 async function handleSubscriptionUpdated(subscription: Stripe.Subscription): Promise<void> {
@@ -183,7 +184,7 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription): Pro
     await cancelSubscription(userId);
   }
   
-  console.log(`Subscription ${subscription.id} updated to status: ${subscription.status}`);
+  logger.info(`Subscription updated to status: ${subscription.status}`);
 }
 
 async function handleSubscriptionDeleted(subscription: Stripe.Subscription): Promise<void> {
@@ -195,7 +196,7 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription): Pro
   }
   
   await cancelSubscription(userId);
-  console.log(`Subscription cancelled for user ${userId}`);
+  logger.info(`Subscription cancelled for user ${userId}`);
 }
 
 async function handlePaymentFailed(invoice: Stripe.Invoice): Promise<void> {

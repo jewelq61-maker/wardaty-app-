@@ -137,18 +137,15 @@ export default function SubscriptionScreen() {
   // Offline mode: disable subscription activation
   const activateMutation = useMutation({
     mutationFn: async ({ planCode, startTrial }: { planCode: string; startTrial: boolean }) => {
-      console.log('Offline mode: subscription activation disabled');
       return { success: false, message: 'Offline mode' };
     },
     onSuccess: async () => {
-      console.log('Offline mode: skipping subscription refresh');
     },
   });
 
   // Offline mode: disable payment checkout
   const checkoutMutation = useMutation({
     mutationFn: async ({ planCode }: { planCode: string }) => {
-      console.log('Offline mode: payment checkout disabled');
       return { formHtml: '', amount: 0, planCode };
     },
     onSuccess: async (result: { formHtml: string; amount: number; planCode: string }) => {
