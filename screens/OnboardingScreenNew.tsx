@@ -10,10 +10,19 @@ import {
   Platform,
   I18nManager,
   Image,
+  Switch,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
-import Animated, { FadeInDown, FadeOutUp } from "react-native-reanimated";
+import { BlurView } from "expo-blur";
+import Animated, {
+  FadeInDown,
+  FadeOutUp,
+  FadeIn,
+  useAnimatedStyle,
+  withSpring,
+  useSharedValue,
+} from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Feather } from "@expo/vector-icons";
@@ -23,18 +32,24 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useLanguage } from "../hooks/useLanguage";
 import { useApp } from "../lib/AppContext";
 import { Persona } from "../lib/types";
-import { DarkTheme, Typography, Spacing, BorderRadius, GlassEffects } from "../constants/theme";
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
-// Wardaty Official Dark Theme
-const BG_BASE = "#0F0820";
-const BG_ELEVATED = "#1A1330";
-const BG_CARD = "#251B40";
-const GLASS_BG = "rgba(37, 27, 64, 0.6)";
-const GLASS_BORDER = "rgba(255, 255, 255, 0.1)";
+// Wardaty Official Dark Theme (Preserved)
+const COLORS = {
+  base: "#0F0820",
+  elevated: "#1A1330",
+  card: "#251B40",
+  text: {
+    primary: "#FFFFFF",
+    secondary: "rgba(255, 255, 255, 0.7)",
+    tertiary: "rgba(255, 255, 255, 0.5)",
+  },
+  border: "rgba(255, 255, 255, 0.1)",
+  shadow: "rgba(0, 0, 0, 0.3)",
+};
 
-// Persona Colors (Official)
+// Persona Colors (Official Wardaty)
 const PERSONA_COLORS = {
   single: "#FF6B9D",
   married: "#FF8D8D",
@@ -42,12 +57,82 @@ const PERSONA_COLORS = {
   partner: "#7EC8E3",
 };
 
-// Persona Flower Images (Official)
+// Persona Flowers (Official Assets)
 const PERSONA_FLOWERS = {
   single: require("../assets/flowers/icon-single-pink.png"),
   married: require("../assets/flowers/icon-married-coral.png"),
   mother: require("../assets/flowers/icon-mother-purple.png"),
   partner: require("../assets/flowers/icon-partner-blue.png"),
+};
+
+// Apple iOS Typography (Preserved Wardaty Colors)
+const TYPOGRAPHY = {
+  largeTitle: {
+    fontSize: 34,
+    fontWeight: "700",
+    lineHeight: 41,
+    letterSpacing: 0.37,
+  },
+  title1: {
+    fontSize: 28,
+    fontWeight: "600",
+    lineHeight: 34,
+    letterSpacing: 0.36,
+  },
+  title2: {
+    fontSize: 22,
+    fontWeight: "600",
+    lineHeight: 28,
+    letterSpacing: 0.35,
+  },
+  headline: {
+    fontSize: 17,
+    fontWeight: "600",
+    lineHeight: 22,
+    letterSpacing: -0.41,
+  },
+  body: {
+    fontSize: 17,
+    fontWeight: "400",
+    lineHeight: 22,
+    letterSpacing: -0.41,
+  },
+  callout: {
+    fontSize: 16,
+    fontWeight: "400",
+    lineHeight: 21,
+    letterSpacing: -0.32,
+  },
+  subheadline: {
+    fontSize: 15,
+    fontWeight: "400",
+    lineHeight: 20,
+    letterSpacing: -0.24,
+  },
+  footnote: {
+    fontSize: 13,
+    fontWeight: "400",
+    lineHeight: 18,
+    letterSpacing: -0.08,
+  },
+  caption: {
+    fontSize: 12,
+    fontWeight: "400",
+    lineHeight: 16,
+    letterSpacing: 0,
+  },
+};
+
+// Apple iOS Spacing
+const SPACING = {
+  xs: 4,
+  sm: 8,
+  md: 12,
+  lg: 16,
+  xl: 20,
+  xxl: 24,
+  xxxl: 32,
+  huge: 40,
 };
 
 interface OnboardingData {
@@ -66,12 +151,12 @@ interface OnboardingData {
 }
 
 const BEAUTY_OPTIONS = [
-  { id: "skincare", labelAr: "العناية بالبشرة", labelEn: "Skincare" },
-  { id: "hair", labelAr: "العناية بالشعر", labelEn: "Hair Care" },
-  { id: "nails", labelAr: "العناية بالأظافر", labelEn: "Nail Care" },
-  { id: "makeup", labelAr: "المكياج", labelEn: "Makeup" },
-  { id: "fragrance", labelAr: "العطور", labelEn: "Fragrance" },
-  { id: "wellness", labelAr: "العافية", labelEn: "Wellness" },
+  { id: "skincare", labelAr: "العناية بالبشرة", labelEn: "Skincare", icon: "droplet" },
+  { id: "hair", labelAr: "العناية بالشعر", labelEn: "Hair Care", icon: "scissors" },
+  { id: "nails", labelAr: "العناية بالأظافر", labelEn: "Nail Care", icon: "star" },
+  { id: "makeup", labelAr: "المكياج", labelEn: "Makeup", icon: "eye" },
+  { id: "fragrance", labelAr: "العطور", labelEn: "Fragrance", icon: "wind" },
+  { id: "wellness", labelAr: "العافية", labelEn: "Wellness", icon: "heart" },
 ];
 
 const AGE_RANGES = [
@@ -82,11 +167,11 @@ const AGE_RANGES = [
 ];
 
 const GOAL_OPTIONS = [
-  { id: "track_cycle", labelAr: "تتبع الدورة", labelEn: "Track Cycle" },
-  { id: "conceive", labelAr: "الحمل", labelEn: "Conceive" },
-  { id: "avoid_pregnancy", labelAr: "تجنب الحمل", labelEn: "Avoid Pregnancy" },
-  { id: "health", labelAr: "الصحة العامة", labelEn: "General Health" },
-  { id: "beauty", labelAr: "الجمال", labelEn: "Beauty & Wellness" },
+  { id: "track_cycle", labelAr: "تتبع الدورة", labelEn: "Track Cycle", icon: "calendar" },
+  { id: "conceive", labelAr: "الحمل", labelEn: "Conceive", icon: "heart" },
+  { id: "avoid_pregnancy", labelAr: "تجنب الحمل", labelEn: "Avoid Pregnancy", icon: "shield" },
+  { id: "health", labelAr: "الصحة العامة", labelEn: "General Health", icon: "activity" },
+  { id: "beauty", labelAr: "الجمال", labelEn: "Beauty & Wellness", icon: "star" },
 ];
 
 export default function OnboardingScreenNew() {
@@ -115,19 +200,17 @@ export default function OnboardingScreenNew() {
   const [showDatePicker, setShowDatePicker] = useState(false);
 
   const isRTL = data.language === "ar";
-  const personaColor = data.persona ? PERSONA_COLORS[data.persona] : "#FF6B9D";
+  const personaColor = data.persona ? PERSONA_COLORS[data.persona] : PERSONA_COLORS.single;
   const personaFlower = data.persona ? PERSONA_FLOWERS[data.persona] : PERSONA_FLOWERS.single;
 
   // Calculate total steps (Partner skips cycle step)
   const totalSteps = data.persona === "partner" ? 5 : 6;
 
-  // Helper: Update data
   const updateField = (field: keyof OnboardingData, value: any) => {
     setData((prev) => ({ ...prev, [field]: value }));
     setError("");
   };
 
-  // Helper: Toggle array item
   const toggleArrayItem = (field: "beautyPreferences" | "goals", item: string) => {
     setData((prev) => ({
       ...prev,
@@ -137,7 +220,6 @@ export default function OnboardingScreenNew() {
     }));
   };
 
-  // Validation
   const validateStep = (): boolean => {
     if (step === 2 && !data.persona) {
       setError(isRTL ? "الرجاء اختيار شخصية" : "Please select a persona");
@@ -189,7 +271,6 @@ export default function OnboardingScreenNew() {
     return true;
   };
 
-  // Navigation
   const handleNext = async () => {
     if (!validateStep()) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
@@ -198,7 +279,6 @@ export default function OnboardingScreenNew() {
 
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
-    // Step 1: Language selection
     if (step === 1) {
       await setLanguage(data.language);
       I18nManager.forceRTL(data.language === "ar");
@@ -206,13 +286,11 @@ export default function OnboardingScreenNew() {
       return;
     }
 
-    // Skip step 5 for Partner
     if (step === 4 && data.persona === "partner") {
       setStep(6);
       return;
     }
 
-    // Last step: Complete onboarding
     if ((step === 5 && data.persona === "partner") || step === 6) {
       await completeOnboarding();
       return;
@@ -224,7 +302,6 @@ export default function OnboardingScreenNew() {
   const handleBack = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     
-    // Skip step 5 when going back from step 6 for Partner
     if (step === 6 && data.persona === "partner") {
       setStep(4);
       return;
@@ -237,7 +314,6 @@ export default function OnboardingScreenNew() {
 
   const completeOnboarding = async () => {
     try {
-      // Calculate cycle predictions
       let cyclePredictions = null;
       if (data.persona !== "partner" && data.lastPeriodDate) {
         const cycleLen = parseInt(data.cycleLength);
@@ -264,7 +340,6 @@ export default function OnboardingScreenNew() {
         };
       }
 
-      // Save to AsyncStorage
       await AsyncStorage.setItem("@wardaty_onboarding_complete", "true");
       await AsyncStorage.setItem("@wardaty_user_data", JSON.stringify({
         persona: data.persona,
@@ -277,7 +352,6 @@ export default function OnboardingScreenNew() {
         cyclePredictions,
       }));
 
-      // Update AppContext
       await updateData({
         persona: data.persona,
         email: data.email,
@@ -287,8 +361,6 @@ export default function OnboardingScreenNew() {
       });
 
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-
-      // Navigate to Main
       navigation.navigate("Main" as never);
     } catch (err) {
       console.error("Error completing onboarding:", err);
@@ -296,7 +368,6 @@ export default function OnboardingScreenNew() {
     }
   };
 
-  // Render Steps
   const renderStep = () => {
     switch (step) {
       case 1:
@@ -316,78 +387,79 @@ export default function OnboardingScreenNew() {
     }
   };
 
-  // Step 1: Language Selection
+  // Step 1: Language Selection (Apple Style)
   const renderStep1Language = () => (
     <Animated.View
-      entering={FadeInDown.duration(400)}
+      entering={FadeInDown.springify().damping(15)}
       exiting={FadeOutUp.duration(300)}
       style={styles.stepContainer}
     >
-      {/* Official Wardaty Logo */}
+      {/* Wardaty Logo with Gradient */}
       <LinearGradient
         colors={["#8C64F0", "#FF5FA8"]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        style={styles.logoGradient}
+        style={styles.logoContainer}
       >
         <Text style={styles.logoText}>ورديتي</Text>
-        <Text style={styles.logoTextEn}>Wardaty</Text>
+        <Text style={styles.logoSubtext}>Wardaty</Text>
       </LinearGradient>
 
-      <Text style={styles.title}>Choose Your Language</Text>
-      <Text style={styles.titleAr}>اختاري لغتك</Text>
+      <Text style={[styles.largeTitle, { marginTop: SPACING.huge }]}>
+        Choose Your Language
+      </Text>
+      <Text style={[styles.largeTitle, { textAlign: "right", marginTop: SPACING.sm }]}>
+        اختاري لغتك
+      </Text>
 
-      <View style={styles.languageContainer}>
-        <Pressable
-          style={[
-            styles.languageCard,
-            data.language === "ar" && { borderColor: personaColor, backgroundColor: `${personaColor}15` },
-          ]}
-          onPress={() => {
-            updateField("language", "ar");
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-          }}
-        >
-          <Text style={styles.languageEmoji}>🇸🇦</Text>
-          <Text style={styles.languageLabel}>العربية</Text>
-        </Pressable>
-
-        <Pressable
-          style={[
-            styles.languageCard,
-            data.language === "en" && { borderColor: personaColor, backgroundColor: `${personaColor}15` },
-          ]}
-          onPress={() => {
-            updateField("language", "en");
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-          }}
-        >
-          <Text style={styles.languageEmoji}>🇬🇧</Text>
-          <Text style={styles.languageLabel}>English</Text>
-        </Pressable>
+      <View style={styles.languageGrid}>
+        {[
+          { id: "ar", label: "العربية", flag: "🇸🇦" },
+          { id: "en", label: "English", flag: "🇬🇧" },
+        ].map((lang) => (
+          <Pressable
+            key={lang.id}
+            style={[
+              styles.appleCard,
+              data.language === lang.id && {
+                borderColor: personaColor,
+                borderWidth: 2,
+                transform: [{ scale: 1.02 }],
+              },
+            ]}
+            onPress={() => {
+              updateField("language", lang.id);
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            }}
+          >
+            <Text style={styles.languageFlag}>{lang.flag}</Text>
+            <Text style={styles.languageLabel}>{lang.label}</Text>
+          </Pressable>
+        ))}
       </View>
     </Animated.View>
   );
 
-  // Step 2: Persona Selection
+  // Step 2: Persona Selection (Apple Style with Flowers)
   const renderStep2Persona = () => (
     <Animated.View
-      entering={FadeInDown.duration(400)}
+      entering={FadeInDown.springify().damping(15)}
       exiting={FadeOutUp.duration(300)}
       style={styles.stepContainer}
     >
-      {/* Logo with Persona Gradient */}
+      {/* Logo with Persona Color */}
       <LinearGradient
-        colors={data.persona ? [personaColor, personaColor] : ["#8C64F0", "#FF5FA8"]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.logoGradientSmall}
+        colors={[personaColor, personaColor]}
+        style={styles.logoContainerSmall}
       >
         <Text style={styles.logoTextSmall}>{isRTL ? "ورديتي" : "Wardaty"}</Text>
       </LinearGradient>
 
-      <Text style={[styles.title, { textAlign: isRTL ? "right" : "left" }]}>
+      <Text style={[styles.title1, { textAlign: isRTL ? "right" : "left", width: "100%" }]}>
         {isRTL ? "اختاري شخصيتك" : "Select Your Persona"}
+      </Text>
+      <Text style={[styles.subheadline, styles.secondaryText, { textAlign: isRTL ? "right" : "left", width: "100%", marginTop: SPACING.sm }]}>
+        {isRTL ? "اختاري ما يناسبك" : "Choose what suits you"}
       </Text>
 
       <View style={styles.personaGrid}>
@@ -406,16 +478,21 @@ export default function OnboardingScreenNew() {
             <Pressable
               key={persona}
               style={[
+                styles.appleCard,
                 styles.personaCard,
-                isSelected && { borderColor: color, backgroundColor: `${color}15` },
+                isSelected && {
+                  borderColor: color,
+                  borderWidth: 2,
+                  backgroundColor: `${color}10`,
+                },
               ]}
               onPress={() => {
                 updateField("persona", persona);
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
               }}
             >
               <Image source={flower} style={styles.personaFlower} />
-              <Text style={[styles.personaLabel, { color: isSelected ? color : DarkTheme.text.primary }]}>
+              <Text style={[styles.headline, { color: isSelected ? color : COLORS.text.primary, marginTop: SPACING.md }]}>
                 {isRTL ? labels[persona].ar : labels[persona].en}
               </Text>
             </Pressable>
@@ -425,97 +502,111 @@ export default function OnboardingScreenNew() {
     </Animated.View>
   );
 
-  // Step 3: Email Signup
+  // Step 3: Email Signup (Apple iOS Style)
   const renderStep3Email = () => (
     <Animated.View
-      entering={FadeInDown.duration(400)}
+      entering={FadeInDown.springify().damping(15)}
       exiting={FadeOutUp.duration(300)}
       style={styles.stepContainer}
     >
       <Image source={personaFlower} style={styles.stepIcon} />
 
-      <Text style={[styles.title, { textAlign: isRTL ? "right" : "left" }]}>
+      <Text style={[styles.title1, { textAlign: isRTL ? "right" : "left", width: "100%" }]}>
         {isRTL ? "إنشاء حساب" : "Create Account"}
       </Text>
+      <Text style={[styles.subheadline, styles.secondaryText, { textAlign: isRTL ? "right" : "left", width: "100%", marginTop: SPACING.sm }]}>
+        {isRTL ? "أدخلي معلومات حسابك" : "Enter your account details"}
+      </Text>
 
-      <View style={styles.inputContainer}>
-        <Text style={[styles.inputLabel, { textAlign: isRTL ? "right" : "left" }]}>
-          {isRTL ? "البريد الإلكتروني" : "Email"}
-        </Text>
-        <TextInput
-          style={[styles.input, { textAlign: isRTL ? "right" : "left" }]}
-          placeholder={isRTL ? "أدخلي بريدك الإلكتروني" : "Enter your email"}
-          placeholderTextColor={DarkTheme.text.secondary}
-          value={data.email}
-          onChangeText={(text) => updateField("email", text)}
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
-      </View>
+      <View style={styles.formContainer}>
+        <View style={styles.inputGroup}>
+          <Text style={[styles.inputLabel, { textAlign: isRTL ? "right" : "left" }]}>
+            {isRTL ? "البريد الإلكتروني" : "Email"}
+          </Text>
+          <TextInput
+            style={[styles.appleInput, { textAlign: isRTL ? "right" : "left" }]}
+            placeholder={isRTL ? "name@example.com" : "name@example.com"}
+            placeholderTextColor={COLORS.text.tertiary}
+            value={data.email}
+            onChangeText={(text) => updateField("email", text)}
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
+        </View>
 
-      <View style={styles.inputContainer}>
-        <Text style={[styles.inputLabel, { textAlign: isRTL ? "right" : "left" }]}>
-          {isRTL ? "كلمة المرور" : "Password"}
-        </Text>
-        <TextInput
-          style={[styles.input, { textAlign: isRTL ? "right" : "left" }]}
-          placeholder={isRTL ? "أدخلي كلمة المرور" : "Enter password"}
-          placeholderTextColor={DarkTheme.text.secondary}
-          value={data.password}
-          onChangeText={(text) => updateField("password", text)}
-          secureTextEntry
-        />
-      </View>
+        <View style={styles.inputGroup}>
+          <Text style={[styles.inputLabel, { textAlign: isRTL ? "right" : "left" }]}>
+            {isRTL ? "كلمة المرور" : "Password"}
+          </Text>
+          <TextInput
+            style={[styles.appleInput, { textAlign: isRTL ? "right" : "left" }]}
+            placeholder={isRTL ? "••••••" : "••••••"}
+            placeholderTextColor={COLORS.text.tertiary}
+            value={data.password}
+            onChangeText={(text) => updateField("password", text)}
+            secureTextEntry
+          />
+        </View>
 
-      <View style={styles.inputContainer}>
-        <Text style={[styles.inputLabel, { textAlign: isRTL ? "right" : "left" }]}>
-          {isRTL ? "تأكيد كلمة المرور" : "Confirm Password"}
-        </Text>
-        <TextInput
-          style={[styles.input, { textAlign: isRTL ? "right" : "left" }]}
-          placeholder={isRTL ? "أعيدي إدخال كلمة المرور" : "Re-enter password"}
-          placeholderTextColor={DarkTheme.text.secondary}
-          value={data.confirmPassword}
-          onChangeText={(text) => updateField("confirmPassword", text)}
-          secureTextEntry
-        />
+        <View style={styles.inputGroup}>
+          <Text style={[styles.inputLabel, { textAlign: isRTL ? "right" : "left" }]}>
+            {isRTL ? "تأكيد كلمة المرور" : "Confirm Password"}
+          </Text>
+          <TextInput
+            style={[styles.appleInput, { textAlign: isRTL ? "right" : "left" }]}
+            placeholder={isRTL ? "••••••" : "••••••"}
+            placeholderTextColor={COLORS.text.tertiary}
+            value={data.confirmPassword}
+            onChangeText={(text) => updateField("confirmPassword", text)}
+            secureTextEntry
+          />
+        </View>
       </View>
     </Animated.View>
   );
 
-  // Step 4: Beauty Preferences
+  // Step 4: Beauty Preferences (Apple Grid Style)
   const renderStep4Beauty = () => (
     <Animated.View
-      entering={FadeInDown.duration(400)}
+      entering={FadeInDown.springify().damping(15)}
       exiting={FadeOutUp.duration(300)}
       style={styles.stepContainer}
     >
       <Image source={personaFlower} style={styles.stepIcon} />
 
-      <Text style={[styles.title, { textAlign: isRTL ? "right" : "left" }]}>
+      <Text style={[styles.title1, { textAlign: isRTL ? "right" : "left", width: "100%" }]}>
         {isRTL ? "اهتماماتك الجمالية" : "Beauty Interests"}
       </Text>
-
-      <Text style={[styles.subtitle, { textAlign: isRTL ? "right" : "left" }]}>
+      <Text style={[styles.subheadline, styles.secondaryText, { textAlign: isRTL ? "right" : "left", width: "100%", marginTop: SPACING.sm }]}>
         {isRTL ? "اختاري ما يهمك" : "Select what interests you"}
       </Text>
 
-      <View style={styles.chipsContainer}>
+      <View style={styles.beautyGrid}>
         {BEAUTY_OPTIONS.map((option) => {
           const isSelected = data.beautyPreferences.includes(option.id);
           return (
             <Pressable
               key={option.id}
               style={[
-                styles.chip,
-                isSelected && { borderColor: personaColor, backgroundColor: `${personaColor}15` },
+                styles.appleCard,
+                styles.beautyCard,
+                isSelected && {
+                  borderColor: personaColor,
+                  borderWidth: 2,
+                  backgroundColor: `${personaColor}10`,
+                },
               ]}
               onPress={() => {
                 toggleArrayItem("beautyPreferences", option.id);
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               }}
             >
-              <Text style={[styles.chipText, isSelected && { color: personaColor }]}>
+              <Feather
+                name={option.icon as any}
+                size={28}
+                color={isSelected ? personaColor : COLORS.text.secondary}
+              />
+              <Text style={[styles.callout, { color: isSelected ? personaColor : COLORS.text.primary, marginTop: SPACING.sm }]}>
                 {isRTL ? option.labelAr : option.labelEn}
               </Text>
             </Pressable>
@@ -525,174 +616,180 @@ export default function OnboardingScreenNew() {
     </Animated.View>
   );
 
-  // Step 5: Cycle Details (Skip for Partner)
+  // Step 5: Cycle Details (iOS Calendar Style)
   const renderStep5Cycle = () => (
     <Animated.View
-      entering={FadeInDown.duration(400)}
+      entering={FadeInDown.springify().damping(15)}
       exiting={FadeOutUp.duration(300)}
       style={styles.stepContainer}
     >
       <Image source={personaFlower} style={styles.stepIcon} />
 
-      <Text style={[styles.title, { textAlign: isRTL ? "right" : "left" }]}>
+      <Text style={[styles.title1, { textAlign: isRTL ? "right" : "left", width: "100%" }]}>
         {isRTL ? "تفاصيل الدورة الشهرية" : "Cycle Details"}
       </Text>
 
-      <View style={styles.inputContainer}>
-        <Text style={[styles.inputLabel, { textAlign: isRTL ? "right" : "left" }]}>
-          {isRTL ? "تاريخ آخر دورة" : "Last Period Date"}
-        </Text>
-        <Pressable
-          style={[styles.dateButton, { flexDirection: isRTL ? "row-reverse" : "row" }]}
-          onPress={() => setShowDatePicker(true)}
-        >
-          <Feather name="calendar" size={20} color={personaColor} />
-          <Text style={styles.dateButtonText}>
-            {data.lastPeriodDate
-              ? data.lastPeriodDate.toLocaleDateString(isRTL ? "ar-SA" : "en-US")
-              : isRTL
-              ? "اختاري التاريخ"
-              : "Select Date"}
+      <View style={styles.formContainer}>
+        <View style={styles.inputGroup}>
+          <Text style={[styles.inputLabel, { textAlign: isRTL ? "right" : "left" }]}>
+            {isRTL ? "تاريخ آخر دورة" : "Last Period Date"}
           </Text>
-        </Pressable>
-      </View>
+          <Pressable
+            style={[styles.appleInput, styles.dateButton, { flexDirection: isRTL ? "row-reverse" : "row" }]}
+            onPress={() => setShowDatePicker(true)}
+          >
+            <Feather name="calendar" size={20} color={personaColor} />
+            <Text style={[styles.body, { color: data.lastPeriodDate ? COLORS.text.primary : COLORS.text.tertiary }]}>
+              {data.lastPeriodDate
+                ? data.lastPeriodDate.toLocaleDateString(isRTL ? "ar-SA" : "en-US")
+                : isRTL
+                ? "اختاري التاريخ"
+                : "Select Date"}
+            </Text>
+          </Pressable>
+        </View>
 
-      {showDatePicker && (
-        <DateTimePicker
-          value={data.lastPeriodDate || new Date()}
-          mode="date"
-          display="default"
-          onChange={(event, selectedDate) => {
-            setShowDatePicker(false);
-            if (selectedDate) {
-              updateField("lastPeriodDate", selectedDate);
-            }
-          }}
-        />
-      )}
+        {showDatePicker && (
+          <DateTimePicker
+            value={data.lastPeriodDate || new Date()}
+            mode="date"
+            display="default"
+            onChange={(event, selectedDate) => {
+              setShowDatePicker(false);
+              if (selectedDate) {
+                updateField("lastPeriodDate", selectedDate);
+              }
+            }}
+          />
+        )}
 
-      <View style={styles.inputContainer}>
-        <Text style={[styles.inputLabel, { textAlign: isRTL ? "right" : "left" }]}>
-          {isRTL ? "طول الدورة (بالأيام)" : "Cycle Length (days)"}
-        </Text>
-        <TextInput
-          style={[styles.input, { textAlign: isRTL ? "right" : "left" }]}
-          placeholder="28"
-          placeholderTextColor={DarkTheme.text.secondary}
-          value={data.cycleLength}
-          onChangeText={(text) => updateField("cycleLength", text)}
-          keyboardType="number-pad"
-        />
+        <View style={styles.inputGroup}>
+          <Text style={[styles.inputLabel, { textAlign: isRTL ? "right" : "left" }]}>
+            {isRTL ? "طول الدورة (بالأيام)" : "Cycle Length (days)"}
+          </Text>
+          <TextInput
+            style={[styles.appleInput, { textAlign: isRTL ? "right" : "left" }]}
+            placeholder="28"
+            placeholderTextColor={COLORS.text.tertiary}
+            value={data.cycleLength}
+            onChangeText={(text) => updateField("cycleLength", text)}
+            keyboardType="number-pad"
+          />
+        </View>
       </View>
     </Animated.View>
   );
 
-  // Step 6: Personal Info
+  // Step 6: Personal Info (iOS Settings Style)
   const renderStep6Personal = () => (
     <Animated.View
-      entering={FadeInDown.duration(400)}
+      entering={FadeInDown.springify().damping(15)}
       exiting={FadeOutUp.duration(300)}
       style={styles.stepContainer}
     >
       <Image source={personaFlower} style={styles.stepIcon} />
 
-      <Text style={[styles.title, { textAlign: isRTL ? "right" : "left" }]}>
+      <Text style={[styles.title1, { textAlign: isRTL ? "right" : "left", width: "100%" }]}>
         {isRTL ? "معلوماتك الشخصية" : "Personal Information"}
       </Text>
 
-      <View style={styles.inputContainer}>
-        <Text style={[styles.inputLabel, { textAlign: isRTL ? "right" : "left" }]}>
-          {isRTL ? "الاسم" : "Name"}
-        </Text>
-        <TextInput
-          style={[styles.input, { textAlign: isRTL ? "right" : "left" }]}
-          placeholder={isRTL ? "أدخلي اسمك" : "Enter your name"}
-          placeholderTextColor={DarkTheme.text.secondary}
-          value={data.name}
-          onChangeText={(text) => updateField("name", text)}
-        />
-      </View>
-
-      <View style={styles.inputContainer}>
-        <Text style={[styles.inputLabel, { textAlign: isRTL ? "right" : "left" }]}>
-          {isRTL ? "الفئة العمرية" : "Age Range"}
-        </Text>
-        <View style={styles.ageRangeContainer}>
-          {AGE_RANGES.map((range) => {
-            const isSelected = data.ageRange === range.id;
-            return (
-              <Pressable
-                key={range.id}
-                style={[
-                  styles.ageRangeButton,
-                  isSelected && { borderColor: personaColor, backgroundColor: `${personaColor}15` },
-                ]}
-                onPress={() => {
-                  updateField("ageRange", range.id);
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                }}
-              >
-                <Text style={[styles.ageRangeText, isSelected && { color: personaColor }]}>
-                  {range.label}
-                </Text>
-              </Pressable>
-            );
-          })}
-        </View>
-      </View>
-
-      <View style={styles.inputContainer}>
-        <Text style={[styles.inputLabel, { textAlign: isRTL ? "right" : "left" }]}>
-          {isRTL ? "أهدافك الصحية" : "Health Goals"}
-        </Text>
-        <View style={styles.chipsContainer}>
-          {GOAL_OPTIONS.map((goal) => {
-            const isSelected = data.goals.includes(goal.id);
-            return (
-              <Pressable
-                key={goal.id}
-                style={[
-                  styles.chip,
-                  isSelected && { borderColor: personaColor, backgroundColor: `${personaColor}15` },
-                ]}
-                onPress={() => {
-                  toggleArrayItem("goals", goal.id);
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                }}
-              >
-                <Text style={[styles.chipText, isSelected && { color: personaColor }]}>
-                  {isRTL ? goal.labelAr : goal.labelEn}
-                </Text>
-              </Pressable>
-            );
-          })}
-        </View>
-      </View>
-
-      <Pressable
-        style={[styles.notificationToggle, { flexDirection: isRTL ? "row-reverse" : "row" }]}
-        onPress={() => {
-          updateField("notificationsEnabled", !data.notificationsEnabled);
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        }}
-      >
-        <View
-          style={[
-            styles.toggleSwitch,
-            data.notificationsEnabled && { backgroundColor: personaColor },
-          ]}
-        >
-          <View
-            style={[
-              styles.toggleThumb,
-              data.notificationsEnabled && { transform: [{ translateX: 20 }] },
-            ]}
+      <View style={styles.formContainer}>
+        <View style={styles.inputGroup}>
+          <Text style={[styles.inputLabel, { textAlign: isRTL ? "right" : "left" }]}>
+            {isRTL ? "الاسم" : "Name"}
+          </Text>
+          <TextInput
+            style={[styles.appleInput, { textAlign: isRTL ? "right" : "left" }]}
+            placeholder={isRTL ? "أدخلي اسمك" : "Enter your name"}
+            placeholderTextColor={COLORS.text.tertiary}
+            value={data.name}
+            onChangeText={(text) => updateField("name", text)}
           />
         </View>
-        <Text style={styles.toggleLabel}>
-          {isRTL ? "تفعيل الإشعارات" : "Enable Notifications"}
-        </Text>
-      </Pressable>
+
+        <View style={styles.inputGroup}>
+          <Text style={[styles.inputLabel, { textAlign: isRTL ? "right" : "left" }]}>
+            {isRTL ? "الفئة العمرية" : "Age Range"}
+          </Text>
+          <View style={styles.ageGrid}>
+            {AGE_RANGES.map((range) => {
+              const isSelected = data.ageRange === range.id;
+              return (
+                <Pressable
+                  key={range.id}
+                  style={[
+                    styles.appleChip,
+                    isSelected && {
+                      backgroundColor: personaColor,
+                    },
+                  ]}
+                  onPress={() => {
+                    updateField("ageRange", range.id);
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  }}
+                >
+                  <Text style={[styles.callout, { color: isSelected ? "#FFFFFF" : COLORS.text.primary }]}>
+                    {range.label}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+        </View>
+
+        <View style={styles.inputGroup}>
+          <Text style={[styles.inputLabel, { textAlign: isRTL ? "right" : "left" }]}>
+            {isRTL ? "أهدافك الصحية" : "Health Goals"}
+          </Text>
+          <View style={styles.goalsGrid}>
+            {GOAL_OPTIONS.map((goal) => {
+              const isSelected = data.goals.includes(goal.id);
+              return (
+                <Pressable
+                  key={goal.id}
+                  style={[
+                    styles.appleCard,
+                    styles.goalCard,
+                    isSelected && {
+                      borderColor: personaColor,
+                      borderWidth: 2,
+                      backgroundColor: `${personaColor}10`,
+                    },
+                  ]}
+                  onPress={() => {
+                    toggleArrayItem("goals", goal.id);
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  }}
+                >
+                  <Feather
+                    name={goal.icon as any}
+                    size={20}
+                    color={isSelected ? personaColor : COLORS.text.secondary}
+                  />
+                  <Text style={[styles.footnote, { color: isSelected ? personaColor : COLORS.text.primary, marginTop: SPACING.xs }]}>
+                    {isRTL ? goal.labelAr : goal.labelEn}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+        </View>
+
+        <View style={[styles.settingsRow, { flexDirection: isRTL ? "row-reverse" : "row" }]}>
+          <Text style={styles.callout}>
+            {isRTL ? "تفعيل الإشعارات" : "Enable Notifications"}
+          </Text>
+          <Switch
+            value={data.notificationsEnabled}
+            onValueChange={(value) => {
+              updateField("notificationsEnabled", value);
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            }}
+            trackColor={{ false: COLORS.border, true: personaColor }}
+            thumbColor="#FFFFFF"
+          />
+        </View>
+      </View>
     </Animated.View>
   );
 
@@ -711,27 +808,30 @@ export default function OnboardingScreenNew() {
         ) : null}
       </ScrollView>
 
-      {/* Progress Dots */}
+      {/* Progress Dots (Apple Style) */}
       <View style={styles.progressContainer}>
         {Array.from({ length: totalSteps }).map((_, index) => (
           <View
             key={index}
             style={[
               styles.progressDot,
-              index + 1 === step && { backgroundColor: personaColor },
+              index + 1 === step && {
+                backgroundColor: personaColor,
+                width: 24,
+              },
             ]}
           />
         ))}
       </View>
 
-      {/* Navigation Buttons */}
+      {/* Navigation Buttons (Apple Style) */}
       <View style={[styles.buttonContainer, { flexDirection: isRTL ? "row-reverse" : "row" }]}>
         {step > 1 && (
           <Pressable style={styles.secondaryButton} onPress={handleBack}>
             <Feather
               name={isRTL ? "arrow-right" : "arrow-left"}
               size={20}
-              color={DarkTheme.text.primary}
+              color={COLORS.text.primary}
             />
             <Text style={styles.secondaryButtonText}>
               {isRTL ? "رجوع" : "Back"}
@@ -766,245 +866,286 @@ export default function OnboardingScreenNew() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: BG_BASE,
+    backgroundColor: COLORS.base,
   },
   scrollContent: {
     flexGrow: 1,
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.xl,
+    paddingHorizontal: SPACING.lg,
+    paddingVertical: SPACING.xl,
   },
   stepContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
   },
-  logoGradient: {
-    paddingVertical: Spacing.xl,
-    paddingHorizontal: Spacing.xxl,
-    borderRadius: BorderRadius.large,
+  
+  // Logo Styles
+  logoContainer: {
+    paddingVertical: SPACING.xxxl,
+    paddingHorizontal: SPACING.huge,
+    borderRadius: 24,
     alignItems: "center",
-    marginBottom: Spacing.xxl,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
+    elevation: 8,
   },
   logoText: {
-    fontSize: 32,
-    fontWeight: "bold",
+    fontSize: 36,
+    fontWeight: "700",
     color: "#FFFFFF",
     fontFamily: "Tajawal-Bold",
   },
-  logoTextEn: {
+  logoSubtext: {
     fontSize: 18,
-    color: "#FFFFFF",
-    marginTop: Spacing.xs,
+    fontWeight: "400",
+    color: "rgba(255, 255, 255, 0.9)",
+    marginTop: SPACING.xs,
     fontFamily: "Tajawal-Regular",
   },
-  logoGradientSmall: {
-    paddingVertical: Spacing.md,
-    paddingHorizontal: Spacing.xl,
-    borderRadius: BorderRadius.medium,
-    marginBottom: Spacing.xl,
+  logoContainerSmall: {
+    paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.xl,
+    borderRadius: 16,
+    marginBottom: SPACING.xl,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
   },
   logoTextSmall: {
     fontSize: 24,
-    fontWeight: "bold",
+    fontWeight: "700",
     color: "#FFFFFF",
     fontFamily: "Tajawal-Bold",
   },
   stepIcon: {
     width: 80,
     height: 80,
-    marginBottom: Spacing.xl,
+    marginBottom: SPACING.xl,
   },
-  title: {
-    ...Typography.largeTitle,
-    color: DarkTheme.text.primary,
-    marginBottom: Spacing.md,
-    width: "100%",
+
+  // Typography (Apple iOS Style)
+  largeTitle: {
+    ...TYPOGRAPHY.largeTitle,
+    color: COLORS.text.primary,
+    textAlign: "center",
   },
-  titleAr: {
-    ...Typography.largeTitle,
-    color: DarkTheme.text.primary,
-    marginBottom: Spacing.xl,
-    width: "100%",
-    textAlign: "right",
+  title1: {
+    ...TYPOGRAPHY.title1,
+    color: COLORS.text.primary,
   },
-  subtitle: {
-    ...Typography.body,
-    color: DarkTheme.text.secondary,
-    marginBottom: Spacing.lg,
-    width: "100%",
+  title2: {
+    ...TYPOGRAPHY.title2,
+    color: COLORS.text.primary,
   },
-  languageContainer: {
+  headline: {
+    ...TYPOGRAPHY.headline,
+    color: COLORS.text.primary,
+  },
+  body: {
+    ...TYPOGRAPHY.body,
+    color: COLORS.text.primary,
+  },
+  callout: {
+    ...TYPOGRAPHY.callout,
+    color: COLORS.text.primary,
+  },
+  subheadline: {
+    ...TYPOGRAPHY.subheadline,
+    color: COLORS.text.primary,
+  },
+  footnote: {
+    ...TYPOGRAPHY.footnote,
+    color: COLORS.text.primary,
+  },
+  caption: {
+    ...TYPOGRAPHY.caption,
+    color: COLORS.text.primary,
+  },
+  secondaryText: {
+    color: COLORS.text.secondary,
+  },
+
+  // Apple Card Style (Frosted Glass Effect)
+  appleCard: {
+    backgroundColor: COLORS.card,
+    borderRadius: 16,
+    padding: SPACING.lg,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    shadowColor: COLORS.shadow,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 3,
+  },
+
+  // Language Grid
+  languageGrid: {
     flexDirection: "row",
-    gap: Spacing.md,
+    gap: SPACING.md,
     width: "100%",
+    marginTop: SPACING.xxxl,
   },
-  languageCard: {
-    flex: 1,
-    backgroundColor: BG_CARD,
-    borderRadius: BorderRadius.large,
-    padding: Spacing.xl,
-    alignItems: "center",
-    borderWidth: 2,
-    borderColor: GLASS_BORDER,
-  },
-  languageEmoji: {
+  languageFlag: {
     fontSize: 48,
-    marginBottom: Spacing.md,
+    marginBottom: SPACING.md,
   },
   languageLabel: {
-    ...Typography.headline,
-    color: DarkTheme.text.primary,
+    ...TYPOGRAPHY.headline,
+    color: COLORS.text.primary,
   },
+
+  // Persona Grid
   personaGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: Spacing.md,
+    gap: SPACING.md,
     width: "100%",
+    marginTop: SPACING.xl,
   },
   personaCard: {
-    width: (SCREEN_WIDTH - Spacing.lg * 2 - Spacing.md) / 2,
-    backgroundColor: BG_CARD,
-    borderRadius: BorderRadius.large,
-    padding: Spacing.lg,
+    width: (SCREEN_WIDTH - SPACING.lg * 2 - SPACING.md) / 2,
     alignItems: "center",
-    borderWidth: 2,
-    borderColor: GLASS_BORDER,
+    paddingVertical: SPACING.xl,
   },
   personaFlower: {
-    width: 64,
-    height: 64,
-    marginBottom: Spacing.md,
+    width: 72,
+    height: 72,
   },
-  personaLabel: {
-    ...Typography.callout,
-    fontWeight: "600",
-  },
-  inputContainer: {
+
+  // Form Styles (iOS Style)
+  formContainer: {
     width: "100%",
-    marginBottom: Spacing.lg,
+    marginTop: SPACING.xl,
+  },
+  inputGroup: {
+    marginBottom: SPACING.lg,
   },
   inputLabel: {
-    ...Typography.callout,
-    color: DarkTheme.text.primary,
-    marginBottom: Spacing.sm,
+    ...TYPOGRAPHY.subheadline,
+    color: COLORS.text.secondary,
+    marginBottom: SPACING.sm,
   },
-  input: {
-    backgroundColor: BG_CARD,
-    borderRadius: BorderRadius.medium,
-    padding: Spacing.md,
-    color: DarkTheme.text.primary,
+  appleInput: {
+    backgroundColor: COLORS.elevated,
+    borderRadius: 12,
+    padding: SPACING.md,
+    ...TYPOGRAPHY.body,
+    color: COLORS.text.primary,
     borderWidth: 1,
-    borderColor: GLASS_BORDER,
-    ...Typography.body,
+    borderColor: COLORS.border,
   },
   dateButton: {
-    backgroundColor: BG_CARD,
-    borderRadius: BorderRadius.medium,
-    padding: Spacing.md,
-    borderWidth: 1,
-    borderColor: GLASS_BORDER,
+    flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.sm,
+    gap: SPACING.sm,
   },
-  dateButtonText: {
-    ...Typography.body,
-    color: DarkTheme.text.primary,
-  },
-  chipsContainer: {
+
+  // Beauty Grid
+  beautyGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: Spacing.sm,
+    gap: SPACING.md,
     width: "100%",
+    marginTop: SPACING.xl,
   },
-  chip: {
-    backgroundColor: BG_CARD,
-    borderRadius: BorderRadius.large,
-    paddingVertical: Spacing.sm,
-    paddingHorizontal: Spacing.md,
-    borderWidth: 1,
-    borderColor: GLASS_BORDER,
-  },
-  chipText: {
-    ...Typography.callout,
-    color: DarkTheme.text.primary,
-  },
-  ageRangeContainer: {
-    flexDirection: "row",
-    gap: Spacing.sm,
-    flexWrap: "wrap",
-  },
-  ageRangeButton: {
-    backgroundColor: BG_CARD,
-    borderRadius: BorderRadius.medium,
-    paddingVertical: Spacing.md,
-    paddingHorizontal: Spacing.lg,
-    borderWidth: 1,
-    borderColor: GLASS_BORDER,
-  },
-  ageRangeText: {
-    ...Typography.callout,
-    color: DarkTheme.text.primary,
-  },
-  notificationToggle: {
+  beautyCard: {
+    width: (SCREEN_WIDTH - SPACING.lg * 2 - SPACING.md) / 2,
     alignItems: "center",
-    gap: Spacing.md,
-    marginTop: Spacing.lg,
+    paddingVertical: SPACING.lg,
   },
-  toggleSwitch: {
-    width: 50,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: BG_CARD,
+
+  // Age Grid
+  ageGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: SPACING.sm,
+  },
+  appleChip: {
+    backgroundColor: COLORS.elevated,
+    borderRadius: 20,
+    paddingVertical: SPACING.sm,
+    paddingHorizontal: SPACING.lg,
     borderWidth: 1,
-    borderColor: GLASS_BORDER,
-    justifyContent: "center",
-    paddingHorizontal: 4,
+    borderColor: COLORS.border,
   },
-  toggleThumb: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    backgroundColor: "#FFFFFF",
+
+  // Goals Grid
+  goalsGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: SPACING.sm,
   },
-  toggleLabel: {
-    ...Typography.callout,
-    color: DarkTheme.text.primary,
+  goalCard: {
+    width: (SCREEN_WIDTH - SPACING.lg * 2 - SPACING.sm * 2) / 3,
+    alignItems: "center",
+    paddingVertical: SPACING.md,
   },
+
+  // Settings Row (iOS Style)
+  settingsRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: COLORS.elevated,
+    borderRadius: 12,
+    padding: SPACING.md,
+    marginTop: SPACING.lg,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+
+  // Error Text
   errorText: {
-    ...Typography.callout,
+    ...TYPOGRAPHY.callout,
     color: "#FF6B6B",
-    marginTop: Spacing.md,
+    marginTop: SPACING.md,
     width: "100%",
   },
+
+  // Progress Dots (Apple Style)
   progressContainer: {
     flexDirection: "row",
     justifyContent: "center",
-    gap: Spacing.sm,
-    paddingVertical: Spacing.md,
+    alignItems: "center",
+    gap: SPACING.sm,
+    paddingVertical: SPACING.md,
   },
   progressDot: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: BG_CARD,
+    backgroundColor: COLORS.border,
+    transition: "all 0.3s ease",
   },
+
+  // Buttons (Apple iOS Style)
   buttonContainer: {
-    paddingHorizontal: Spacing.lg,
-    paddingBottom: Spacing.lg,
-    gap: Spacing.md,
+    paddingHorizontal: SPACING.lg,
+    paddingBottom: SPACING.lg,
+    gap: SPACING.md,
   },
   primaryButton: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: Spacing.sm,
-    minHeight: Spacing.buttonHeight,
-    borderRadius: BorderRadius.large,
-    paddingVertical: Spacing.md,
-    paddingHorizontal: Spacing.xl,
+    gap: SPACING.sm,
+    minHeight: 50,
+    borderRadius: 14,
+    paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.xl,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
   },
   primaryButtonText: {
-    ...Typography.headline,
+    ...TYPOGRAPHY.headline,
     color: "#FFFFFF",
     fontWeight: "600",
   },
@@ -1012,18 +1153,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: Spacing.sm,
-    minHeight: Spacing.buttonHeight,
-    borderRadius: BorderRadius.large,
-    paddingVertical: Spacing.md,
-    paddingHorizontal: Spacing.lg,
-    backgroundColor: BG_CARD,
+    gap: SPACING.sm,
+    minHeight: 50,
+    borderRadius: 14,
+    paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.lg,
+    backgroundColor: COLORS.elevated,
     borderWidth: 1,
-    borderColor: GLASS_BORDER,
+    borderColor: COLORS.border,
   },
   secondaryButtonText: {
-    ...Typography.callout,
-    color: DarkTheme.text.primary,
+    ...TYPOGRAPHY.callout,
+    color: COLORS.text.primary,
     fontWeight: "600",
   },
 });
