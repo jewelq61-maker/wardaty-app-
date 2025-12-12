@@ -178,7 +178,7 @@ export default function OnboardingScreenNew() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const { language, setLanguage } = useLanguage();
-  const { updateData } = useApp();
+  const { updateData, data: appData } = useApp();
 
   const [step, setStep] = useState(1);
   const [data, setData] = useState<OnboardingData>({
@@ -340,7 +340,19 @@ export default function OnboardingScreenNew() {
         };
       }
 
-      await AsyncStorage.setItem("@wardaty_onboarding_complete", "true");
+      // Update settings to mark onboarding as complete
+      await updateData({
+        settings: {
+          ...appData.settings,
+          onboardingComplete: true,
+          persona: data.persona,
+          name: data.name,
+          language: data.language,
+          notificationsEnabled: data.notificationsEnabled,
+        },
+      });
+
+      // Save additional user data to AsyncStorage
       await AsyncStorage.setItem("@wardaty_user_data", JSON.stringify({
         persona: data.persona,
         email: data.email,
@@ -351,14 +363,6 @@ export default function OnboardingScreenNew() {
         notificationsEnabled: data.notificationsEnabled,
         cyclePredictions,
       }));
-
-      await updateData({
-        persona: data.persona,
-        email: data.email,
-        name: data.name,
-        beautyPreferences: data.beautyPreferences,
-        cyclePredictions,
-      });
 
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       navigation.navigate("Main" as never);
