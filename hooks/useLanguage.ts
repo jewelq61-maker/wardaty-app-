@@ -38,15 +38,28 @@ export function useLanguage() {
   const setLanguage = useCallback(
     async (newLanguage: Language) => {
       const shouldBeRTL = newLanguage === "ar";
+      
+      // Update settings first
+      await updateSettings({ language: newLanguage });
+      
+      // Force RTL/LTR globally
       if (I18nManager.isRTL !== shouldBeRTL) {
         I18nManager.allowRTL(shouldBeRTL);
         I18nManager.forceRTL(shouldBeRTL);
+        
+        // On native, need to reload for RTL to take effect
+        if (Platform.OS !== "web") {
+          // Alert user that app will reload
+          // Updates.reloadAsync(); // Uncomment if using expo-updates
+        }
       }
+      
+      // Web: immediate direction change
       if (Platform.OS === "web") {
         document.documentElement.dir = shouldBeRTL ? "rtl" : "ltr";
+        document.documentElement.lang = newLanguage;
         document.body.style.direction = shouldBeRTL ? "rtl" : "ltr";
       }
-      await updateSettings({ language: newLanguage });
     },
     [updateSettings]
   );
