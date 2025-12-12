@@ -35,18 +35,18 @@ import { Persona } from "../lib/types";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
-// Wardaty Official Dark Theme (Preserved)
+// Apple iOS Light Theme
 const COLORS = {
-  base: "#0F0820",
-  elevated: "#1A1330",
-  card: "#251B40",
+  base: "#FFFFFF",
+  elevated: "#F9F9F9",
+  card: "#F5F5F7",
   text: {
-    primary: "#FFFFFF",
-    secondary: "rgba(255, 255, 255, 0.7)",
-    tertiary: "rgba(255, 255, 255, 0.5)",
+    primary: "#000000",
+    secondary: "rgba(0, 0, 0, 0.6)",
+    tertiary: "rgba(0, 0, 0, 0.4)",
   },
-  border: "rgba(255, 255, 255, 0.1)",
-  shadow: "rgba(0, 0, 0, 0.3)",
+  border: "rgba(0, 0, 0, 0.1)",
+  shadow: "rgba(0, 0, 0, 0.15)",
 };
 
 // Persona Colors (Official Wardaty)
@@ -422,8 +422,13 @@ export default function OnboardingScreenNew() {
               styles.appleCard,
               data.language === lang.id && {
                 borderColor: personaColor,
-                borderWidth: 2,
-                transform: [{ scale: 1.02 }],
+                borderWidth: 3,
+                backgroundColor: "#FFFFFF",
+                shadowColor: personaColor,
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.2,
+                shadowRadius: 12,
+                elevation: 8,
               },
             ]}
             onPress={() => {
@@ -481,8 +486,13 @@ export default function OnboardingScreenNew() {
                 styles.personaCard,
                 isSelected && {
                   borderColor: color,
-                  borderWidth: 2,
-                  backgroundColor: `${color}10`,
+                  borderWidth: 3,
+                  backgroundColor: "#FFFFFF",
+                  shadowColor: color,
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.2,
+                  shadowRadius: 12,
+                  elevation: 8,
                 },
               ]}
               onPress={() => {
@@ -591,8 +601,13 @@ export default function OnboardingScreenNew() {
                 styles.beautyCard,
                 isSelected && {
                   borderColor: personaColor,
-                  borderWidth: 2,
-                  backgroundColor: `${personaColor}10`,
+                  borderWidth: 3,
+                  backgroundColor: "#FFFFFF",
+                  shadowColor: personaColor,
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.2,
+                  shadowRadius: 12,
+                  elevation: 8,
                 },
               ]}
               onPress={() => {
@@ -751,8 +766,13 @@ export default function OnboardingScreenNew() {
                     styles.goalCard,
                     isSelected && {
                       borderColor: personaColor,
-                      borderWidth: 2,
-                      backgroundColor: `${personaColor}10`,
+                      borderWidth: 3,
+                      backgroundColor: "#FFFFFF",
+                      shadowColor: personaColor,
+                      shadowOffset: { width: 0, height: 4 },
+                      shadowOpacity: 0.2,
+                      shadowRadius: 12,
+                      elevation: 8,
                     },
                   ]}
                   onPress={() => {
@@ -892,14 +912,14 @@ const styles = StyleSheet.create({
   logoText: {
     fontSize: 40,
     fontWeight: "700",
-    color: "#FFFFFF",
+    color: COLORS.text.primary,
     fontFamily: "Tajawal-Bold",
     letterSpacing: -0.5,
   },
   logoSubtext: {
     fontSize: 20,
     fontWeight: "500",
-    color: "rgba(255, 255, 255, 0.8)",
+    color: COLORS.text.secondary,
     marginTop: SPACING.xs,
     fontFamily: "Tajawal-Regular",
     letterSpacing: 0.5,
@@ -963,18 +983,18 @@ const styles = StyleSheet.create({
     color: COLORS.text.secondary,
   },
 
-  // Apple Card Style (Frosted Glass Effect)
+  // Apple Card Style (iOS Light Theme)
   appleCard: {
     backgroundColor: COLORS.card,
     borderRadius: 20,
     padding: SPACING.xxl,
-    borderWidth: 1.5,
+    borderWidth: 1,
     borderColor: COLORS.border,
-    shadowColor: COLORS.shadow,
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.2,
-    shadowRadius: 16,
-    elevation: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 2,
     minHeight: 140,
     justifyContent: "center",
     alignItems: "center",
@@ -1126,7 +1146,7 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    backgroundColor: "rgba(0, 0, 0, 0.15)",
     transition: "all 0.3s ease",
   },
 
