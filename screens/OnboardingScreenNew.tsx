@@ -395,21 +395,29 @@ export default function OnboardingScreenNew() {
       style={styles.stepContainer}
     >
       {/* Wardaty Logo Flower */}
-      <View style={styles.logoContainer}>
+      <Animated.View 
+        entering={FadeIn.delay(200).duration(600)}
+        style={styles.logoContainer}
+      >
         <Image
           source={require("../assets/wardaty-logo.png")}
           style={styles.logoFlower}
         />
         <Text style={styles.logoText}>ورديتي</Text>
         <Text style={styles.logoSubtext}>Wardaty</Text>
-      </View>
+      </Animated.View>
 
-      <Text style={[styles.largeTitle, { marginBottom: SPACING.sm }]}>
-        Choose Your Language
-      </Text>
-      <Text style={[styles.largeTitle, { textAlign: "center" }]}>
-        اختاري لغتك
-      </Text>
+      <Animated.View 
+        entering={FadeIn.delay(400).duration(600)}
+        style={{ alignItems: "center", marginBottom: SPACING.xxxl }}
+      >
+        <Text style={[styles.largeTitle, { marginBottom: SPACING.xs }]}>
+          Choose Your Language
+        </Text>
+        <Text style={[styles.largeTitle]}>
+          اختاري لغتك
+        </Text>
+      </Animated.View>
 
       <View style={styles.languageGrid}>
         {[
@@ -896,31 +904,33 @@ const styles = StyleSheet.create({
   stepContainer: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "flex-start",
+    paddingTop: SPACING.huge,
   },
   
   // Logo Styles
   logoContainer: {
     alignItems: "center",
-    marginBottom: SPACING.huge,
+    marginBottom: SPACING.xxxl,
+    marginTop: SPACING.xl,
   },
   logoFlower: {
-    width: 140,
-    height: 140,
-    marginBottom: SPACING.xl,
+    width: 160,
+    height: 160,
+    marginBottom: SPACING.xxl,
   },
   logoText: {
-    fontSize: 40,
+    fontSize: 44,
     fontWeight: "700",
     color: COLORS.text.primary,
     fontFamily: "Tajawal-Bold",
     letterSpacing: -0.5,
   },
   logoSubtext: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: "500",
     color: COLORS.text.secondary,
-    marginTop: SPACING.xs,
+    marginTop: SPACING.sm,
     fontFamily: "Tajawal-Regular",
     letterSpacing: 0.5,
   },
@@ -940,10 +950,10 @@ const styles = StyleSheet.create({
 
   // Typography (Apple iOS Style)
   largeTitle: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: "700",
-    lineHeight: 38,
-    letterSpacing: -0.5,
+    lineHeight: 34,
+    letterSpacing: -0.3,
     color: COLORS.text.primary,
     textAlign: "center",
   },
@@ -986,7 +996,7 @@ const styles = StyleSheet.create({
   // Apple Card Style (iOS Light Theme)
   appleCard: {
     backgroundColor: COLORS.card,
-    borderRadius: 20,
+    borderRadius: 24,
     padding: SPACING.xxl,
     borderWidth: 1,
     borderColor: COLORS.border,
@@ -995,7 +1005,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.08,
     shadowRadius: 8,
     elevation: 2,
-    minHeight: 140,
+    minHeight: 160,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -1005,15 +1015,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: SPACING.lg,
     width: "100%",
-    marginTop: SPACING.huge,
-    paddingHorizontal: SPACING.md,
+    paddingHorizontal: SPACING.lg,
   },
   languageFlag: {
-    fontSize: 64,
-    marginBottom: SPACING.lg,
+    fontSize: 72,
+    marginBottom: SPACING.xl,
   },
   languageLabel: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: "600",
     color: COLORS.text.primary,
     letterSpacing: -0.3,
